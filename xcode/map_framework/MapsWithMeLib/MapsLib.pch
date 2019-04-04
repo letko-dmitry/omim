@@ -1,0 +1,13 @@
+//
+//  MapsLib.pch
+//  MapsWithMeLib
+//
+//  Created by Oleg Sorochich on 10/31/18.
+//  Copyright © 2018 Target50. All rights reserved.
+//
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+
+#import "MWMTypes.h"
+#endif
