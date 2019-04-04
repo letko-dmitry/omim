@@ -35,11 +35,22 @@
 #include <string>
 #include <utility>
 
+
+__attribute__((visibility("hidden")))
+@interface PlatformBundleWorkaround: NSObject
+
+@end
+
+@implementation PlatformBundleWorkaround
+
+@end
+
+
 Platform::Platform()
 {
   m_isTablet = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 
-  NSBundle * bundle = NSBundle.mainBundle;
+  NSBundle * bundle = [NSBundle bundleForClass:PlatformBundleWorkaround.self];
   NSString * path = [bundle resourcePath];
   m_resourcesDir = path.UTF8String;
   m_resourcesDir += "/";
@@ -54,7 +65,7 @@ Platform::Platform()
   auto privatePaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,
                                                           NSUserDomainMask, YES);
   m_privateDir = privatePaths.firstObject.UTF8String;
-  m_privateDir +=  "/";
+  m_privateDir += "/";
 
   NSString * tmpDir = NSTemporaryDirectory();
   if (tmpDir)
