@@ -180,3 +180,4 @@ designer_version.h
 
 # Vim files
 *.sw?
+xcode/map_framework/MapsWithMeLib.framework

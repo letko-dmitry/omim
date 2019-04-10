@@ -6,6 +6,20 @@
 	objectVersion = 51;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DC253CAE225E3A5400F3301E /* MapsWithMeUniversalLib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DC253CB1225E3A5500F3301E /* Build configuration list for PBXAggregateTarget "MapsWithMeUniversalLib" */;
+			buildPhases = (
+				DC253CB2225E3A5D00F3301E /* Run Script */,
+			);
+			dependencies = (
+			);
+			name = MapsWithMeUniversalLib;
+			productName = MapsWithMeUnicversalLib;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		7B5CC72F223FA6400030C3F1 /* libdescriptions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B5CC72E223FA6400030C3F1 /* libdescriptions.a */; };
 		7B6E9CD32189947E00FB38FB /* MapsWithMeLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B6E9CD12189947E00FB38FB /* MapsWithMeLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,6 +76,8 @@
 		7B6E9DD22189A0DD00FB38FB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9DD12189A0DD00FB38FB /* CFNetwork.framework */; };
 		7B6E9DD42189A0F900FB38FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9DD32189A0F900FB38FB /* Security.framework */; };
 		7B6E9E092189B51A00FB38FB /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9E082189B51A00FB38FB /* libc++.tbd */; };
+		DC253CB7225E497F00F3301E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC253CB6225E497E00F3301E /* CoreLocation.framework */; };
+		DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = DC253CB9225E54A900F3301E /* shaders_metal.metallib */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5922565440002B64E8 /* MWMFrameworkListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
@@ -255,6 +271,11 @@
 		7B6E9DD12189A0DD00FB38FB /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		7B6E9DD32189A0F900FB38FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7B6E9E082189B51A00FB38FB /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		DC253CB3225E43FA00F3301E /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../common-release.xcconfig"; sourceTree = "<group>"; };
+		DC253CB4225E43FA00F3301E /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../common-debug.xcconfig"; sourceTree = "<group>"; };
+		DC253CB5225E43FA00F3301E /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
+		DC253CB6225E497E00F3301E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DC253CB9225E54A900F3301E /* shaders_metal.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; path = shaders_metal.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMFrameworkListener.h; sourceTree = "<group>"; };
 		DCCFEA422256543F002B64E8 /* iosOGLContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContext.mm; sourceTree = "<group>"; };
 		DCCFEA432256543F002B64E8 /* MetalContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalContextFactory.h; sourceTree = "<group>"; };
@@ -338,6 +359,7 @@
 				7B6E9E092189B51A00FB38FB /* libc++.tbd in Frameworks */,
 				7B6E9DD42189A0F900FB38FB /* Security.framework in Frameworks */,
 				7B6E9DD22189A0DD00FB38FB /* CFNetwork.framework in Frameworks */,
+				DC253CB7225E497F00F3301E /* CoreLocation.framework in Frameworks */,
 				7B6E9DD02189A0A800FB38FB /* QuartzCore.framework in Frameworks */,
 				7B6E9DCE2189A05C00FB38FB /* CoreGraphics.framework in Frameworks */,
 				7B6E9DC321899EE600FB38FB /* GLKit.framework in Frameworks */,
@@ -399,6 +421,10 @@
 		7B6E9CC42189947E00FB38FB = {
 			isa = PBXGroup;
 			children = (
+				DC253CB9225E54A900F3301E /* shaders_metal.metallib */,
+				DC253CB4225E43FA00F3301E /* common-debug.xcconfig */,
+				DC253CB3225E43FA00F3301E /* common-release.xcconfig */,
+				DC253CB5225E43FA00F3301E /* common.xcconfig */,
 				7B6E9CD02189947E00FB38FB /* MapsWithMeLib */,
 				7B6E9CCF2189947E00FB38FB /* Products */,
 				7B6E9CD9218994A200FB38FB /* Frameworks */,
@@ -428,6 +454,7 @@
 		7B6E9CD9218994A200FB38FB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC253CB6225E497E00F3301E /* CoreLocation.framework */,
 				7B5CC72E223FA6400030C3F1 /* libdescriptions.a */,
 				7B5CC72C223FA6120030C3F1 /* libvulkan_wrapper.a */,
 				7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */,
@@ -679,9 +706,9 @@
 			buildConfigurationList = 7B6E9CD62189947E00FB38FB /* Build configuration list for PBXNativeTarget "MapsWithMeLib" */;
 			buildPhases = (
 				7B6E9CC92189947E00FB38FB /* Headers */,
+				DCCFE9612256422F002B64E8 /* Resources */,
 				7B6E9CCA2189947E00FB38FB /* Sources */,
 				7B6E9CCB2189947E00FB38FB /* Frameworks */,
-				DCCFE9612256422F002B64E8 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -698,11 +725,15 @@
 		7B6E9CC52189947E00FB38FB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Target50;
 				TargetAttributes = {
 					7B6E9CCD2189947E00FB38FB = {
 						CreatedOnToolsVersion = 10.0;
+					};
+					DC253CAE225E3A5400F3301E = {
+						CreatedOnToolsVersion = 10.2;
 					};
 				};
 			};
@@ -719,6 +750,7 @@
 			projectRoot = "";
 			targets = (
 				7B6E9CCD2189947E00FB38FB /* MapsWithMeLib */,
+				DC253CAE225E3A5400F3301E /* MapsWithMeUniversalLib */,
 			);
 		};
 /* End PBXProject section */
@@ -762,6 +794,7 @@
 				DCCFEAA02256573D002B64E8 /* resources-hdpi_dark in Resources */,
 				DCCFEAD022565954002B64E8 /* 03_jomolhari-id-a3d.ttf in Resources */,
 				DCCFEA942256573D002B64E8 /* resources-6plus_clear in Resources */,
+				DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */,
 				DCCFEAC42256594A002B64E8 /* countries_obsolete.txt in Resources */,
 				DCCFEACD22565954002B64E8 /* 00_roboto_regular.ttf in Resources */,
 				DCCFEAD122565954002B64E8 /* 04_padauk.ttf in Resources */,
@@ -783,6 +816,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DC253CB2225E3A5D00F3301E /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "UNIVERSAL_OUTPUT_DIR=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUT_DIR}\"\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -workspace \"../omim.xcworkspace\" -scheme \"${PROJECT_NAME}\" ONLY_ACTIVE_ARCH=NO BITCODE_GENERATION_MODE=bitcode -configuration Release BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" OBJROOT=\"${OBJROOT}/DependentBuilds\" build -sdk iphoneos\nxcodebuild -workspace \"../omim.xcworkspace\" -scheme \"${PROJECT_NAME}\" ONLY_ACTIVE_ARCH=NO BITCODE_GENERATION_MODE=bitcode -configuration Release BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" OBJROOT=\"${OBJROOT}/DependentBuilds\" build -sdk iphonesimulator\n\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework\" \"${UNIVERSAL_OUTPUT_DIR}/\"\n\n# Step 3. Copy Swift modules from iphonesimulator build (if it exists) to the copied framework directory\nSIMULATOR_SWIFT_MODULES_DIR=\"${BUILD_DIR}/Release-iphonesimulator/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule/.\"\n\nif [ -d \"${SIMULATOR_SWIFT_MODULES_DIR}\" ]; then\ncp -R \"${SIMULATOR_SWIFT_MODULES_DIR}\" \"${UNIVERSAL_OUTPUT_DIR}/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule\"\nfi\n\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUT_DIR}/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/Release-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/Release-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}\"\n\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUT_DIR}/${PROJECT_NAME}.framework\" \"${PROJECT_DIR}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7B6E9CCA2189947E00FB38FB /* Sources */ = {
@@ -806,6 +860,7 @@
 /* Begin XCBuildConfiguration section */
 		7B6E9CD42189947E00FB38FB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC253CB4225E43FA00F3301E /* common-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
@@ -881,6 +936,7 @@
 		};
 		7B6E9CD52189947E00FB38FB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC253CB3225E43FA00F3301E /* common-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
@@ -978,12 +1034,10 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
-				OMIM_METAL_AVAILABLE = NO;
 				OMIM_ROOT = "$(PROJECT_DIR)/../..";
 				PRODUCT_BUNDLE_IDENTIFIER = com.target50.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -1016,12 +1070,26 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
-				OMIM_METAL_AVAILABLE = NO;
 				OMIM_ROOT = "$(PROJECT_DIR)/../..";
 				PRODUCT_BUNDLE_IDENTIFIER = com.target50.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		DC253CAF225E3A5500F3301E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DC253CB0225E3A5500F3301E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1042,6 +1110,15 @@
 			buildConfigurations = (
 				7B6E9CD72189947E00FB38FB /* Debug */,
 				7B6E9CD82189947E00FB38FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC253CB1225E3A5500F3301E /* Build configuration list for PBXAggregateTarget "MapsWithMeUniversalLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC253CAF225E3A5500F3301E /* Debug */,
+				DC253CB0225E3A5500F3301E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
