@@ -7,6 +7,9 @@
 //
 
 #import "MWMapViewRenderer.h"
+#import "MWMapViewRendererDelegate.h"
+#import "MWMapViewRegion.h"
+#import "MWMMapEngine.h"
 #import "MWMMapDownloader.h"
 #import "MWMapDownloadingDelegate.h"
 #import "MWMFrameworkListener.h"
@@ -29,15 +32,15 @@
 
 @implementation MWMapViewRenderer
 
-- (instancetype)init {
+- (instancetype)initWithEngine:(MWMMapEngine *)engine {
     self = [super init];
 
     if (self) {
-        self.mapView = [EAGLView new];
-        self.mapDownloader = [MWMMapDownloader new];
+        _engine = engine;
+        _mapView = [EAGLView new];
+        _mapDownloader = [MWMMapDownloader new];
 
-        auto &framework = GetFramework();
-        framework.SetupMeasurementSystem();
+        MWMMapEngineFramework(engine).SetupMeasurementSystem();
     }
 
     return self;
@@ -45,6 +48,14 @@
 
 - (void)dealloc {
     [self unsubscribeFromApplicationNotifications];
+}
+
+- (MWMapViewRegion *)region {
+    auto &framework = MWMMapEngineFramework(_engine);
+    auto coordinate = MercatorBounds::ToLatLonRect(framework.GetCurrentViewport());
+
+    return [[MWMapViewRegion alloc] initWithTopRight: CLLocationCoordinate2DMake(coordinate.maxX(), coordinate.maxY())
+                                          bottomLeft: CLLocationCoordinate2DMake(coordinate.minX(), coordinate.minY())];
 }
 
 - (void)setupWithView:(UIView *)view {
@@ -118,9 +129,8 @@
     
     if (toggledTouches.count > 1)
         [self checkMaskedPointer:[toggledTouches objectAtIndex:1] withEvent:e];
-    
-    Framework & f = GetFramework();
-    f.TouchEvent(e);
+
+    MWMMapEngineFramework(_engine).TouchEvent(e);
 }
 
 - (BOOL)hasForceTouch {
@@ -171,7 +181,11 @@
 // MARK: - MWMFrameworkDrapeObserver
 
 - (void)processViewportCountryEvent:(CountryId const &)countryId {
-    [self.mapDownloader downloadCountry:countryId];
+    // [self.mapDownloader downloadCountry:countryId];
+}
+
+- (void)processViewportChangedEvent {
+    [_delegate mapViewRendererDidChangeRegion:self];
 }
 
 // MARK: - MWMFrameworkStorageObserver
@@ -180,8 +194,10 @@
     
 }
 
+// MARK: - private
+
 - (void)enableRendering {
-    auto &framework = GetFramework();
+    auto &framework = MWMMapEngineFramework(_engine);
     framework.SetRenderingEnabled();
     // On some devices we have to free all belong-to-graphics memory
     // because of new OpenGL driver powered by Metal.
@@ -193,7 +209,7 @@
 }
 
 - (void)disableRendering {
-    auto &framework = GetFramework();
+    auto &framework = MWMMapEngineFramework(_engine);
     // On some devices we have to free all belong-to-graphics memory
     // because of new OpenGL driver powered by Metal.
 //    if ([AppInfo sharedInfo].openGLDriver == MWMOpenGLDriverMetalPre103)
@@ -209,15 +225,15 @@
 }
 
 - (void)moveToForeground {
-    GetFramework().EnterForeground();
+    MWMMapEngineFramework(_engine).EnterForeground();
 }
 
 - (void)moveToBackground {
-    GetFramework().EnterBackground();
+    MWMMapEngineFramework(_engine).EnterBackground();
 }
 
 - (void)invalidateRendering {
-    GetFramework().InvalidateRendering();
+    MWMMapEngineFramework(_engine).InvalidateRendering();
 }
 
 - (void)subscribeToApplicationNotifications {

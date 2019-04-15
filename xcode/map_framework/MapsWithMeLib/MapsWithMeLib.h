@@ -17,8 +17,12 @@ FOUNDATION_EXPORT const unsigned char MapsWithMeLibVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <MapsWithMeLib/PublicHeader.h>
 
 #import "MWMMapEngine.h"
+
+#import "MWMapViewRenderer.h"
+#import "MWMapViewRendererDelegate.h"
+#import "MWMapViewRegion.h"
+
 #import "MWMMapAnnotation.h"
 #import "MWMMapAnnotationManager.h"
 
-#import "MWMapViewRenderer.h"
 #import "MWMapDownloadingDelegate.h"

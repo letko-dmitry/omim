@@ -13,13 +13,14 @@ final class ViewController: UIViewController {
     @IBOutlet private var contentView: UIView!
 
     private lazy var engine = MapEngine()
-    private lazy var renderer = MapRenderer()
+    private lazy var renderer = MapRenderer(engine: engine)
     private lazy var annotationManager = MapAnnotationManager(engine: engine)
     private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        renderer.delegate = self
         renderer.mapDownloadingDelegate = self
         renderer.setup(with: contentView)
     }
@@ -73,6 +74,7 @@ final class ViewController: UIViewController {
     }
 }
 
+// MARK: - MWMMapDownloadingDelegate
 extension ViewController: MWMMapDownloadingDelegate {
     func handleMapDownloaded() {
 
@@ -88,5 +90,16 @@ extension ViewController: MWMMapDownloadingDelegate {
 
     func handleMapLoadingProgress(_ progress: CGFloat) {
         
+    }
+}
+
+
+// MARK: - MWMMapViewRendererDelegate
+extension ViewController: MapRendererDelegate {
+    func mapRendererDidChangeRegion(_ renderer: MapRenderer) {
+        let region = renderer.region
+
+        print("region.topRight: \(region.topRight)")
+        print("region.bottomLeft: \(region.bottomLeft)")
     }
 }
