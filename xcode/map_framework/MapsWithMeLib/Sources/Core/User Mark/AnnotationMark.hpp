@@ -1,0 +1,26 @@
+//
+//  AnnotationMark.hpp
+//  MapsWithMeLib
+//
+//  Created by Dmitry Letko on 4/15/19.
+//  Copyright © 2019 WiFi Map. All rights reserved.
+//
+
+#ifndef AnnotationUserMark_h
+#define AnnotationUserMark_h
+
+#import "map/user_mark.hpp"
+#import "map/user_mark_layer.hpp"
+
+#import <cstdint>
+
+class AnnotationMark : public UserMark
+{
+public:
+    explicit AnnotationMark(m2::PointD const &ptOrg);
+
+    drape_ptr<SymbolNameZoomInfo> GetSymbolNames() const override;
+    df::ColorConstant GetColorConstant() const override;
+};
+
+#endif /* AnnotationUserMark_h */

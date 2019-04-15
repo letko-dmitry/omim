@@ -12,7 +12,10 @@ import MapsWithMeLib
 final class ViewController: UIViewController {
     @IBOutlet private var contentView: UIView!
 
-    private lazy var renderer = MWMapViewRenderer()
+    private lazy var engine = MapEngine()
+    private lazy var renderer = MapRenderer()
+    private lazy var annotationManager = MapAnnotationManager(engine: engine)
+    private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +28,12 @@ final class ViewController: UIViewController {
         super.viewWillAppear(animated)
 
         renderer.handleViewWillApear()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        annotationManager.add([annotation])
     }
 
     override func viewDidDisappear(_ animated: Bool) {

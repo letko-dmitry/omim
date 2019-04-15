@@ -8,6 +8,7 @@
 
 #import "MWMapViewRenderer.h"
 #import "MWMMapDownloader.h"
+#import "MWMapDownloadingDelegate.h"
 #import "MWMFrameworkListener.h"
 #import "EAGLView.h"
 
@@ -141,19 +142,29 @@
         e.SetSecondMaskedPointer(pointerIndex);
 }
 
+// MARK: - UIResponder
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+
     [self sendTouchType:df::TouchEvent::TOUCH_DOWN withTouches:touches andEvent:event];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesMoved:touches withEvent:event];
+
     [self sendTouchType:df::TouchEvent::TOUCH_MOVE withTouches:nil andEvent:event];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+
     [self sendTouchType:df::TouchEvent::TOUCH_UP withTouches:touches andEvent:event];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesCancelled:touches withEvent:event];
+
     [self sendTouchType:df::TouchEvent::TOUCH_CANCEL withTouches:touches andEvent:event];
 }
 

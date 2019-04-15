@@ -12,6 +12,8 @@
 		DC129740224A7DEE004F46AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC12973E224A7DEE004F46AF /* Main.storyboard */; };
 		DC129742224A7DEF004F46AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC129741224A7DEF004F46AF /* Assets.xcassets */; };
 		DC129745224A7DEF004F46AF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC129743224A7DEF004F46AF /* LaunchScreen.storyboard */; };
+		DC1DE1132264CEAD00D6AF4B /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1DE1122264CEAD00D6AF4B /* Annotation.swift */; };
+		DC1DE1152264D85100D6AF4B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC1DE1142264D85100D6AF4B /* CoreLocation.framework */; };
 		DC257ED4224D18F800D0E595 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED1224D18F800D0E595 /* Metal.framework */; };
 		DC257ED5224D18F800D0E595 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED2224D18F800D0E595 /* MetalPerformanceShaders.framework */; };
 		DC257ED6224D18F800D0E595 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED3224D18F800D0E595 /* MetalKit.framework */; };
@@ -40,6 +42,8 @@
 		DC12973C224A7DEE004F46AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DC129741224A7DEF004F46AF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DC129746224A7DEF004F46AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DC1DE1122264CEAD00D6AF4B /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
+		DC1DE1142264D85100D6AF4B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC257ED1224D18F800D0E595 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		DC257ED2224D18F800D0E595 /* MetalPerformanceShaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalPerformanceShaders.framework; path = System/Library/Frameworks/MetalPerformanceShaders.framework; sourceTree = SDKROOT; };
 		DC257ED3224D18F800D0E595 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
@@ -54,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC1DE1152264D85100D6AF4B /* CoreLocation.framework in Frameworks */,
 				DC257ED8224D18FF00D0E595 /* QuartzCore.framework in Frameworks */,
 				DC257ED4224D18F800D0E595 /* Metal.framework in Frameworks */,
 				DCCFE74922563CBE002B64E8 /* MapsWithMeLib.framework in Frameworks */,
@@ -88,6 +93,7 @@
 			children = (
 				DC12973A224A7DEE004F46AF /* AppDelegate.swift */,
 				DC12973C224A7DEE004F46AF /* ViewController.swift */,
+				DC1DE1122264CEAD00D6AF4B /* Annotation.swift */,
 				DC12973E224A7DEE004F46AF /* Main.storyboard */,
 				DC129741224A7DEF004F46AF /* Assets.xcassets */,
 				DC129743224A7DEF004F46AF /* LaunchScreen.storyboard */,
@@ -99,6 +105,7 @@
 		DC313E0A224CF678006E0EA9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC1DE1142264D85100D6AF4B /* CoreLocation.framework */,
 				DC257ED7224D18FF00D0E595 /* QuartzCore.framework */,
 				DC257ED1224D18F800D0E595 /* Metal.framework */,
 				DC257ED3224D18F800D0E595 /* MetalKit.framework */,
@@ -179,6 +186,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC12973D224A7DEE004F46AF /* ViewController.swift in Sources */,
+				DC1DE1132264CEAD00D6AF4B /* Annotation.swift in Sources */,
 				DC12973B224A7DEE004F46AF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,7 +246,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -256,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -299,19 +306,19 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -327,7 +334,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B6MFP2S67D;
+				DEVELOPMENT_TEAM = JLXF8YU2J6;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -340,6 +348,7 @@
 					"$(PROJECT_DIR)/Test/Maps/3party/MyTarget",
 					"$(PROJECT_DIR)/Test/Maps/3party/GoogleSignIn",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -350,7 +359,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Test/Maps/3party/Flurry",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.mapsme.test;
+				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.mapsme.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
@@ -364,7 +373,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B6MFP2S67D;
+				DEVELOPMENT_TEAM = JLXF8YU2J6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -387,7 +396,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Test/Maps/3party/Flurry",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.mapsme.test;
+				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.mapsme.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;

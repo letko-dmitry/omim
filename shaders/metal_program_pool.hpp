@@ -43,3 +43,8 @@ private:
 };
 }  // namespace metal
 }  // namespace gpu
+
+__attribute__((visibility("hidden")))
+@interface MetalBundleWorkaround: NSObject
+
+@end

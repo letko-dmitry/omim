@@ -76,8 +76,15 @@
 		7B6E9DD22189A0DD00FB38FB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9DD12189A0DD00FB38FB /* CFNetwork.framework */; };
 		7B6E9DD42189A0F900FB38FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9DD32189A0F900FB38FB /* Security.framework */; };
 		7B6E9E092189B51A00FB38FB /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9E082189B51A00FB38FB /* libc++.tbd */; };
+		DC1DE1032264941800D6AF4B /* MWMMapAnnotationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DC57508B2260DF18000B20B4 /* MWMMapAnnotationManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DC1DE1042264941B00D6AF4B /* MWMMapAnnotationManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */; };
+		DC1DE1072264943B00D6AF4B /* MWMMapAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DC1DE1052264943B00D6AF4B /* MWMMapAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DC1DE10F2264B4A200D6AF4B /* AnnotationMark.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DC1DE10E2264B4A200D6AF4B /* AnnotationMark.hpp */; };
+		DC1DE1112264B4C100D6AF4B /* AnnotationMark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC1DE1102264B4C100D6AF4B /* AnnotationMark.cpp */; };
 		DC253CB7225E497F00F3301E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC253CB6225E497E00F3301E /* CoreLocation.framework */; };
 		DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = DC253CB9225E54A900F3301E /* shaders_metal.metallib */; };
+		DC5750932260E793000B20B4 /* MWMMapEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DC5750942260E795000B20B4 /* MWMMapEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5922565440002B64E8 /* MWMFrameworkListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
@@ -271,11 +278,20 @@
 		7B6E9DD12189A0DD00FB38FB /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		7B6E9DD32189A0F900FB38FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7B6E9E082189B51A00FB38FB /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		DC1DE1052264943B00D6AF4B /* MWMMapAnnotation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapAnnotation.h; sourceTree = "<group>"; };
+		DC1DE1092264958D00D6AF4B /* libc++.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.1.tbd"; path = "usr/lib/libc++.1.tbd"; sourceTree = SDKROOT; };
+		DC1DE10A2264958D00D6AF4B /* libc++abi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++abi.tbd"; path = "usr/lib/libc++abi.tbd"; sourceTree = SDKROOT; };
+		DC1DE10E2264B4A200D6AF4B /* AnnotationMark.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AnnotationMark.hpp; sourceTree = "<group>"; };
+		DC1DE1102264B4C100D6AF4B /* AnnotationMark.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnnotationMark.cpp; sourceTree = "<group>"; };
 		DC253CB3225E43FA00F3301E /* common-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-release.xcconfig"; path = "../common-release.xcconfig"; sourceTree = "<group>"; };
 		DC253CB4225E43FA00F3301E /* common-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "common-debug.xcconfig"; path = "../common-debug.xcconfig"; sourceTree = "<group>"; };
 		DC253CB5225E43FA00F3301E /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = ../common.xcconfig; sourceTree = "<group>"; };
 		DC253CB6225E497E00F3301E /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC253CB9225E54A900F3301E /* shaders_metal.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; path = shaders_metal.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC57508B2260DF18000B20B4 /* MWMMapAnnotationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapAnnotationManager.h; sourceTree = "<group>"; };
+		DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapAnnotationManager.mm; sourceTree = "<group>"; };
+		DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MWMMapEngine.h; sourceTree = "<group>"; };
+		DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapEngine.mm; sourceTree = "<group>"; };
 		DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMFrameworkListener.h; sourceTree = "<group>"; };
 		DCCFEA422256543F002B64E8 /* iosOGLContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContext.mm; sourceTree = "<group>"; };
 		DCCFEA432256543F002B64E8 /* MetalContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalContextFactory.h; sourceTree = "<group>"; };
@@ -298,57 +314,57 @@
 		DCCFEA552256543F002B64E8 /* MWMapViewRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMapViewRenderer.h; sourceTree = "<group>"; };
 		DCCFEA562256543F002B64E8 /* MWMapViewRenderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMapViewRenderer.mm; sourceTree = "<group>"; };
 		DCCFEA572256543F002B64E8 /* MWMMapDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMMapDownloader.h; sourceTree = "<group>"; };
-		DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_clear.bin; path = ../../../../data/drules_proto_vehicle_clear.bin; sourceTree = "<group>"; };
-		DCCFEA702256573C002B64E8 /* resources-xxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_clear"; path = "../../../../data/resources-xxhdpi_clear"; sourceTree = "<group>"; };
-		DCCFEA712256573C002B64E8 /* icudt57l.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = icudt57l.dat; path = ../../../../data/icudt57l.dat; sourceTree = "<group>"; };
-		DCCFEA722256573C002B64E8 /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-default"; path = "../../../../data/resources-default"; sourceTree = "<group>"; };
-		DCCFEA732256573C002B64E8 /* ugc_migration */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ugc_migration; path = ../../../../data/ugc_migration; sourceTree = "<group>"; };
-		DCCFEA742256573C002B64E8 /* countries-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "countries-strings"; path = "../../../../data/countries-strings"; sourceTree = "<group>"; };
-		DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_dark"; path = "../../../../data/resources-xxxhdpi_dark"; sourceTree = "<group>"; };
-		DCCFEA762256573C002B64E8 /* resources-6plus_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_clear"; path = "../../../../data/resources-6plus_clear"; sourceTree = "<group>"; };
-		DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_dark"; path = "../../../../data/resources-xxhdpi_dark"; sourceTree = "<group>"; };
-		DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_clear"; path = "../../../../data/resources-xxxhdpi_clear"; sourceTree = "<group>"; };
-		DCCFEA792256573C002B64E8 /* WorldCoasts.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts.mwm; path = ../../../../data/WorldCoasts.mwm; sourceTree = "<group>"; };
-		DCCFEA7A2256573C002B64E8 /* drules_proto_vehicle_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_dark.bin; path = ../../../../data/drules_proto_vehicle_dark.bin; sourceTree = "<group>"; };
-		DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_dark"; path = "../../../../data/resources-mdpi_dark"; sourceTree = "<group>"; };
-		DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_dark"; path = "../../../../data/resources-6plus_dark"; sourceTree = "<group>"; };
-		DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_clear.bin; path = ../../../../data/drules_proto_clear.bin; sourceTree = "<group>"; };
-		DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_dark"; path = "../../../../data/resources-xhdpi_dark"; sourceTree = "<group>"; };
-		DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons_obsolete.bin; path = ../../../../data/packed_polygons_obsolete.bin; sourceTree = "<group>"; };
-		DCCFEA802256573D002B64E8 /* packed_polygons.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons.bin; path = ../../../../data/packed_polygons.bin; sourceTree = "<group>"; };
-		DCCFEA812256573D002B64E8 /* sound-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "sound-strings"; path = "../../../../data/sound-strings"; sourceTree = "<group>"; };
-		DCCFEA822256573D002B64E8 /* resources-hdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_dark"; path = "../../../../data/resources-hdpi_dark"; sourceTree = "<group>"; };
-		DCCFEA832256573D002B64E8 /* ugc_types.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ugc_types.csv; path = ../../../../data/ugc_types.csv; sourceTree = "<group>"; };
-		DCCFEA842256573D002B64E8 /* editor.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = editor.config; path = ../../../../data/editor.config; sourceTree = "<group>"; };
-		DCCFEA852256573D002B64E8 /* taxi_places */ = {isa = PBXFileReference; lastKnownFileType = folder; name = taxi_places; path = ../../../../data/taxi_places; sourceTree = "<group>"; };
-		DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_clear"; path = "../../../../data/resources-xhdpi_clear"; sourceTree = "<group>"; };
-		DCCFEA872256573D002B64E8 /* resources-hdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_clear"; path = "../../../../data/resources-hdpi_clear"; sourceTree = "<group>"; };
-		DCCFEA882256573D002B64E8 /* World.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = World.mwm; path = ../../../../data/World.mwm; sourceTree = "<group>"; };
-		DCCFEA892256573D002B64E8 /* cuisine-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "cuisine-strings"; path = "../../../../data/cuisine-strings"; sourceTree = "<group>"; };
-		DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_dark.bin; path = ../../../../data/drules_proto_dark.bin; sourceTree = "<group>"; };
-		DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_clear"; path = "../../../../data/resources-mdpi_clear"; sourceTree = "<group>"; };
-		DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts_obsolete.mwm; path = ../../../../data/WorldCoasts_obsolete.mwm; sourceTree = "<group>"; };
-		DCCFEAAB22565949002B64E8 /* colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = colors.txt; path = ../../../../data/colors.txt; sourceTree = "<group>"; };
-		DCCFEAAC22565949002B64E8 /* transit_colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = transit_colors.txt; path = ../../../../data/transit_colors.txt; sourceTree = "<group>"; };
-		DCCFEAAD22565949002B64E8 /* classificator.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = classificator.txt; path = ../../../../data/classificator.txt; sourceTree = "<group>"; };
-		DCCFEAAE22565949002B64E8 /* types.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = types.txt; path = ../../../../data/types.txt; sourceTree = "<group>"; };
-		DCCFEAAF22565949002B64E8 /* fonts_blacklist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fonts_blacklist.txt; path = ../../../../data/fonts_blacklist.txt; sourceTree = "<group>"; };
-		DCCFEAB022565949002B64E8 /* categories.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = categories.txt; path = ../../../../data/categories.txt; sourceTree = "<group>"; };
-		DCCFEAB122565949002B64E8 /* synonyms.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = synonyms.txt; path = ../../../../data/synonyms.txt; sourceTree = "<group>"; };
-		DCCFEAB222565949002B64E8 /* unicode_blocks.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unicode_blocks.txt; path = ../../../../data/unicode_blocks.txt; sourceTree = "<group>"; };
-		DCCFEAB322565949002B64E8 /* patterns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patterns.txt; path = ../../../../data/patterns.txt; sourceTree = "<group>"; };
-		DCCFEAB42256594A002B64E8 /* local_ads_symbols.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = local_ads_symbols.txt; path = ../../../../data/local_ads_symbols.txt; sourceTree = "<group>"; };
-		DCCFEAB52256594A002B64E8 /* countries.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = countries.txt; path = ../../../../data/countries.txt; sourceTree = "<group>"; };
-		DCCFEAB62256594A002B64E8 /* fonts_whitelist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fonts_whitelist.txt; path = ../../../../data/fonts_whitelist.txt; sourceTree = "<group>"; };
-		DCCFEAB72256594A002B64E8 /* countries_obsolete.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = countries_obsolete.txt; path = ../../../../data/countries_obsolete.txt; sourceTree = "<group>"; };
-		DCCFEAC522565950002B64E8 /* 05_khmeros.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 05_khmeros.ttf; path = ../../../../data/05_khmeros.ttf; sourceTree = "<group>"; };
-		DCCFEAC622565950002B64E8 /* 04_padauk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 04_padauk.ttf; path = ../../../../data/04_padauk.ttf; sourceTree = "<group>"; };
-		DCCFEAC722565950002B64E8 /* 06_code2000.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 06_code2000.ttf; path = ../../../../data/06_code2000.ttf; sourceTree = "<group>"; };
-		DCCFEAC822565950002B64E8 /* 03_jomolhari-id-a3d.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "03_jomolhari-id-a3d.ttf"; path = "../../../../data/03_jomolhari-id-a3d.ttf"; sourceTree = "<group>"; };
-		DCCFEAC922565950002B64E8 /* 01_dejavusans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 01_dejavusans.ttf; path = ../../../../data/01_dejavusans.ttf; sourceTree = "<group>"; };
-		DCCFEACA22565950002B64E8 /* 07_roboto_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 07_roboto_medium.ttf; path = ../../../../data/07_roboto_medium.ttf; sourceTree = "<group>"; };
-		DCCFEACB22565950002B64E8 /* 00_roboto_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 00_roboto_regular.ttf; path = ../../../../data/00_roboto_regular.ttf; sourceTree = "<group>"; };
-		DCCFEACC22565951002B64E8 /* 02_droidsans-fallback.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "02_droidsans-fallback.ttf"; path = "../../../../data/02_droidsans-fallback.ttf"; sourceTree = "<group>"; };
+		DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_clear.bin; path = ../../data/drules_proto_vehicle_clear.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA702256573C002B64E8 /* resources-xxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_clear"; path = "../../data/resources-xxhdpi_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA712256573C002B64E8 /* icudt57l.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = icudt57l.dat; path = ../../data/icudt57l.dat; sourceTree = SOURCE_ROOT; };
+		DCCFEA722256573C002B64E8 /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-default"; path = "../../data/resources-default"; sourceTree = SOURCE_ROOT; };
+		DCCFEA732256573C002B64E8 /* ugc_migration */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ugc_migration; path = ../../data/ugc_migration; sourceTree = SOURCE_ROOT; };
+		DCCFEA742256573C002B64E8 /* countries-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "countries-strings"; path = "../../data/countries-strings"; sourceTree = SOURCE_ROOT; };
+		DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_dark"; path = "../../data/resources-xxxhdpi_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA762256573C002B64E8 /* resources-6plus_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_clear"; path = "../../data/resources-6plus_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_dark"; path = "../../data/resources-xxhdpi_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_clear"; path = "../../data/resources-xxxhdpi_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA792256573C002B64E8 /* WorldCoasts.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts.mwm; path = ../../data/WorldCoasts.mwm; sourceTree = SOURCE_ROOT; };
+		DCCFEA7A2256573C002B64E8 /* drules_proto_vehicle_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_dark.bin; path = ../../data/drules_proto_vehicle_dark.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_dark"; path = "../../data/resources-mdpi_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_dark"; path = "../../data/resources-6plus_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_clear.bin; path = ../../data/drules_proto_clear.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_dark"; path = "../../data/resources-xhdpi_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons_obsolete.bin; path = ../../data/packed_polygons_obsolete.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA802256573D002B64E8 /* packed_polygons.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons.bin; path = ../../data/packed_polygons.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA812256573D002B64E8 /* sound-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "sound-strings"; path = "../../data/sound-strings"; sourceTree = SOURCE_ROOT; };
+		DCCFEA822256573D002B64E8 /* resources-hdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_dark"; path = "../../data/resources-hdpi_dark"; sourceTree = SOURCE_ROOT; };
+		DCCFEA832256573D002B64E8 /* ugc_types.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ugc_types.csv; path = ../../data/ugc_types.csv; sourceTree = SOURCE_ROOT; };
+		DCCFEA842256573D002B64E8 /* editor.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = editor.config; path = ../../data/editor.config; sourceTree = SOURCE_ROOT; };
+		DCCFEA852256573D002B64E8 /* taxi_places */ = {isa = PBXFileReference; lastKnownFileType = folder; name = taxi_places; path = ../../data/taxi_places; sourceTree = SOURCE_ROOT; };
+		DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_clear"; path = "../../data/resources-xhdpi_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA872256573D002B64E8 /* resources-hdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_clear"; path = "../../data/resources-hdpi_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA882256573D002B64E8 /* World.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = World.mwm; path = ../../data/World.mwm; sourceTree = SOURCE_ROOT; };
+		DCCFEA892256573D002B64E8 /* cuisine-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "cuisine-strings"; path = "../../data/cuisine-strings"; sourceTree = SOURCE_ROOT; };
+		DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_dark.bin; path = ../../data/drules_proto_dark.bin; sourceTree = SOURCE_ROOT; };
+		DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_clear"; path = "../../data/resources-mdpi_clear"; sourceTree = SOURCE_ROOT; };
+		DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts_obsolete.mwm; path = ../../data/WorldCoasts_obsolete.mwm; sourceTree = SOURCE_ROOT; };
+		DCCFEAAB22565949002B64E8 /* colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = colors.txt; path = ../../data/colors.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAAC22565949002B64E8 /* transit_colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = transit_colors.txt; path = ../../data/transit_colors.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAAD22565949002B64E8 /* classificator.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = classificator.txt; path = ../../data/classificator.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAAE22565949002B64E8 /* types.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = types.txt; path = ../../data/types.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAAF22565949002B64E8 /* fonts_blacklist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fonts_blacklist.txt; path = ../../data/fonts_blacklist.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB022565949002B64E8 /* categories.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = categories.txt; path = ../../data/categories.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB122565949002B64E8 /* synonyms.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = synonyms.txt; path = ../../data/synonyms.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB222565949002B64E8 /* unicode_blocks.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unicode_blocks.txt; path = ../../data/unicode_blocks.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB322565949002B64E8 /* patterns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patterns.txt; path = ../../data/patterns.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB42256594A002B64E8 /* local_ads_symbols.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = local_ads_symbols.txt; path = ../../data/local_ads_symbols.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB52256594A002B64E8 /* countries.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = countries.txt; path = ../../data/countries.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB62256594A002B64E8 /* fonts_whitelist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fonts_whitelist.txt; path = ../../data/fonts_whitelist.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAB72256594A002B64E8 /* countries_obsolete.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = countries_obsolete.txt; path = ../../data/countries_obsolete.txt; sourceTree = SOURCE_ROOT; };
+		DCCFEAC522565950002B64E8 /* 05_khmeros.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 05_khmeros.ttf; path = ../../data/05_khmeros.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEAC622565950002B64E8 /* 04_padauk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 04_padauk.ttf; path = ../../data/04_padauk.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEAC722565950002B64E8 /* 06_code2000.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 06_code2000.ttf; path = ../../data/06_code2000.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEAC822565950002B64E8 /* 03_jomolhari-id-a3d.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "03_jomolhari-id-a3d.ttf"; path = "../../data/03_jomolhari-id-a3d.ttf"; sourceTree = SOURCE_ROOT; };
+		DCCFEAC922565950002B64E8 /* 01_dejavusans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 01_dejavusans.ttf; path = ../../data/01_dejavusans.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEACA22565950002B64E8 /* 07_roboto_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 07_roboto_medium.ttf; path = ../../data/07_roboto_medium.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEACB22565950002B64E8 /* 00_roboto_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 00_roboto_regular.ttf; path = ../../data/00_roboto_regular.ttf; sourceTree = SOURCE_ROOT; };
+		DCCFEACC22565951002B64E8 /* 02_droidsans-fallback.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "02_droidsans-fallback.ttf"; path = "../../data/02_droidsans-fallback.ttf"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -454,6 +470,8 @@
 		7B6E9CD9218994A200FB38FB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC1DE1092264958D00D6AF4B /* libc++.1.tbd */,
+				DC1DE10A2264958D00D6AF4B /* libc++abi.tbd */,
 				DC253CB6225E497E00F3301E /* CoreLocation.framework */,
 				7B5CC72E223FA6400030C3F1 /* libdescriptions.a */,
 				7B5CC72C223FA6120030C3F1 /* libvulkan_wrapper.a */,
@@ -571,6 +589,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		DC1DE10D2264B48800D6AF4B /* User Mark */ = {
+			isa = PBXGroup;
+			children = (
+				DC1DE10E2264B4A200D6AF4B /* AnnotationMark.hpp */,
+				DC1DE1102264B4C100D6AF4B /* AnnotationMark.cpp */,
+			);
+			path = "User Mark";
+			sourceTree = "<group>";
+		};
 		DCCFEA3F2256543F002B64E8 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -583,6 +610,7 @@
 		DCCFEA402256543F002B64E8 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				DC1DE10D2264B48800D6AF4B /* User Mark */,
 				DCCFEA4E2256543F002B64E8 /* Framework.h */,
 				DCCFEA442256543F002B64E8 /* Framework.cpp */,
 				DCCFEA4D2256543F002B64E8 /* MWMTypes.h */,
@@ -612,6 +640,11 @@
 				DCCFEA542256543F002B64E8 /* MWMapDownloadingDelegate.h */,
 				DCCFEA572256543F002B64E8 /* MWMMapDownloader.h */,
 				DCCFEA532256543F002B64E8 /* MWMMapDownloader.mm */,
+				DC1DE1052264943B00D6AF4B /* MWMMapAnnotation.h */,
+				DC57508B2260DF18000B20B4 /* MWMMapAnnotationManager.h */,
+				DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */,
+				DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */,
+				DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -682,9 +715,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCCFEA5D22565440002B64E8 /* EAGLView.h in Headers */,
+				DC1DE10F2264B4A200D6AF4B /* AnnotationMark.hpp in Headers */,
 				DCCFEA5F22565440002B64E8 /* MWMFrameworkObservers.h in Headers */,
+				DC1DE1072264943B00D6AF4B /* MWMMapAnnotation.h in Headers */,
 				DCCFEA6722565440002B64E8 /* MWMRouterRecommendation.h in Headers */,
 				7B6E9CD32189947E00FB38FB /* MapsWithMeLib.h in Headers */,
+				DC1DE1032264941800D6AF4B /* MWMMapAnnotationManager.h in Headers */,
 				DCCFEA6422565440002B64E8 /* MWMStorage.h in Headers */,
 				DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */,
 				DCCFEA5922565440002B64E8 /* MWMFrameworkListener.h in Headers */,
@@ -695,6 +731,7 @@
 				DCCFEA6C22565440002B64E8 /* MWMapViewRenderer.h in Headers */,
 				DCCFEA6E22565440002B64E8 /* MWMMapDownloader.h in Headers */,
 				DCCFEA6B22565440002B64E8 /* MWMapDownloadingDelegate.h in Headers */,
+				DC5750932260E793000B20B4 /* MWMMapEngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,9 +762,10 @@
 		7B6E9CC52189947E00FB38FB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = MWM;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = Target50;
+				ORGANIZATIONNAME = "WiFi Map";
 				TargetAttributes = {
 					7B6E9CCD2189947E00FB38FB = {
 						CreatedOnToolsVersion = 10.0;
@@ -844,6 +882,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCCFEA6022565440002B64E8 /* MWMFrameworkListener.mm in Sources */,
+				DC1DE1042264941B00D6AF4B /* MWMMapAnnotationManager.mm in Sources */,
+				DC1DE1112264B4C100D6AF4B /* AnnotationMark.cpp in Sources */,
+				DC5750942260E795000B20B4 /* MWMMapEngine.mm in Sources */,
 				DCCFEA6A22565440002B64E8 /* MWMMapDownloader.mm in Sources */,
 				DCCFEA5E22565440002B64E8 /* MetalContextFactory.mm in Sources */,
 				DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */,
@@ -1010,9 +1051,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BOOST_ROOT = "$(OMIM_ROOT)/3party/boost";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1021,6 +1060,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_PREFIX_HEADER = MapsWithMeLib/MapsLib.pch;
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"$(OMIM_ROOT)",
 					"$(BOOST_ROOT)",
 					"$(OMIM_ROOT)/3party/glm",
@@ -1038,6 +1078,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.target50.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -1045,9 +1086,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BOOST_ROOT = "$(OMIM_ROOT)/3party/boost";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1057,6 +1096,7 @@
 				GCC_PREFIX_HEADER = MapsWithMeLib/MapsLib.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"$(OMIM_ROOT)",
 					"$(BOOST_ROOT)",
 					"$(OMIM_ROOT)/3party/glm",
@@ -1074,6 +1114,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.target50.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Release;
 		};

@@ -214,8 +214,9 @@ MetalProgramPool::MetalProgramPool(id<MTLDevice> device)
   : m_device(device)
 {
   ProgramParams::Init();
-  
-  NSString * libPath = [[NSBundle mainBundle] pathForResource:@"shaders_metal" ofType:@"metallib"];
+
+  NSBundle * bundle = [NSBundle bundleForClass:MetalBundleWorkaround.self];
+  NSString * libPath = [bundle pathForResource:@"shaders_metal" ofType:@"metallib"];
   NSError * error = nil;
   m_library = [m_device newLibraryWithFile:libPath error:&error];
   if (error)
@@ -307,3 +308,7 @@ id<MTLFunction> MetalProgramPool::GetFunction(std::string const & name)
 }
 }  // namespace metal
 }  // namespace gpu
+
+@implementation MetalBundleWorkaround
+
+@end

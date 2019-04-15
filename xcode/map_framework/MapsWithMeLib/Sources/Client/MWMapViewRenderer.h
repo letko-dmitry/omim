@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MWMapDownloadingDelegate.h"
+@protocol MWMMapDownloadingDelegate;
 
-@interface MWMapViewRenderer: NSObject
-@property (nonatomic, weak) id<MWMMapDownloadingDelegate> mapDownloadingDelegate;
+NS_ASSUME_NONNULL_BEGIN
+
+NS_SWIFT_NAME(MapRenderer)
+@interface MWMapViewRenderer: UIResponder
+@property (weak, nonatomic, nullable) id<MWMMapDownloadingDelegate> mapDownloadingDelegate;
 
 - (void)setupWithView:(UIView *)view;
 
@@ -19,10 +22,6 @@
 - (void)handleViewDidDisappear;
 - (void)handleViewDidLayoutSubviews;
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
-
 @end
 
+NS_ASSUME_NONNULL_END
