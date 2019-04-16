@@ -10,9 +10,6 @@
 #define AnnotationUserMark_h
 
 #import "map/user_mark.hpp"
-#import "map/user_mark_layer.hpp"
-
-#import <cstdint>
 
 class AnnotationMark : public UserMark
 {

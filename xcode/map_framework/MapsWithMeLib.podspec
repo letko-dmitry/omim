@@ -2,7 +2,7 @@
 Pod::Spec.new do |spec|
 
 spec.name         = "MapsWithMeLib"
-spec.version      = "1.0"
+spec.version      = "1.0.2"
 spec.license      = "MIT"
 spec.homepage     = "https://wifimap.io"
 spec.summary      = "maps.me framework"
