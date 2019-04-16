@@ -13,6 +13,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWMMapEngine (Private)
+@property (nonatomic, readonly) BOOL isAnimating;
 @property (weak, nonatomic, nullable) id<MWMMapEngineDelegate> delegate;
 
 - (void)start;

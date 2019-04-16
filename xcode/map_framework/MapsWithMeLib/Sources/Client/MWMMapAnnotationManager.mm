@@ -70,10 +70,12 @@
     auto markIdentifier = _markIdentifiersByAnnotation[annotation];
 
     if (markIdentifier != kml::kInvalidMarkId) {
-        auto &manager = MWMMapEngineFramework(_engine).GetBookmarkManager();
-//        auto &mark = manager.GetMark<AnnotationMark>(markIdentifier);
-//
-//        mark.SetSelected(true);
+        auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
+        auto mark = session.GetMarkForEdit<AnnotationMark>(markIdentifier);
+
+        if (mark != nullptr) {
+            mark->SetSelected(true);
+        }
     }
 }
 
@@ -83,10 +85,12 @@
     auto markIdentifier = _markIdentifiersByAnnotation[annotation];
 
     if (markIdentifier != kml::kInvalidMarkId) {
-        auto &manager = MWMMapEngineFramework(_engine).GetBookmarkManager();
-//        auto &mark = manager.GetMark<AnnotationMark>(markIdentifier);
-//
-//        mark.SetSelected(false);
+        auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
+        auto mark = session.GetMarkForEdit<AnnotationMark>(markIdentifier);
+
+        if (mark != nullptr) {
+            mark->SetSelected(false);
+        }
     }
 }
 

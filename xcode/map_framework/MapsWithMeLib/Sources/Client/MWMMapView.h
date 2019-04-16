@@ -19,6 +19,8 @@ NS_SWIFT_NAME(MapView)
 @interface MWMMapView : UIView
 @property (nonatomic, readonly) MWMMapEngine *engine;
 @property (nonatomic, readonly) MWMMapViewRegion *region;
+@property (nonatomic, readonly) BOOL isDragging;
+@property (nonatomic, readonly) BOOL isTracking;
 @property (weak, nonatomic, nullable) id<MWMMapViewDelegate> delegate;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;

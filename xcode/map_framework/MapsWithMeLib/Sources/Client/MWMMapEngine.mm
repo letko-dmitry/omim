@@ -10,8 +10,11 @@
 #import "MWMMapEngine+Private.h"
 #import "MWMMapEngineDelegate.h"
 
-//#import "map/framework.hpp"
+#import "map/framework.hpp"
+#import "drape_frontend/animation_system.hpp"
+
 #import "Framework.h"
+
 
 @interface MWMMapEngine () {
 @public
@@ -64,6 +67,10 @@
     [self unsubscribeFromApplicationNotifications];
 
     //delete framework;
+}
+
+- (BOOL)isAnimating {
+    return df::AnimationSystem::Instance().HasMapAnimations();
 }
 
 - (void)start {
@@ -171,6 +178,10 @@
                                selector: @selector(applicationDidBecomeActive:)
                                    name: UIApplicationDidBecomeActiveNotification
                                  object: nil];
+        [notificationCenter addObserver: self
+                               selector: @selector(applicationDidReceiveMemoryWarning:)
+                                   name: UIApplicationDidReceiveMemoryWarningNotification
+                                 object: nil];
     }
 }
 
@@ -181,6 +192,7 @@
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
         [notificationCenter removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+        [notificationCenter removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     }
 }
 
@@ -194,6 +206,10 @@
     [self resume];
 
     [self.delegate mapEngineDidResume:self];
+}
+
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+    _framework->MemoryWarning();
 }
 
 @end

@@ -21,7 +21,16 @@
 #import "drape_frontend/user_event_stream.hpp"
 #import "map/framework.hpp"
 
-@interface MWMMapView() <MWMFrameworkDrapeObserver, MWMMapEngineDelegate>
+@interface MWMMapView() <MWMFrameworkDrapeObserver, MWMMapEngineDelegate> {
+    BOOL _delegateRespondsToDidChangeRegion;
+    BOOL _delegateRespondsToRegionDidChangeAnimated;
+
+    BOOL _didChangeRegionWhileDragging;
+    BOOL _didChangeRegionWhileAnimating;
+
+    m2::RectD _didChangeRegionAnimatedLastViewport;
+}
+
 @property (nonatomic, readonly) EAGLView *mapView;
 @property (nonatomic, readonly) MWMMapDownloader *mapDownloader;
 
@@ -62,11 +71,26 @@
                                           bottomLeft: CLLocationCoordinate2DMake(coordinate.minX(), coordinate.minY())];
 }
 
-- (void)showRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
-    auto rect = m2::RectD(region.bottomLeft.latitude, region.bottomLeft.longitude, region.topRight.latitude, region.topRight.longitude);
-    auto viewport = MercatorBounds::FromLatLonRect(rect);
+- (void)setDelegate:(id<MWMMapViewDelegate>)delegate {
+    if (_delegate != delegate) {
+        _delegate = delegate;
 
-    MWMMapEngineFramework(_engine).SetVisibleViewport(viewport);
+        _delegateRespondsToDidChangeRegion = [delegate respondsToSelector:@selector(mapViewDidChangeRegion:)];
+        _delegateRespondsToRegionDidChangeAnimated = [delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)];
+    }
+}
+
+- (void)showRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
+    auto coordinates = m2::RectD(region.bottomLeft.latitude, region.bottomLeft.longitude, region.topRight.latitude, region.topRight.longitude);
+    auto rect = MercatorBounds::FromLatLonRect(coordinates);
+    auto &framework = MWMMapEngineFramework(_engine);
+
+
+    if (animated) {
+        framework.ShowRect(rect);
+    } else {
+        framework.SetVisibleViewport(rect);
+    }
 }
 
 // MARK: - UIView
@@ -88,6 +112,15 @@
 
     if (!_mapView.drapeEngineCreated) {
         [_mapView createDrapeEngine];
+
+        auto &framework = MWMMapEngineFramework(_engine);
+        auto drape = framework.GetDrapeEngine();
+
+        drape->SetTapEventInfoListener([self] (df::TapInfo const &tapInfo) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"lol");
+            });
+        });
     }
 }
 
@@ -96,11 +129,17 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
+    _isTracking = YES;
+    _isDragging = NO;
+
     [self sendTouchType:df::TouchEvent::TOUCH_DOWN withTouches:touches andEvent:event];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesMoved:touches withEvent:event];
+
+    _isTracking = NO;
+    _isDragging = YES;
 
     [self sendTouchType:df::TouchEvent::TOUCH_MOVE withTouches:nil andEvent:event];
 }
@@ -108,13 +147,31 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
 
+    BOOL isDragging = _isDragging;
+
+    _isTracking = NO;
+    _isDragging = NO;
+
     [self sendTouchType:df::TouchEvent::TOUCH_UP withTouches:touches andEvent:event];
+
+    if (isDragging) {
+        [self didFinishDragging];
+    }
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesCancelled:touches withEvent:event];
 
+    BOOL isDragging = _isDragging;
+
+    _isTracking = NO;
+    _isDragging = NO;
+
     [self sendTouchType:df::TouchEvent::TOUCH_CANCEL withTouches:touches andEvent:event];
+
+    if (isDragging) {
+        [self didFinishDragging];
+    }
 }
 
 // MARK: - private
@@ -122,65 +179,63 @@
 - (void)sendTouchType:(df::TouchEvent::ETouchType)type
           withTouches:(NSSet *)touches
              andEvent:(UIEvent *)event {
-    NSArray * allTouches = [[event allTouches] allObjects];
-    if ([allTouches count] < 1)
+    NSArray<UITouch *> *allTouches = event.allTouches.allObjects;
+
+    if (allTouches.count == 0) {
         return;
-
-    UIView * v = self.mapView;
-    CGFloat const scaleFactor = v.contentScaleFactor;
-
-    df::TouchEvent e;
-    UITouch * touch = [allTouches objectAtIndex:0];
-    CGPoint const pt = [touch locationInView:v];
-
-    e.SetTouchType(type);
-
-    df::Touch t0;
-    t0.m_location = m2::PointD(pt.x * scaleFactor, pt.y * scaleFactor);
-    t0.m_id = reinterpret_cast<int64_t>(touch);
-    if ([self hasForceTouch])
-        t0.m_force = touch.force / touch.maximumPossibleForce;
-    e.SetFirstTouch(t0);
-
-    if (allTouches.count > 1)
-    {
-        UITouch * touch = [allTouches objectAtIndex:1];
-        CGPoint const pt = [touch locationInView:v];
-
-        df::Touch t1;
-        t1.m_location = m2::PointD(pt.x * scaleFactor, pt.y * scaleFactor);
-        t1.m_id = reinterpret_cast<int64_t>(touch);
-        if ([self hasForceTouch])
-            t1.m_force = touch.force / touch.maximumPossibleForce;
-        e.SetSecondTouch(t1);
     }
 
-    NSArray * toggledTouches = [touches allObjects];
-    if (toggledTouches.count > 0)
-        [self checkMaskedPointer:[toggledTouches objectAtIndex:0] withEvent:e];
+    CGFloat scaleFactor = _mapView.contentScaleFactor;
 
-    if (toggledTouches.count > 1)
-        [self checkMaskedPointer:[toggledTouches objectAtIndex:1] withEvent:e];
+    df::TouchEvent touchEvent;
+    touchEvent.SetTouchType(type);
 
-    MWMMapEngineFramework(_engine).TouchEvent(e);
+    UITouch *firstTouch = [allTouches objectAtIndex:0];
+    CGPoint firstTouchLocation = [firstTouch locationInView:_mapView];
+
+    df::Touch t0;
+    t0.m_location = m2::PointD(firstTouchLocation.x * scaleFactor, firstTouchLocation.y * scaleFactor);
+    t0.m_id = reinterpret_cast<int64_t>(firstTouch);
+
+    touchEvent.SetFirstTouch(t0);
+
+    if (allTouches.count > 1) {
+        UITouch *secondTouch = [allTouches objectAtIndex:1];
+        CGPoint secondTouchLocation = [secondTouch locationInView:_mapView];
+
+        df::Touch t1;
+        t1.m_location = m2::PointD(secondTouchLocation.x * scaleFactor, secondTouchLocation.y * scaleFactor);
+        t1.m_id = reinterpret_cast<int64_t>(secondTouch);
+
+        touchEvent.SetSecondTouch(t1);
+    }
+
+    MWMMapEngineFramework(_engine).TouchEvent(touchEvent);
 }
 
-- (BOOL)hasForceTouch {
-    return self.mapView.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable;
+// MARK: - private
+
+- (void)didFinishDragging {
+    if (_didChangeRegionWhileDragging) {
+        _didChangeRegionWhileDragging = NO;
+
+        if (!_engine.isAnimating) {
+            [self didChangeRegionAnimated:NO];
+        }
+    }
 }
 
-- (void)checkMaskedPointer:(UITouch *)touch withEvent:(df::TouchEvent &)e {
-    int64_t id = reinterpret_cast<int64_t>(touch);
-    int8_t pointerIndex = df::TouchEvent::INVALID_MASKED_POINTER;
-    if (e.GetFirstTouch().m_id == id)
-        pointerIndex = 0;
-    else if (e.GetSecondTouch().m_id == id)
-        pointerIndex = 1;
+- (void)didChangeRegionAnimated:(BOOL)animated {
+    if (_delegateRespondsToRegionDidChangeAnimated) {
+        auto &framework = MWMMapEngineFramework(_engine);
+        auto viewport = framework.GetCurrentViewport();
 
-    if (e.GetFirstMaskedPointer() == df::TouchEvent::INVALID_MASKED_POINTER)
-        e.SetFirstMaskedPointer(pointerIndex);
-    else
-        e.SetSecondMaskedPointer(pointerIndex);
+        if (_didChangeRegionAnimatedLastViewport != viewport) {
+            _didChangeRegionAnimatedLastViewport = viewport;
+
+            [_delegate mapView:self regionDidChangeAnimated:NO];
+        }
+    }
 }
 
 // MARK: - MWMFrameworkDrapeObserver
@@ -190,7 +245,24 @@
 }
 
 - (void)processViewportChangedEvent {
-    [_delegate mapViewDidChangeRegion:self];
+    BOOL isDrugging = _isDragging;
+    BOOL isAnimating = _engine.isAnimating;
+
+    if (_delegateRespondsToDidChangeRegion) {
+        [_delegate mapViewDidChangeRegion:self];
+    }
+
+    if (!isDrugging && !isAnimating) {
+        BOOL didChangeRegionWhileAnimating = _didChangeRegionWhileAnimating;
+
+        _didChangeRegionWhileDragging = NO;
+        _didChangeRegionWhileAnimating = NO;
+
+        [self didChangeRegionAnimated:didChangeRegionWhileAnimating];
+    } else {
+        _didChangeRegionWhileDragging |= isDrugging;
+        _didChangeRegionWhileAnimating |= isAnimating;
+    }
 }
 
 // MARK: - MWMMapEngineDelegate
