@@ -1,5 +1,5 @@
 //
-//  MWMapViewRegion.h
+//  MWMMapViewRegion.h
 //  MapsWithMeLib
 //
 //  Created by Dmitry Letko on 4/15/19.
@@ -11,8 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(MapRegion)
-@interface MWMapViewRegion : NSObject
+NS_SWIFT_NAME(MapViewRegion)
+@interface MWMMapViewRegion : NSObject
 @property (nonatomic, readonly) CLLocationCoordinate2D topRight;
 @property (nonatomic, readonly) CLLocationCoordinate2D bottomLeft;
 

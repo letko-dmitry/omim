@@ -8,7 +8,9 @@
 
 #import "AnnotationMark.hpp"
 
-AnnotationMark::AnnotationMark(m2::PointD const &ptOrg): UserMark(ptOrg, UserMark::Type::STATIC) { }
+AnnotationMark::AnnotationMark(m2::PointD const &ptOrg): UserMark(ptOrg, UserMark::Type::STATIC) {
+    m_isSelected = false;
+}
 
 drape_ptr<df::UserPointMark::SymbolNameZoomInfo> AnnotationMark::GetSymbolNames() const {
     auto symbol = make_unique_dp<SymbolNameZoomInfo>();
@@ -18,5 +20,17 @@ drape_ptr<df::UserPointMark::SymbolNameZoomInfo> AnnotationMark::GetSymbolNames(
 }
 
 df::ColorConstant AnnotationMark::GetColorConstant() const {
-    return "BookmarkBlue";
+    if (m_isSelected) {
+        return "BookmarkRed";
+    } else {
+        return "BookmarkBlue";
+    }
+}
+
+void AnnotationMark::SetSelected(bool isSelected) {
+    if (m_isSelected != isSelected) {
+        m_isSelected = isSelected;
+
+        SetDirty();
+    }
 }

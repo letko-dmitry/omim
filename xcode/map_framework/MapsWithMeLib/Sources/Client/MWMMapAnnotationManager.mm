@@ -9,6 +9,7 @@
 #import "MWMMapAnnotationManager.h"
 #import "MWMMapAnnotation.h"
 #import "MWMMapEngine.h"
+#import "MWMMapEngine+Private.h"
 
 #import "AnnotationMark.hpp"
 
@@ -60,6 +61,32 @@
         session.DeleteUserMark(markIdentifier);
 
         _markIdentifiersByAnnotation.erase(iterator);
+    }
+}
+
+- (void)selectAnnotations:(id<MWMMapAnnotation>)annotation {
+    NSParameterAssert(annotation != nil);
+
+    auto markIdentifier = _markIdentifiersByAnnotation[annotation];
+
+    if (markIdentifier != kml::kInvalidMarkId) {
+        auto &manager = MWMMapEngineFramework(_engine).GetBookmarkManager();
+//        auto &mark = manager.GetMark<AnnotationMark>(markIdentifier);
+//
+//        mark.SetSelected(true);
+    }
+}
+
+- (void)deselectAnnotations:(id<MWMMapAnnotation>)annotation {
+    NSParameterAssert(annotation != nil);
+
+    auto markIdentifier = _markIdentifiersByAnnotation[annotation];
+
+    if (markIdentifier != kml::kInvalidMarkId) {
+        auto &manager = MWMMapEngineFramework(_engine).GetBookmarkManager();
+//        auto &mark = manager.GetMark<AnnotationMark>(markIdentifier);
+//
+//        mark.SetSelected(false);
     }
 }
 

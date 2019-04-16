@@ -18,11 +18,9 @@ FOUNDATION_EXPORT const unsigned char MapsWithMeLibVersionString[];
 
 #import <MapsWithMeLib/MWMMapEngine.h>
 
-#import <MapsWithMeLib/MWMapViewRenderer.h>
-#import <MapsWithMeLib/MWMapViewRendererDelegate.h>
-#import <MapsWithMeLib/MWMapViewRegion.h>
+#import <MapsWithMeLib/MWMMapView.h>
+#import <MapsWithMeLib/MWMMapViewDelegate.h>
+#import <MapsWithMeLib/MWMMapViewRegion.h>
 
 #import <MapsWithMeLib/MWMMapAnnotation.h>
 #import <MapsWithMeLib/MWMMapAnnotationManager.h>
-
-#import <MapsWithMeLib/MWMapDownloadingDelegate.h>

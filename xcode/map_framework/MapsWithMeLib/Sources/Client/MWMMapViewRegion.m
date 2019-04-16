@@ -1,14 +1,14 @@
 //
-//  MWMapViewRegion.m
+//  MWMMapViewRegion.m
 //  MapsWithMeLib
 //
 //  Created by Dmitry Letko on 4/15/19.
 //  Copyright © 2019 WiFi Map. All rights reserved.
 //
 
-#import "MWMapViewRegion.h"
+#import "MWMMapViewRegion.h"
 
-@implementation MWMapViewRegion
+@implementation MWMMapViewRegion
 
 - (instancetype)initWithTopRight:(CLLocationCoordinate2D)topRight bottomLeft:(CLLocationCoordinate2D)bottomLeft {
     self = [super init];

@@ -11,13 +11,21 @@
 
 #import "map/user_mark.hpp"
 
-class AnnotationMark : public UserMark
-{
+class AnnotationMark : public UserMark {
 public:
     explicit AnnotationMark(m2::PointD const &ptOrg);
 
     drape_ptr<SymbolNameZoomInfo> GetSymbolNames() const override;
     df::ColorConstant GetColorConstant() const override;
+
+    void SetSelected(bool isSelected);
+
+    bool isSelected() const {
+        return m_isSelected;
+    }
+
+private:
+    bool m_isSelected;
 };
 
 #endif /* AnnotationUserMark_h */

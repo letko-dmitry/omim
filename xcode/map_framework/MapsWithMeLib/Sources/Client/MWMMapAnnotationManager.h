@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class MWMMapEngine;
+
 @protocol MWMMapAnnotation;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,6 +23,9 @@ NS_SWIFT_NAME(MapAnnotationManager)
 
 - (void)addAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations;
 - (void)removeAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations;
+
+- (void)selectAnnotations:(id<MWMMapAnnotation>)annotation;
+- (void)deselectAnnotations:(id<MWMMapAnnotation>)annotation;
 
 @end
 

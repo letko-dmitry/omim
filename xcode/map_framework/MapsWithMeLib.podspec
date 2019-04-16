@@ -16,7 +16,7 @@ spec.requires_arc = true
 spec.static_framework = false
 
 spec.ios.deployment_target = '10.0'
-spec.ios.frameworks = 'QuartzCore', 'Metal', 'MetalKit', 'MetalPerformanceShaders'
+spec.ios.frameworks = 'UIKit', 'QuartzCore', 'Metal', 'MetalKit', 'MetalPerformanceShaders', 'CoreLocation'
 spec.ios.vendored_frameworks = 'MapsWithMeLib.framework'
 
 spec.source = { :http => 'https://www.dropbox.com/s/1l8tebcjtntir3b/MapsWithMeLib.framework.zip' }
