@@ -28,8 +28,10 @@
     BOOL _delegateRespondsToDidChangeRegion;
     BOOL _delegateRespondsToRegionDidChangeAnimated;
 
-    BOOL _didChangeRegionWhileDragging;
-    BOOL _didChangeRegionWhileAnimating;
+    BOOL _didChangeViewportWhileDragging;
+    BOOL _didChangeViewportWhileAnimating;
+
+    NSTimeInterval _delayedReportDidChangeViewportTimeInterval;
 
     m2::RectD _didChangeRegionAnimatedLastViewport;
     ScreenBase _viewport;
@@ -37,6 +39,8 @@
 
 @property (nonatomic, readonly) EAGLView *mapView;
 @property (nonatomic, readonly) MWMMapDownloader *mapDownloader;
+@property (nonatomic, readonly) NSTimer *delayedReportDidChangeViewportTimer;
+@property (nonatomic, readonly) BOOL needsDelayedReportDidChangeViewport;
 
 - (void)createDrapeIfNeeded;
 
@@ -52,8 +56,12 @@
 - (void)changeViewport:(ScreenBase)viewport;
 
 - (void)didFinishDragging;
-- (void)didChangeRegionAnimated:(BOOL)animated;
 - (void)didChangeViewport;
+
+- (void)reportDidChangeRegionAnimated:(BOOL)animated delayed:(BOOL)delayed;
+
+- (void)setNeedsDelayedReportDidChangeViewportAnimated:(BOOL)animated;
+- (void)resetNeedsDelayedReportDidChangeViewport;
 
 @end
 
@@ -68,6 +76,8 @@
 
         _mapView = [EAGLView new];
         _mapDownloader = [MWMMapDownloader new];
+
+        _delayedReportDidChangeViewportTimeInterval = 0.05;
 
         [self addSubview:_mapView];
 
@@ -302,24 +312,11 @@
 // MARK: - private
 
 - (void)didFinishDragging {
-    if (_didChangeRegionWhileDragging) {
-        _didChangeRegionWhileDragging = NO;
+    if (_didChangeViewportWhileDragging) {
+        _didChangeViewportWhileDragging = NO;
 
         if (!_engine.isAnimating) {
-            [self didChangeRegionAnimated:NO];
-        }
-    }
-}
-
-- (void)didChangeRegionAnimated:(BOOL)animated {
-    if (_delegateRespondsToRegionDidChangeAnimated) {
-        auto &framework = MWMMapEngineFramework(_engine);
-        auto viewport = framework.GetCurrentViewport();
-
-        if (_didChangeRegionAnimatedLastViewport != viewport) {
-            _didChangeRegionAnimatedLastViewport = viewport;
-
-            [_delegate mapView:self regionDidChangeAnimated:NO];
+            [self reportDidChangeRegionAnimated:NO delayed:YES];
         }
     }
 }
@@ -333,15 +330,66 @@
     }
 
     if (!isDrugging && !isAnimating) {
-        BOOL didChangeRegionWhileAnimating = _didChangeRegionWhileAnimating;
+        BOOL didChangeRegionWhileAnimating = _didChangeViewportWhileAnimating;
 
-        _didChangeRegionWhileDragging = NO;
-        _didChangeRegionWhileAnimating = NO;
+        _didChangeViewportWhileDragging = NO;
+        _didChangeViewportWhileAnimating = NO;
 
-        [self didChangeRegionAnimated:didChangeRegionWhileAnimating];
+        if (self.needsDelayedReportDidChangeViewport) {
+            if (didChangeRegionWhileAnimating) {
+                [self reportDidChangeRegionAnimated:YES delayed:NO];
+            }
+        } else {
+             [self reportDidChangeRegionAnimated:didChangeRegionWhileAnimating delayed:NO];
+        }
     } else {
-        _didChangeRegionWhileDragging |= isDrugging;
-        _didChangeRegionWhileAnimating |= isAnimating;
+        _didChangeViewportWhileDragging |= isDrugging;
+        _didChangeViewportWhileAnimating |= isAnimating;
+
+        [self resetNeedsDelayedReportDidChangeViewport];
+    }
+}
+
+// MARK: - private
+
+- (BOOL)needsDelayedReportDidChangeViewport {
+    return (_delayedReportDidChangeViewportTimer != nil);
+}
+
+- (void)reportDidChangeRegionAnimated:(BOOL)animated delayed:(BOOL)delayed {
+    [self resetNeedsDelayedReportDidChangeViewport];
+
+    if (_delegateRespondsToRegionDidChangeAnimated) {
+        auto &framework = MWMMapEngineFramework(_engine);
+        auto viewport = framework.GetCurrentViewport();
+
+        if (_didChangeRegionAnimatedLastViewport != viewport) {
+            if (delayed) {
+                [self setNeedsDelayedReportDidChangeViewportAnimated:animated];
+            } else {
+                _didChangeRegionAnimatedLastViewport = viewport;
+
+                [_delegate mapView:self regionDidChangeAnimated:animated];
+            }
+        }
+    }
+}
+
+- (void)setNeedsDelayedReportDidChangeViewportAnimated:(BOOL)animated {
+    [self resetNeedsDelayedReportDidChangeViewport];
+
+    __weak auto selfWeak = self;
+
+    _delayedReportDidChangeViewportTimer = [NSTimer scheduledTimerWithTimeInterval:_delayedReportDidChangeViewportTimeInterval repeats:NO block:^(NSTimer * _Nonnull timer) {
+        [selfWeak resetNeedsDelayedReportDidChangeViewport];
+        [selfWeak reportDidChangeRegionAnimated:animated delayed:NO];
+    }];
+}
+
+- (void)resetNeedsDelayedReportDidChangeViewport {
+    if (_delayedReportDidChangeViewportTimer) {
+        [_delayedReportDidChangeViewportTimer invalidate];
+        _delayedReportDidChangeViewportTimer = nil;
     }
 }
 

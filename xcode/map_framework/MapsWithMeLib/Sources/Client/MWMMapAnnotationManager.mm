@@ -149,7 +149,7 @@
 // MARK: - private
 
 - (void)deselectAnnotationAutomatically {
-    if (_selectedAnnotation != nil) {
+    if (_selectedAnnotation) {
         id<MWMMapAnnotation> selectedAnnotationOld = _selectedAnnotation;
 
         [self deselectAnnotation];
