@@ -15,7 +15,7 @@ final class ViewController: UIViewController {
     private lazy var mapEngine = MapEngine()
     private lazy var mapView = MapView(engine: mapEngine)
 
-    private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0))
+    private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 53.93952, longitude: 27.598032))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +54,11 @@ extension ViewController: MapViewDelegate {
 extension ViewController: MapAnnotationManagerDelegate {
     func mapAnnotationManager(_ manager: MapAnnotationManager, didSelect annotation: MapAnnotation) {
         print("didSelect: \(annotation)")
+
+        let region = MapViewRegion(topRight: annotation.coordinate,
+                                   bottomLeft: annotation.coordinate)
+
+        mapView.setRegion(region, animated: true)
     }
 
     func mapAnnotationManager(_ manager: MapAnnotationManager, didDeselect annotation: MapAnnotation) {

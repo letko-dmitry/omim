@@ -107,8 +107,7 @@
 - (MWMMapViewRegion *)region {
     NSAssert([NSThread isMainThread], @"The property is expected to be called from the main thread only");
 
-    auto &framework = MWMMapEngineFramework(_engine);
-    auto coordinate = MercatorBounds::ToLatLonRect(framework.GetCurrentViewport());
+    auto coordinate = MercatorBounds::ToLatLonRect(_viewport.ClipRect());
 
     return [[MWMMapViewRegion alloc] initWithTopRight: CLLocationCoordinate2DMake(coordinate.maxX(), coordinate.maxY())
                                           bottomLeft: CLLocationCoordinate2DMake(coordinate.minX(), coordinate.minY())];
@@ -128,14 +127,14 @@
 - (void)setRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
     NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
 
-    auto coordinates = m2::RectD(region.bottomLeft.latitude, region.bottomLeft.longitude, region.topRight.latitude, region.topRight.longitude);
+    auto coordinates = m2::RectD(region.bottomLeft.longitude, region.bottomLeft.latitude, region.topRight.longitude, region.topRight.latitude);
     auto rect = MercatorBounds::FromLatLonRect(coordinates);
     auto &framework = MWMMapEngineFramework(_engine);
 
     if (animated) {
         framework.ShowRect(rect);
     } else {
-        framework.SetVisibleViewport(rect);
+        framework.ShowRect(rect, INT_MAX, false);
     }
 }
 
