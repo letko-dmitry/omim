@@ -8,13 +8,12 @@
 
 #import "MWMMapDownloader.h"
 #import "MWMapDownloadingDelegate.h"
-#import "MWMFrameworkListener.h"
 #import "MWMStorage.h"
 #import "Framework.h"
 
 using namespace storage;
 
-@interface MWMMapDownloader() <MWMFrameworkStorageObserver> {
+@interface MWMMapDownloader() {
     CountryId m_countryId;
 }
 
@@ -24,9 +23,11 @@ using namespace storage;
 
 - (instancetype)init {
     self = [super init];
+
     if (self) {
-        [MWMFrameworkListener addObserver:self];
+
     }
+
     return self;
 }
 
@@ -81,19 +82,19 @@ using namespace storage;
     }
 }
 
-#pragma mark - MWMFrameworkStorageObserver
-
-- (void)processCountryEvent:(CountryId const &)countryId {
-    if (m_countryId == countryId) {
-        [self downloadCountry:countryId];
-    }
-}
-
-- (void)processCountry:(CountryId const &)countryId
-              progress:(MapFilesDownloader::Progress const &)progress {
-    if (m_countryId == countryId) {
-        [self downloadCountry:countryId];
-    }
-}
+//#pragma mark - MWMFrameworkStorageObserver
+//
+//- (void)processCountryEvent:(CountryId const &)countryId {
+//    if (m_countryId == countryId) {
+//        [self downloadCountry:countryId];
+//    }
+//}
+//
+//- (void)processCountry:(CountryId const &)countryId
+//              progress:(MapFilesDownloader::Progress const &)progress {
+//    if (m_countryId == countryId) {
+//        [self downloadCountry:countryId];
+//    }
+//}
 
 @end

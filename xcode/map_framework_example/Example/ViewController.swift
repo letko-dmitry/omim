@@ -14,33 +14,22 @@ final class ViewController: UIViewController {
 
     private lazy var mapEngine = MapEngine()
     private lazy var mapView = MapView(engine: mapEngine)
-    private lazy var mapAnnotationManager = MapAnnotationManager(engine: mapEngine)
 
     private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0))
-    private var selectedAnnotation: Annotation?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        contentView.addSubview(mapView)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
         mapView.delegate = self
+        mapView.annotationManager.delegate = self
+
+        contentView.addSubview(mapView)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        mapAnnotationManager.add([annotation])
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        mapView.delegate = nil
+        mapView.annotationManager.add([annotation])
     }
 
     override func viewDidLayoutSubviews() {
@@ -61,17 +50,13 @@ extension ViewController: MapViewDelegate {
     }
 }
 
-// MARK: - private
-private extension ViewController {
-    @IBAction func hanleTapOnButton() {
-        if let deselectAnnotation = selectedAnnotation {
-            selectedAnnotation = nil
+// MARK: - MapAnnotationManagerDelegate
+extension ViewController: MapAnnotationManagerDelegate {
+    func mapAnnotationManager(_ manager: MapAnnotationManager, didSelect annotation: MapAnnotation) {
+        print("didSelect: \(annotation)")
+    }
 
-            mapAnnotationManager.deselectAnnotations(deselectAnnotation)
-        } else {
-            selectedAnnotation = annotation
-
-            mapAnnotationManager.selectAnnotations(annotation)
-        }
+    func mapAnnotationManager(_ manager: MapAnnotationManager, didDeselect annotation: MapAnnotation) {
+        print("didDeselect: \(annotation)")
     }
 }

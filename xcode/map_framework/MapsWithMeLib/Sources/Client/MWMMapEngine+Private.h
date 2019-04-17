@@ -8,16 +8,18 @@
 
 #import "MWMMapEngine.h"
 
-@protocol MWMMapEngineDelegate;
+@protocol MWMMapEngineSubscriber;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWMMapEngine (Private)
 @property (nonatomic, readonly) BOOL isAnimating;
-@property (weak, nonatomic, nullable) id<MWMMapEngineDelegate> delegate;
 
 - (void)start;
 - (void)stop;
+
+- (void)subscribe:(id<MWMMapEngineSubscriber>)subscriber;
+- (void)unsubscribe:(id<MWMMapEngineSubscriber>)subscriber;
 
 @end
 

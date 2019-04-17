@@ -22,23 +22,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q1O-Od-jhh">
-                                <rect key="frame" x="32" y="76" width="46" height="46"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="46" id="DLP-Ih-JVM"/>
-                                    <constraint firstAttribute="width" constant="46" id="bQD-yd-Jh3"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="hanleTapOnButton" destination="BYZ-38-t0r" eventType="touchUpInside" id="TQQ-kO-0VC"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="UK5-p0-le1" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="INj-g2-CVs"/>
-                            <constraint firstItem="q1O-Od-jhh" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="32" id="NtL-LU-Fcz"/>
-                            <constraint firstItem="q1O-Od-jhh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="QEF-e7-YwN"/>
                             <constraint firstItem="UK5-p0-le1" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Thn-kp-M20"/>
                             <constraint firstItem="UK5-p0-le1" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="fib-BT-6ql"/>
                             <constraint firstItem="UK5-p0-le1" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="tGx-z1-gr9"/>

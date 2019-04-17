@@ -89,14 +89,11 @@
 		DC8AC8E72264F96200D2421A /* MWMMapViewRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC8AC8E82264F96200D2421A /* MWMMapViewRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = DC8AC8E62264F96200D2421A /* MWMMapViewRegion.m */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
-		DCCFEA5922565440002B64E8 /* MWMFrameworkListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
 		DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA432256543F002B64E8 /* MetalContextFactory.h */; };
 		DCCFEA5C22565440002B64E8 /* Framework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA442256543F002B64E8 /* Framework.cpp */; };
 		DCCFEA5D22565440002B64E8 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA452256543F002B64E8 /* EAGLView.h */; };
 		DCCFEA5E22565440002B64E8 /* MetalContextFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA462256543F002B64E8 /* MetalContextFactory.mm */; };
-		DCCFEA5F22565440002B64E8 /* MWMFrameworkObservers.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA472256543F002B64E8 /* MWMFrameworkObservers.h */; };
-		DCCFEA6022565440002B64E8 /* MWMFrameworkListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA482256543F002B64E8 /* MWMFrameworkListener.mm */; };
 		DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA492256543F002B64E8 /* iosOGLContextFactory.mm */; };
 		DCCFEA6222565440002B64E8 /* MWMStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA4A2256543F002B64E8 /* MWMStorage.mm */; };
 		DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA4B2256543F002B64E8 /* iosOGLContext.h */; };
@@ -160,9 +157,11 @@
 		DCCFEAD222565954002B64E8 /* 05_khmeros.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAC522565950002B64E8 /* 05_khmeros.ttf */; };
 		DCCFEAD322565954002B64E8 /* 06_code2000.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAC722565950002B64E8 /* 06_code2000.ttf */; };
 		DCCFEAD422565954002B64E8 /* 07_roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEACA22565950002B64E8 /* 07_roboto_medium.ttf */; };
+		DCDE1C342267693000D9A82D /* MWMMapAnnotationManager+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDE1C332267692B00D9A82D /* MWMMapAnnotationManager+Private.h */; };
+		DCDE1C362267737500D9A82D /* MWMMapAnnotationManagerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDE1C352267737200D9A82D /* MWMMapAnnotationManagerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DCDFC69F226624E000FA98BD /* MWMMapView.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC69D226624E000FA98BD /* MWMMapView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCDFC69E226624E000FA98BD /* MWMMapView.mm */; };
-		DCDFC6A322662CED00FA98BD /* MWMMapEngineDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A122662B9200FA98BD /* MWMMapEngineDelegate.h */; };
+		DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */; };
 		DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */; };
 /* End PBXBuildFile section */
 
@@ -300,14 +299,11 @@
 		DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewDelegate.h; sourceTree = "<group>"; };
 		DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewRegion.h; sourceTree = "<group>"; };
 		DC8AC8E62264F96200D2421A /* MWMMapViewRegion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWMMapViewRegion.m; sourceTree = "<group>"; };
-		DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMFrameworkListener.h; sourceTree = "<group>"; };
 		DCCFEA422256543F002B64E8 /* iosOGLContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContext.mm; sourceTree = "<group>"; };
 		DCCFEA432256543F002B64E8 /* MetalContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalContextFactory.h; sourceTree = "<group>"; };
 		DCCFEA442256543F002B64E8 /* Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Framework.cpp; sourceTree = "<group>"; };
 		DCCFEA452256543F002B64E8 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		DCCFEA462256543F002B64E8 /* MetalContextFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MetalContextFactory.mm; sourceTree = "<group>"; };
-		DCCFEA472256543F002B64E8 /* MWMFrameworkObservers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWMFrameworkObservers.h; sourceTree = "<group>"; };
-		DCCFEA482256543F002B64E8 /* MWMFrameworkListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMFrameworkListener.mm; sourceTree = "<group>"; };
 		DCCFEA492256543F002B64E8 /* iosOGLContextFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContextFactory.mm; sourceTree = "<group>"; };
 		DCCFEA4A2256543F002B64E8 /* MWMStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMStorage.mm; sourceTree = "<group>"; };
 		DCCFEA4B2256543F002B64E8 /* iosOGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iosOGLContext.h; sourceTree = "<group>"; };
@@ -371,9 +367,11 @@
 		DCCFEACA22565950002B64E8 /* 07_roboto_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 07_roboto_medium.ttf; path = ../../data/07_roboto_medium.ttf; sourceTree = SOURCE_ROOT; };
 		DCCFEACB22565950002B64E8 /* 00_roboto_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 00_roboto_regular.ttf; path = ../../data/00_roboto_regular.ttf; sourceTree = SOURCE_ROOT; };
 		DCCFEACC22565951002B64E8 /* 02_droidsans-fallback.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "02_droidsans-fallback.ttf"; path = "../../data/02_droidsans-fallback.ttf"; sourceTree = SOURCE_ROOT; };
+		DCDE1C332267692B00D9A82D /* MWMMapAnnotationManager+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWMMapAnnotationManager+Private.h"; sourceTree = "<group>"; };
+		DCDE1C352267737200D9A82D /* MWMMapAnnotationManagerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapAnnotationManagerDelegate.h; sourceTree = "<group>"; };
 		DCDFC69D226624E000FA98BD /* MWMMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapView.h; sourceTree = "<group>"; };
 		DCDFC69E226624E000FA98BD /* MWMMapView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapView.mm; sourceTree = "<group>"; };
-		DCDFC6A122662B9200FA98BD /* MWMMapEngineDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapEngineDelegate.h; sourceTree = "<group>"; };
+		DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapEngineSubscriber.h; sourceTree = "<group>"; };
 		DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWMMapEngine+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -633,9 +631,6 @@
 				DCCFEA512256543F002B64E8 /* EAGLView.mm */,
 				DCCFEA432256543F002B64E8 /* MetalContextFactory.h */,
 				DCCFEA462256543F002B64E8 /* MetalContextFactory.mm */,
-				DCCFEA472256543F002B64E8 /* MWMFrameworkObservers.h */,
-				DCCFEA412256543F002B64E8 /* MWMFrameworkListener.h */,
-				DCCFEA482256543F002B64E8 /* MWMFrameworkListener.mm */,
 				DCCFEA4C2256543F002B64E8 /* MWMStorage.h */,
 				DCCFEA4A2256543F002B64E8 /* MWMStorage.mm */,
 			);
@@ -655,11 +650,13 @@
 				DCCFEA532256543F002B64E8 /* MWMMapDownloader.mm */,
 				DC1DE1052264943B00D6AF4B /* MWMMapAnnotation.h */,
 				DC57508B2260DF18000B20B4 /* MWMMapAnnotationManager.h */,
+				DCDE1C332267692B00D9A82D /* MWMMapAnnotationManager+Private.h */,
 				DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */,
+				DCDE1C352267737200D9A82D /* MWMMapAnnotationManagerDelegate.h */,
 				DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */,
 				DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */,
 				DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */,
-				DCDFC6A122662B9200FA98BD /* MWMMapEngineDelegate.h */,
+				DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -730,19 +727,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCCFEA5D22565440002B64E8 /* EAGLView.h in Headers */,
+				DCDE1C362267737500D9A82D /* MWMMapAnnotationManagerDelegate.h in Headers */,
 				DC1DE10F2264B4A200D6AF4B /* AnnotationMark.hpp in Headers */,
-				DCCFEA5F22565440002B64E8 /* MWMFrameworkObservers.h in Headers */,
 				DC1DE1072264943B00D6AF4B /* MWMMapAnnotation.h in Headers */,
 				DC8AC8E72264F96200D2421A /* MWMMapViewRegion.h in Headers */,
 				DCCFEA6722565440002B64E8 /* MWMRouterRecommendation.h in Headers */,
+				DCDE1C342267693000D9A82D /* MWMMapAnnotationManager+Private.h in Headers */,
 				7B6E9CD32189947E00FB38FB /* MapsWithMeLib.h in Headers */,
 				DC1DE1032264941800D6AF4B /* MWMMapAnnotationManager.h in Headers */,
 				DCDFC69F226624E000FA98BD /* MWMMapView.h in Headers */,
 				DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */,
 				DCCFEA6422565440002B64E8 /* MWMStorage.h in Headers */,
 				DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */,
-				DCDFC6A322662CED00FA98BD /* MWMMapEngineDelegate.h in Headers */,
-				DCCFEA5922565440002B64E8 /* MWMFrameworkListener.h in Headers */,
+				DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */,
 				DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */,
 				DCCFEA6622565440002B64E8 /* Framework.h in Headers */,
 				DC8AC8E42264F8F500D2421A /* MWMMapViewDelegate.h in Headers */,
@@ -900,7 +897,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DCCFEA6022565440002B64E8 /* MWMFrameworkListener.mm in Sources */,
 				DC1DE1042264941B00D6AF4B /* MWMMapAnnotationManager.mm in Sources */,
 				DC1DE1112264B4C100D6AF4B /* AnnotationMark.cpp in Sources */,
 				DC5750942260E795000B20B4 /* MWMMapEngine.mm in Sources */,
@@ -949,6 +945,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = NO;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
@@ -1023,6 +1020,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = NO;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;

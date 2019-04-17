@@ -10,6 +10,7 @@
 
 @class MWMMapEngine;
 @class MWMMapViewRegion;
+@class MWMMapAnnotationManager;
 
 @protocol MWMMapViewDelegate;
 
@@ -19,6 +20,7 @@ NS_SWIFT_NAME(MapView)
 @interface MWMMapView : UIView
 @property (nonatomic, readonly) MWMMapEngine *engine;
 @property (nonatomic, readonly) MWMMapViewRegion *region;
+@property (nonatomic, readonly) MWMMapAnnotationManager *annotationManager;
 @property (nonatomic, readonly) BOOL isDragging;
 @property (nonatomic, readonly) BOOL isTracking;
 @property (weak, nonatomic, nullable) id<MWMMapViewDelegate> delegate;
@@ -28,7 +30,7 @@ NS_SWIFT_NAME(MapView)
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithEngine:(MWMMapEngine *)engine NS_DESIGNATED_INITIALIZER;
 
-- (void)showRegion:(MWMMapViewRegion *)region animated:(BOOL)animated;
+- (void)setRegion:(MWMMapViewRegion *)region animated:(BOOL)animated;
 
 @end
 

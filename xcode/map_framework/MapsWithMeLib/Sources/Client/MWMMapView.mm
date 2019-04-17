@@ -11,17 +11,20 @@
 #import "MWMMapViewRegion.h"
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
-#import "MWMMapEngineDelegate.h"
+#import "MWMMapEngineSubscriber.h"
+
+#import "MWMMapAnnotationManager.h"
+#import "MWMMapAnnotationManager+Private.h"
 
 #import "MWMMapDownloader.h"
-#import "MWMFrameworkListener.h"
 
 #import "EAGLView.h"
 
 #import "drape_frontend/user_event_stream.hpp"
+#import "geometry/screenbase.hpp"
 #import "map/framework.hpp"
 
-@interface MWMMapView() <MWMFrameworkDrapeObserver, MWMMapEngineDelegate> {
+@interface MWMMapView() <MWMMapEngineSubscriber> {
     BOOL _delegateRespondsToDidChangeRegion;
     BOOL _delegateRespondsToRegionDidChangeAnimated;
 
@@ -29,41 +32,71 @@
     BOOL _didChangeRegionWhileAnimating;
 
     m2::RectD _didChangeRegionAnimatedLastViewport;
+    ScreenBase _viewport;
 }
 
 @property (nonatomic, readonly) EAGLView *mapView;
 @property (nonatomic, readonly) MWMMapDownloader *mapDownloader;
 
+- (void)createDrapeIfNeeded;
+
+- (void)subscribeToDrapeEvents;
+- (void)unsubscribeFromDrapeEvents;
+
+- (void)subscribeToFrameworkEvents;
+- (void)unsubscribeFromFrameworkEvents;
+
+- (void)subscribeToEngineEvents;
+- (void)unsubscribeFromEngineEvents;
+
+- (void)changeViewport:(ScreenBase)viewport;
+
+- (void)didFinishDragging;
+- (void)didChangeRegionAnimated:(BOOL)animated;
+- (void)didChangeViewport;
+
 @end
 
 @implementation MWMMapView
+@synthesize annotationManager = _annotationManager;
 
 - (instancetype)initWithEngine:(MWMMapEngine *)engine {
-    NSParameterAssert(engine.delegate == nil);
-
     self = [super initWithFrame:CGRectZero];
 
     if (self) {
         _engine = engine;
-        _engine.delegate = self;
+
         _mapView = [EAGLView new];
         _mapDownloader = [MWMMapDownloader new];
 
         [self addSubview:_mapView];
 
-        [MWMFrameworkListener addObserver:self];
+        [self subscribeToFrameworkEvents];
+        [self subscribeToEngineEvents];
     }
 
     return self;
 }
 
 - (void)dealloc {
-    _engine.delegate = nil;
-    
-    [MWMFrameworkListener removeObserver:self];
+    [self unsubscribeFromEngineEvents];
+    [self unsubscribeFromDrapeEvents];
+    [self unsubscribeFromFrameworkEvents];
+}
+
+- (MWMMapAnnotationManager *)annotationManager {
+    NSAssert([NSThread isMainThread], @"The property is expected to be called from the main thread only");
+
+    if (_annotationManager == nil) {
+        _annotationManager = [[MWMMapAnnotationManager alloc] initWithEngine:_engine];
+    }
+
+    return _annotationManager;
 }
 
 - (MWMMapViewRegion *)region {
+    NSAssert([NSThread isMainThread], @"The property is expected to be called from the main thread only");
+
     auto &framework = MWMMapEngineFramework(_engine);
     auto coordinate = MercatorBounds::ToLatLonRect(framework.GetCurrentViewport());
 
@@ -72,6 +105,8 @@
 }
 
 - (void)setDelegate:(id<MWMMapViewDelegate>)delegate {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
     if (_delegate != delegate) {
         _delegate = delegate;
 
@@ -80,11 +115,12 @@
     }
 }
 
-- (void)showRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
+- (void)setRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
     auto coordinates = m2::RectD(region.bottomLeft.latitude, region.bottomLeft.longitude, region.topRight.latitude, region.topRight.longitude);
     auto rect = MercatorBounds::FromLatLonRect(coordinates);
     auto &framework = MWMMapEngineFramework(_engine);
-
 
     if (animated) {
         framework.ShowRect(rect);
@@ -110,18 +146,7 @@
 
     _mapView.frame = self.bounds;
 
-    if (!_mapView.drapeEngineCreated) {
-        [_mapView createDrapeEngine];
-
-        auto &framework = MWMMapEngineFramework(_engine);
-        auto drape = framework.GetDrapeEngine();
-
-        drape->SetTapEventInfoListener([self] (df::TapInfo const &tapInfo) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"lol");
-            });
-        });
-    }
+    [self createDrapeIfNeeded];
 }
 
 // MARK: - UIResponder
@@ -215,6 +240,67 @@
 
 // MARK: - private
 
+- (void)createDrapeIfNeeded {
+    if (!_mapView.drapeEngineCreated) {
+        [_mapView createDrapeEngine];
+
+        [self subscribeToDrapeEvents];
+    }
+}
+
+- (void)subscribeToDrapeEvents {
+    auto &framework = MWMMapEngineFramework(_engine);
+    auto drape = framework.GetDrapeEngine();
+
+    drape->SetUserPositionListener(nil);
+    drape->SetTapEventInfoListener([self] (df::TapInfo const &tapInfo) {
+        auto tapInfoCopy = tapInfo;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self->_annotationManager handleTap:tapInfoCopy inViewport:self->_viewport];
+        });
+    });
+}
+
+- (void)unsubscribeFromDrapeEvents {
+    auto &framework = MWMMapEngineFramework(_engine);
+    auto drape = framework.GetDrapeEngine();
+
+    drape->SetUserPositionListener(nil);
+    drape->SetTapEventInfoListener(nil);
+}
+
+- (void)subscribeToFrameworkEvents {
+    auto &framework = MWMMapEngineFramework(_engine);
+
+    framework.SetViewportListener([self] (ScreenBase const &viewport) {
+        [self changeViewport:viewport];
+    });
+}
+
+- (void)unsubscribeFromFrameworkEvents {
+    auto &framework = MWMMapEngineFramework(_engine);
+    framework.SetViewportListener(nil);
+}
+
+- (void)subscribeToEngineEvents {
+    [_engine subscribe:self];
+}
+
+- (void)unsubscribeFromEngineEvents {
+    [_engine unsubscribe:self];
+}
+
+// MARK: - private
+
+- (void)changeViewport:(ScreenBase)viewport {
+    _viewport = viewport;
+
+    [self didChangeViewport];
+}
+
+// MARK: - private
+
 - (void)didFinishDragging {
     if (_didChangeRegionWhileDragging) {
         _didChangeRegionWhileDragging = NO;
@@ -238,13 +324,7 @@
     }
 }
 
-// MARK: - MWMFrameworkDrapeObserver
-
-- (void)processViewportCountryEvent:(CountryId const &)countryId {
-    // [self.mapDownloader downloadCountry:countryId];
-}
-
-- (void)processViewportChangedEvent {
+- (void)didChangeViewport {
     BOOL isDrugging = _isDragging;
     BOOL isAnimating = _engine.isAnimating;
 
@@ -265,7 +345,7 @@
     }
 }
 
-// MARK: - MWMMapEngineDelegate
+// MARK: - MWMMapEngineSubscriber
 
 - (void)mapEngineWillPause:(MWMMapEngine *)engine {
     [_mapView setPresentAvailable:NO];

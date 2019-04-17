@@ -8,7 +8,7 @@
 
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
-#import "MWMMapEngineDelegate.h"
+#import "MWMMapEngineSubscriber.h"
 
 #import "map/framework.hpp"
 #import "drape_frontend/animation_system.hpp"
@@ -21,11 +21,11 @@
     Framework *_framework;
 }
 
+@property (nonatomic, readonly) NSHashTable<id<MWMMapEngineSubscriber>> *subscibers;
 @property (nonatomic, readonly) BOOL subscribedToApplicationNotifications;
 @property (nonatomic, readonly) BOOL isRendering;
 @property (nonatomic, readonly) BOOL isPaused;
 @property (nonatomic, readonly) BOOL isApplicationActive;
-@property (weak, nonatomic, nullable) id<MWMMapEngineDelegate> delegate;
 
 - (void)moveToForeground;
 - (void)moveToBackground;
@@ -70,10 +70,14 @@
 }
 
 - (BOOL)isAnimating {
+    NSAssert([NSThread isMainThread], @"The property is expected to be called from the main thread only");
+
     return df::AnimationSystem::Instance().HasMapAnimations();
 }
 
 - (void)start {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
     if (!_isRendering) {
         _isRendering = YES;
 
@@ -86,11 +90,33 @@
 }
 
 - (void)stop {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
     if (_isRendering) {
         _isRendering = NO;
 
         [self pause];
         [self unsubscribeFromApplicationNotifications];
+    }
+}
+
+- (void)subscribe:(id<MWMMapEngineSubscriber>)subscriber {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
+    if (_subscibers == nil) {
+        _subscibers = [NSHashTable weakObjectsHashTable];
+    }
+
+    [_subscibers addObject:subscriber];
+}
+
+- (void)unsubscribe:(id<MWMMapEngineSubscriber>)subscriber {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
+    [_subscibers removeObject:subscriber];
+
+    if (_subscibers.allObjects.count == 0) {
+        _subscibers = nil;
     }
 }
 
@@ -197,7 +223,7 @@
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    [self.delegate mapEngineWillPause:self];
+    [_subscibers.allObjects makeObjectsPerformSelector:@selector(mapEngineWillPause:) withObject:self];
 
     [self pause];
 }
@@ -205,7 +231,7 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [self resume];
 
-    [self.delegate mapEngineDidResume:self];
+    [_subscibers.allObjects makeObjectsPerformSelector:@selector(mapEngineDidResume:) withObject:self];
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {

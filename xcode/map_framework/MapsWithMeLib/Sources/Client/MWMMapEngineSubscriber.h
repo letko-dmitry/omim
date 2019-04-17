@@ -1,5 +1,5 @@
 //
-//  MWMMapEngineDelegate.h
+//  MWMMapEngineSubscriber.h
 //  MapsWithMeLib
 //
 //  Created by Dmitry Letko on 4/16/19.
@@ -12,8 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(MapEngineDelegate)
-@protocol MWMMapEngineDelegate <NSObject>
+NS_SWIFT_NAME(MapEngineSubscriber)
+@protocol MWMMapEngineSubscriber <NSObject>
 
 - (void)mapEngineWillPause:(MWMMapEngine *)engine NS_SWIFT_NAME(mapEngineWillPause(_:));
 - (void)mapEngineDidResume:(MWMMapEngine *)engine NS_SWIFT_NAME(mapEngineDidResume(_:));

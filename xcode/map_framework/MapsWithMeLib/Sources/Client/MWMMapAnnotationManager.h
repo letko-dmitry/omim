@@ -11,12 +11,15 @@
 @class MWMMapEngine;
 
 @protocol MWMMapAnnotation;
+@protocol MWMMapAnnotationManagerDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_NAME(MapAnnotationManager)
 @interface MWMMapAnnotationManager : NSObject
 @property (nonatomic, readonly) MWMMapEngine *engine;
+@property (nonatomic, readonly) id<MWMMapAnnotation> selectedAnnotation;
+@property (weak, nonatomic, nullable) id<MWMMapAnnotationManagerDelegate> delegate;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithEngine:(MWMMapEngine *)engine NS_DESIGNATED_INITIALIZER;
@@ -24,8 +27,8 @@ NS_SWIFT_NAME(MapAnnotationManager)
 - (void)addAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations;
 - (void)removeAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations;
 
-- (void)selectAnnotations:(id<MWMMapAnnotation>)annotation;
-- (void)deselectAnnotations:(id<MWMMapAnnotation>)annotation;
+- (void)selectAnnotation:(id<MWMMapAnnotation>)annotation;
+- (void)deselectAnnotation;
 
 @end
 

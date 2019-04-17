@@ -24,3 +24,4 @@ FOUNDATION_EXPORT const unsigned char MapsWithMeLibVersionString[];
 
 #import <MapsWithMeLib/MWMMapAnnotation.h>
 #import <MapsWithMeLib/MWMMapAnnotationManager.h>
+#import <MapsWithMeLib/MWMMapAnnotationManagerDelegate.h>

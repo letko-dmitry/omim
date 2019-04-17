@@ -7,6 +7,8 @@
 //
 
 #import "MWMMapAnnotationManager.h"
+#import "MWMMapAnnotationManager+Private.h"
+#import "MWMMapAnnotationManagerDelegate.h"
 #import "MWMMapAnnotation.h"
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
@@ -14,10 +16,16 @@
 #import "AnnotationMark.hpp"
 
 #import "map/framework.hpp"
+#import "drape_frontend/frontend_renderer.hpp"
+#import "geometry/screenbase.hpp"
+
 
 @interface MWMMapAnnotationManager () {
     std::map<id<MWMMapAnnotation>, kml::MarkId> _markIdentifiersByAnnotation;
+    std::map<kml::MarkId, id<MWMMapAnnotation>> _annotationsByMarkIdentifiers;
 }
+
+- (void)deselectAnnotationAutomatically;
 
 @end
 
@@ -36,6 +44,7 @@
 }
 
 - (void)addAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
     NSParameterAssert(annotations != nil);
 
     auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
@@ -46,10 +55,12 @@
         auto markIdentifier = mark->GetId();
 
         _markIdentifiersByAnnotation[annotation] = markIdentifier;
+        _annotationsByMarkIdentifiers[markIdentifier] = annotation;
     }
 }
 
 - (void)removeAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
     NSParameterAssert(annotations != nil);
 
     auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
@@ -61,11 +72,19 @@
         session.DeleteUserMark(markIdentifier);
 
         _markIdentifiersByAnnotation.erase(iterator);
+        _annotationsByMarkIdentifiers.erase(markIdentifier);
     }
 }
 
-- (void)selectAnnotations:(id<MWMMapAnnotation>)annotation {
+- (void)selectAnnotation:(id<MWMMapAnnotation>)annotation {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
     NSParameterAssert(annotation != nil);
+
+    if (_selectedAnnotation == annotation) {
+        return;
+    }
+
+    [self deselectAnnotationAutomatically];
 
     auto markIdentifier = _markIdentifiersByAnnotation[annotation];
 
@@ -75,14 +94,20 @@
 
         if (mark != nullptr) {
             mark->SetSelected(true);
+
+            _selectedAnnotation = annotation;
         }
     }
 }
 
-- (void)deselectAnnotations:(id<MWMMapAnnotation>)annotation {
-    NSParameterAssert(annotation != nil);
+- (void)deselectAnnotation {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
 
-    auto markIdentifier = _markIdentifiersByAnnotation[annotation];
+    if (_selectedAnnotation == nil) {
+        return;
+    }
+
+    auto markIdentifier = _markIdentifiersByAnnotation[_selectedAnnotation];
 
     if (markIdentifier != kml::kInvalidMarkId) {
         auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
@@ -91,6 +116,44 @@
         if (mark != nullptr) {
             mark->SetSelected(false);
         }
+    }
+
+    _selectedAnnotation = nil;
+}
+
+- (void)handleTap:(df::TapInfo)tapInfo inViewport:(ScreenBase)viewport {
+    NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
+
+    auto &manager = MWMMapEngineFramework(_engine).GetBookmarkManager();
+
+    auto rect = tapInfo.GetDefaultSearchRect(viewport);
+    auto distance = numeric_limits<double>().max();
+    auto mark = manager.FindMarkInRect(UserMark::Type::STATIC, rect, distance);
+
+    if (mark == nil) {
+        [self deselectAnnotationAutomatically];
+    } else {
+        auto annotation = _annotationsByMarkIdentifiers[mark->GetId()];
+
+        if (annotation == nil) {
+            [self deselectAnnotationAutomatically];
+        } else {
+            if (_selectedAnnotation != annotation) {
+                [self selectAnnotation:annotation];
+                [self.delegate mapAnnotationManager:self didSelect:annotation];
+            }
+        }
+    }
+}
+
+// MARK: - private
+
+- (void)deselectAnnotationAutomatically {
+    if (_selectedAnnotation != nil) {
+        id<MWMMapAnnotation> selectedAnnotationOld = _selectedAnnotation;
+
+        [self deselectAnnotation];
+        [self.delegate mapAnnotationManager:self didDeselect:selectedAnnotationOld];
     }
 }
 
