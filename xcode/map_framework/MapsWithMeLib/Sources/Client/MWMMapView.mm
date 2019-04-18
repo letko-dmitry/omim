@@ -16,11 +16,10 @@
 #import "MWMMapAnnotationManager.h"
 #import "MWMMapAnnotationManager+Private.h"
 
-#import "MWMMapDownloader.h"
-
 #import "EAGLView.h"
 
 #import "drape_frontend/user_event_stream.hpp"
+#import "drape_frontend/visual_params.hpp"
 #import "geometry/screenbase.hpp"
 #import "map/framework.hpp"
 
@@ -33,12 +32,11 @@
 
     NSTimeInterval _delayedReportDidChangeViewportTimeInterval;
 
-    m2::RectD _didChangeRegionAnimatedLastViewport;
+    ScreenBase _didChangeRegionAnimatedLastViewport;
     ScreenBase _viewport;
 }
 
 @property (nonatomic, readonly) EAGLView *mapView;
-@property (nonatomic, readonly) MWMMapDownloader *mapDownloader;
 @property (nonatomic, readonly) NSTimer *delayedReportDidChangeViewportTimer;
 @property (nonatomic, readonly) BOOL needsDelayedReportDidChangeViewport;
 
@@ -73,9 +71,7 @@
 
     if (self) {
         _engine = engine;
-
         _mapView = [EAGLView new];
-        _mapDownloader = [MWMMapDownloader new];
 
         _delayedReportDidChangeViewportTimeInterval = 0.05;
 
@@ -124,18 +120,25 @@
     }
 }
 
-- (void)setRegion:(MWMMapViewRegion *)region animated:(BOOL)animated {
+- (void)setRegion:(MWMMapViewRegion *)region edgeInsets:(UIEdgeInsets)edgeInsets animated:(BOOL)animated {
     NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
 
-    auto coordinates = m2::RectD(region.bottomLeft.longitude, region.bottomLeft.latitude, region.topRight.longitude, region.topRight.latitude);
-    auto rect = MercatorBounds::FromLatLonRect(coordinates);
-    auto &framework = MWMMapEngineFramework(_engine);
 
-    if (animated) {
-        framework.ShowRect(rect);
-    } else {
-        framework.ShowRect(rect, INT_MAX, false);
-    }
+    auto viewSize= self.bounds.size;
+    auto pointScale = df::VisualParams::Instance().GetVisualScale();
+    auto regionCoordinates = m2::RectD(region.bottomLeft.longitude, region.bottomLeft.latitude,
+                                 region.topRight.longitude, region.topRight.latitude);
+
+    auto rect = MercatorBounds::FromLatLonRect(regionCoordinates);
+    auto rectWidth = rect.SizeX();
+    auto rectHeight = rect.SizeY();
+
+    rect.setMaxY(rect.maxY() + rectHeight * (edgeInsets.top / viewSize.height) * pointScale);
+    rect.setMinY(rect.minY() - rectHeight * (edgeInsets.bottom / viewSize.height) * pointScale);
+    rect.setMaxX(rect.maxX() + rectWidth * (edgeInsets.right / viewSize.width) * pointScale);
+    rect.setMinX(rect.minX() - rectWidth * (edgeInsets.left / viewSize.width) * pointScale);
+
+    MWMMapEngineFramework(_engine).ShowRect(rect, -1, animated);
 }
 
 // MARK: - UIView
@@ -359,14 +362,12 @@
     [self resetNeedsDelayedReportDidChangeViewport];
 
     if (_delegateRespondsToRegionDidChangeAnimated) {
-        auto &framework = MWMMapEngineFramework(_engine);
-        auto viewport = framework.GetCurrentViewport();
 
-        if (_didChangeRegionAnimatedLastViewport != viewport) {
+        if (_didChangeRegionAnimatedLastViewport != _viewport) {
             if (delayed) {
                 [self setNeedsDelayedReportDidChangeViewportAnimated:animated];
             } else {
-                _didChangeRegionAnimatedLastViewport = viewport;
+                _didChangeRegionAnimatedLastViewport = _viewport;
 
                 [_delegate mapView:self regionDidChangeAnimated:animated];
             }

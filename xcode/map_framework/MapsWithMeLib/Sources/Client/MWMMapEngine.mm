@@ -10,6 +10,9 @@
 #import "MWMMapEngine+Private.h"
 #import "MWMMapEngineSubscriber.h"
 
+#import "base/logging.hpp"
+#import "base/assert.hpp"
+#import "platform/platform.hpp"
 #import "map/framework.hpp"
 #import "drape_frontend/animation_system.hpp"
 
@@ -48,6 +51,13 @@
 
 @implementation MWMMapEngine
 
++ (void)initialize {
+#ifndef DEBUG
+    base::SetLogMessageFn([] (base::LogLevel level, base::SrcPoint const &, std::string const &) { });
+    base::SetAssertFunction([] (base::SrcPoint const & srcPoint, std::string const & msg) { return true; });
+#endif
+}
+
 - (instancetype)init {
     self = [super init];
 
@@ -66,7 +76,7 @@
 - (void)dealloc {
     [self unsubscribeFromApplicationNotifications];
 
-    //delete framework;
+    //delete _framework; _framework = nullptr;
 }
 
 - (BOOL)isAnimating {

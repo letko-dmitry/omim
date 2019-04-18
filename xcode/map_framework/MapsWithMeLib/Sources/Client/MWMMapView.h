@@ -30,7 +30,7 @@ NS_SWIFT_NAME(MapView)
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithEngine:(MWMMapEngine *)engine NS_DESIGNATED_INITIALIZER;
 
-- (void)setRegion:(MWMMapViewRegion *)region animated:(BOOL)animated;
+- (void)setRegion:(MWMMapViewRegion *)region edgeInsets:(UIEdgeInsets)edgeInsets animated:(BOOL)animated;
 
 @end
 

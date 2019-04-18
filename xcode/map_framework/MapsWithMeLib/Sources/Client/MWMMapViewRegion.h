@@ -18,6 +18,9 @@ NS_SWIFT_NAME(MapViewRegion)
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTopRight:(CLLocationCoordinate2D)topRight bottomLeft:(CLLocationCoordinate2D)bottomLeft NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCenter:(CLLocationCoordinate2D)center
+             latitudinalMeters:(CLLocationDistance)latitudinalMeters
+            longitudinalMeters:(CLLocationDistance)longitudinalMeters;
 
 @end
 

@@ -15,7 +15,8 @@ final class ViewController: UIViewController {
     private lazy var mapEngine = MapEngine()
     private lazy var mapView = MapView(engine: mapEngine)
 
-    private let annotation = Annotation(coordinate: CLLocationCoordinate2D(latitude: 53.93952, longitude: 27.598032))
+    private let annotationA = Annotation(coordinate: CLLocationCoordinate2D(latitude: 53.93952, longitude: 27.598032))
+    private let annotationB = Annotation(coordinate: CLLocationCoordinate2D(latitude: 53.93952 + 0.1, longitude: 27.598032 + 0.1))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +30,7 @@ final class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        mapView.annotationManager.add([annotation])
+        mapView.annotationManager.add([annotationA, annotationB])
     }
 
     override func viewDidLayoutSubviews() {
@@ -55,10 +56,10 @@ extension ViewController: MapAnnotationManagerDelegate {
     func mapAnnotationManager(_ manager: MapAnnotationManager, didSelect annotation: MapAnnotation) {
         print("didSelect: \(annotation)")
 
-        let region = MapViewRegion(topRight: annotation.coordinate,
-                                   bottomLeft: annotation.coordinate)
+        let region = MapViewRegion(topRight: annotationB.coordinate,
+                                   bottomLeft: annotationA.coordinate)
 
-        mapView.setRegion(region, animated: true)
+        mapView.setRegion(region, edgeInsets: UIEdgeInsets(top: 30, left: 30, bottom: 200, right: 30), animated: true)
     }
 
     func mapAnnotationManager(_ manager: MapAnnotationManager, didDeselect annotation: MapAnnotation) {
