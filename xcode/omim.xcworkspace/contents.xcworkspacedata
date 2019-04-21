@@ -347,7 +347,7 @@
       location = "group:map_framework/MapsWithMeLib.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:/Users/dmitry.letko/Repository/omim/xcode/map_framework_example/MapsWithMeLibExample.xcodeproj">
+      location = "group:map_framework_example/MapsWithMeLibExample.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:../iphone/Maps/Pods/Pods.xcodeproj">
