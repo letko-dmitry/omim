@@ -9,6 +9,7 @@
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
 #import "MWMMapEngineSubscriber.h"
+#import "MWMMapCountry.h"
 
 #import "base/logging.hpp"
 #import "base/assert.hpp"
@@ -112,6 +113,7 @@
 }
 
 - (void)subscribe:(id<MWMMapEngineSubscriber>)subscriber {
+    NSParameterAssert(subscriber != nil);
     NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
 
     if (_subscibers == nil) {
@@ -122,6 +124,7 @@
 }
 
 - (void)unsubscribe:(id<MWMMapEngineSubscriber>)subscriber {
+    NSParameterAssert(subscriber != nil);
     NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
 
     [_subscibers removeObject:subscriber];
@@ -131,11 +134,20 @@
     }
 }
 
-- (void)loadCountryWithIdentifier:(MWMMapCountryIdentifier)identifier fromFileAt:(NSURL *)fileUrl {
-    auto fileName = platform::CountryFile(fileUrl.lastPathComponent.UTF8String);
-    auto file = platform::LocalCountryFile(fileUrl.URLByDeletingLastPathComponent.absoluteString.UTF8String, fileName, 0);
-    
-    _framework->OnCountryFileDownloaded(identifier.UTF8String, std::make_shared<platform::LocalCountryFile>(file));
+- (void)loadCountry:(MWMMapCountry *)country {
+    NSParameterAssert(country != nil);
+
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        auto fileUrl = country.fileUrl;
+        auto fileName = platform::CountryFile(fileUrl.URLByDeletingPathExtension.lastPathComponent.UTF8String);
+        auto file = platform::LocalCountryFile(fileUrl.URLByDeletingLastPathComponent.path.UTF8String, fileName, country.version);
+
+        file.SyncWithDisk();
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->_framework->OnCountryFileDownloaded(country.identifier.UTF8String, std::make_shared<platform::LocalCountryFile>(file));
+        });
+    });
 }
 
 // MARK: - private

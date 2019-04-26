@@ -10,12 +10,14 @@
 
 #import "MWMMapCountry.h"
 
+@class MWMMapCountry;
+
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_NAME(MapEngine)
 @interface MWMMapEngine : NSObject
 
-- (void)loadCountryWithIdentifier:(MWMMapCountryIdentifier)identifier fromFileAt:(NSURL *)fileUrl NS_SWIFT_NAME(loadCountry(withIdentifier:from:));
+- (void)loadCountry:(MWMMapCountry *)country NS_SWIFT_NAME(loadCountry(_:));
 
 @end
 

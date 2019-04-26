@@ -29,11 +29,8 @@ final class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        let fileUrl = Bundle.main.url(forResource: "Barbados", withExtension: "mwm")!
         
         mapView.annotationManager.add([annotationA, annotationB])
-       // mapEngine.loadCountry(withIdentifier: "Barbados", from: fileUrl)
     }
 
     override func viewDidLayoutSubviews() {
@@ -51,6 +48,20 @@ extension ViewController: MapViewDelegate {
         print("region.topRight: \(region.topRight)")
         print("region.bottomLeft: \(region.bottomLeft)")
         print("-=-=-=")
+    }
+
+    func mapViewDidChangeCountry(_ view: MapView) {
+        print("mapViewDidChangeCountry: \(view.countryIdentifier)")
+
+        guard view.countryIdentifier == "Barbados" else { return }
+
+        let fileUrl = Bundle.main.url(forResource: "Barbados", withExtension: "mwm")!
+
+        print("fileUrl: \(fileUrl)")
+
+        let country = MapCountry("Barbados", fileUrl: fileUrl)
+
+        mapEngine.loadCountry(country)
     }
 }
 

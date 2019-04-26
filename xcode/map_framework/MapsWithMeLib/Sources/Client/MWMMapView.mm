@@ -318,11 +318,14 @@
 }
 
 - (void)changeCountry:(storage::CountryId)countryIdentifier {
-    MWMMapCountryIdentifier newCountryIdentifier = [[NSString alloc] initWithCString: countryIdentifier.c_str()
-                                                                            encoding: NSUTF8StringEncoding];
-    
+    MWMMapCountryIdentifier newCountryIdentifier = nil;
+
+    if (!countryIdentifier.empty()) {
+        newCountryIdentifier = [[NSString alloc] initWithUTF8String:countryIdentifier.c_str()];
+    }
+
     if (_countryIdentifier != newCountryIdentifier && [_countryIdentifier isEqualToString:newCountryIdentifier] == NO) {
-        _countryIdentifier = newCountryIdentifier;
+        _countryIdentifier = [newCountryIdentifier copy];
         
         if (_delegateRespondsToDidChangeCountry) {
             [_delegate mapViewDidChangeCountry:self];

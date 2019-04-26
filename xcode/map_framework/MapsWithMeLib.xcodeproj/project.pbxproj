@@ -157,6 +157,7 @@
 		DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCDFC69E226624E000FA98BD /* MWMMapView.mm */; };
 		DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */; };
 		DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */; };
+		DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */ = {isa = PBXBuildFile; fileRef = DCF274AF22737ADC005DF836 /* MWMMapCountry.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -361,6 +362,7 @@
 		DCDFC69E226624E000FA98BD /* MWMMapView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapView.mm; sourceTree = "<group>"; };
 		DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapEngineSubscriber.h; sourceTree = "<group>"; };
 		DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWMMapEngine+Private.h"; sourceTree = "<group>"; };
+		DCF274AF22737ADC005DF836 /* MWMMapCountry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWMMapCountry.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -625,6 +627,7 @@
 			isa = PBXGroup;
 			children = (
 				7559ECF722730B5800C0677A /* MWMMapCountry.h */,
+				DCF274AF22737ADC005DF836 /* MWMMapCountry.m */,
 				DCDFC69D226624E000FA98BD /* MWMMapView.h */,
 				DCDFC69E226624E000FA98BD /* MWMMapView.mm */,
 				DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */,
@@ -881,6 +884,7 @@
 				DCCFEA5E22565440002B64E8 /* MetalContextFactory.mm in Sources */,
 				DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */,
 				DCCFEA5C22565440002B64E8 /* Framework.cpp in Sources */,
+				DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */,
 				DC8AC8E82264F96200D2421A /* MWMMapViewRegion.mm in Sources */,
 				DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */,
 				DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */,
@@ -932,7 +936,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1069,7 +1073,6 @@
 				OMIM_ROOT = "$(PROJECT_DIR)/../..";
 				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				STRIP_STYLE = "non-global";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Debug;
