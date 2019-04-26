@@ -245,16 +245,6 @@ protected:
   booking::filter::FilterProcessor m_bookingFilterProcessor;
   booking::AvailabilityParams m_bookingAvailabilityParams;
 
-  /// This function will be called by m_storage when latest local files
-  /// is downloaded.
-  void OnCountryFileDownloaded(storage::CountryId const & countryId,
-                               storage::LocalFilePtr const localFile);
-
-  /// This function will be called by m_storage before latest local files
-  /// is deleted.
-  bool OnCountryFileDelete(storage::CountryId const & countryId,
-                           storage::LocalFilePtr const localFile);
-
   /// This function is called by m_model when the map file is deregistered.
   void OnMapDeregistered(platform::LocalCountryFile const & localFile);
 
@@ -267,6 +257,16 @@ protected:
 public:
   Framework(FrameworkParams const & params = {});
   virtual ~Framework();
+    
+  /// This function will be called by m_storage when latest local files
+  /// is downloaded.
+  void OnCountryFileDownloaded(storage::CountryId const & countryId,
+                               storage::LocalFilePtr const localFile);
+  
+  /// This function will be called by m_storage before latest local files
+  /// is deleted.
+  bool OnCountryFileDelete(storage::CountryId const & countryId,
+                           storage::LocalFilePtr const localFile);
 
   /// Get access to booking api helpers
   booking::Api * GetBookingApi(platform::NetworkPolicy const & policy);

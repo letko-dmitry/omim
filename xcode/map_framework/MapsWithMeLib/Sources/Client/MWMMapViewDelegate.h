@@ -16,8 +16,10 @@ NS_SWIFT_NAME(MapViewDelegate)
 @protocol MWMMapViewDelegate <NSObject>
 @optional
 
-- (void)mapViewDidChangeRegion:(MWMMapView *)renderer NS_SWIFT_NAME(mapViewDidChangeRegion(_:));
-- (void)mapView:(MWMMapView *)renderer regionDidChangeAnimated:(BOOL)animated NS_SWIFT_NAME(mapView(_:regionDidChangeAnimated:));
+- (void)mapViewDidChangeRegion:(MWMMapView *)view NS_SWIFT_NAME(mapViewDidChangeRegion(_:));
+- (void)mapView:(MWMMapView *)view regionDidChangeAnimated:(BOOL)animated NS_SWIFT_NAME(mapView(_:regionDidChangeAnimated:));
+
+- (void)mapViewDidChangeCountry:(MWMMapView *)view NS_SWIFT_NAME(mapViewDidChangeCountry(_:));
 
 @end
 

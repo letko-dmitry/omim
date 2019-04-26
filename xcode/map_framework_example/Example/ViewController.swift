@@ -30,7 +30,10 @@ final class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        let fileUrl = Bundle.main.url(forResource: "Barbados", withExtension: "mwm")!
+        
         mapView.annotationManager.add([annotationA, annotationB])
+       // mapEngine.loadCountry(withIdentifier: "Barbados", from: fileUrl)
     }
 
     override func viewDidLayoutSubviews() {

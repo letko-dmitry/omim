@@ -13,6 +13,7 @@
 #import "base/logging.hpp"
 #import "base/assert.hpp"
 #import "platform/platform.hpp"
+#import "platform/local_country_file_utils.hpp"
 #import "map/framework.hpp"
 #import "drape_frontend/animation_system.hpp"
 
@@ -128,6 +129,13 @@
     if (_subscibers.allObjects.count == 0) {
         _subscibers = nil;
     }
+}
+
+- (void)loadCountryWithIdentifier:(MWMMapCountryIdentifier)identifier fromFileAt:(NSURL *)fileUrl {
+    auto fileName = platform::CountryFile(fileUrl.lastPathComponent.UTF8String);
+    auto file = platform::LocalCountryFile(fileUrl.URLByDeletingLastPathComponent.absoluteString.UTF8String, fileName, 0);
+    
+    _framework->OnCountryFileDownloaded(identifier.UTF8String, std::make_shared<platform::LocalCountryFile>(file));
 }
 
 // MARK: - private

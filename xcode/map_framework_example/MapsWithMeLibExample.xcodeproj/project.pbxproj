@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		753E95FF2273626B00A68504 /* Barbados.mwm in Resources */ = {isa = PBXBuildFile; fileRef = 753E95FC22731BF100A68504 /* Barbados.mwm */; };
 		DC12973B224A7DEE004F46AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC12973A224A7DEE004F46AF /* AppDelegate.swift */; };
 		DC12973D224A7DEE004F46AF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC12973C224A7DEE004F46AF /* ViewController.swift */; };
 		DC129740224A7DEE004F46AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC12973E224A7DEE004F46AF /* Main.storyboard */; };
@@ -37,6 +38,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		753E95FC22731BF100A68504 /* Barbados.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; path = Barbados.mwm; sourceTree = "<group>"; };
 		DC129737224A7DEE004F46AF /* MapsWithMeLibExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapsWithMeLibExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC12973A224A7DEE004F46AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC12973C224A7DEE004F46AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 			children = (
 				DC12973A224A7DEE004F46AF /* AppDelegate.swift */,
 				DC12973C224A7DEE004F46AF /* ViewController.swift */,
+				753E95FC22731BF100A68504 /* Barbados.mwm */,
 				DC1DE1122264CEAD00D6AF4B /* Annotation.swift */,
 				DC12973E224A7DEE004F46AF /* Main.storyboard */,
 				DC129741224A7DEF004F46AF /* Assets.xcassets */,
@@ -173,6 +176,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC129745224A7DEF004F46AF /* LaunchScreen.storyboard in Resources */,
+				753E95FF2273626B00A68504 /* Barbados.mwm in Resources */,
 				DC129742224A7DEF004F46AF /* Assets.xcassets in Resources */,
 				DC129740224A7DEE004F46AF /* Main.storyboard in Resources */,
 			);

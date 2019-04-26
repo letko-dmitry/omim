@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "MWMMapCountry.h"
+
 @class MWMMapEngine;
 @class MWMMapViewRegion;
 @class MWMMapAnnotationManager;
@@ -23,6 +25,7 @@ NS_SWIFT_NAME(MapView)
 @property (nonatomic, readonly) MWMMapAnnotationManager *annotationManager;
 @property (nonatomic, readonly) BOOL isDragging;
 @property (nonatomic, readonly) BOOL isTracking;
+@property (nonatomic, readonly, nullable) MWMMapCountryIdentifier countryIdentifier;
 @property (weak, nonatomic, nullable) id<MWMMapViewDelegate> delegate;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;

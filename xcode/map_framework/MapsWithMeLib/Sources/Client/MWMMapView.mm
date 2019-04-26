@@ -26,6 +26,7 @@
 @interface MWMMapView() <MWMMapEngineSubscriber> {
     BOOL _delegateRespondsToDidChangeRegion;
     BOOL _delegateRespondsToRegionDidChangeAnimated;
+    BOOL _delegateRespondsToDidChangeCountry;
 
     BOOL _didChangeViewportWhileDragging;
     BOOL _didChangeViewportWhileAnimating;
@@ -117,6 +118,7 @@
 
         _delegateRespondsToDidChangeRegion = [delegate respondsToSelector:@selector(mapViewDidChangeRegion:)];
         _delegateRespondsToRegionDidChangeAnimated = [delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)];
+        _delegateRespondsToDidChangeCountry = [delegate respondsToSelector:@selector(mapViewDidChangeCountry:)];
     }
 }
 
@@ -288,11 +290,15 @@
     framework.SetViewportListener([self] (ScreenBase const &viewport) {
         [self changeViewport:viewport];
     });
+    framework.SetCurrentCountryChangedListener([self] (storage::CountryId const &countryId) {
+        [self changeCountry:countryId];
+    });
 }
 
 - (void)unsubscribeFromFrameworkEvents {
     auto &framework = MWMMapEngineFramework(_engine);
     framework.SetViewportListener(nil);
+    framework.SetCurrentCountryChangedListener(nil);
 }
 
 - (void)subscribeToEngineEvents {
@@ -309,6 +315,19 @@
     _viewport = viewport;
 
     [self didChangeViewport];
+}
+
+- (void)changeCountry:(storage::CountryId)countryIdentifier {
+    MWMMapCountryIdentifier newCountryIdentifier = [[NSString alloc] initWithCString: countryIdentifier.c_str()
+                                                                            encoding: NSUTF8StringEncoding];
+    
+    if (_countryIdentifier != newCountryIdentifier && [_countryIdentifier isEqualToString:newCountryIdentifier] == NO) {
+        _countryIdentifier = newCountryIdentifier;
+        
+        if (_delegateRespondsToDidChangeCountry) {
+            [_delegate mapViewDidChangeCountry:self];
+        }
+    }
 }
 
 // MARK: - private

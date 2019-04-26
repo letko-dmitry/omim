@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		753E95FE22731C3C00A68504 /* MWMMapCountry.h in Headers */ = {isa = PBXBuildFile; fileRef = 7559ECF722730B5800C0677A /* MWMMapCountry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B5CC72F223FA6400030C3F1 /* libdescriptions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B5CC72E223FA6400030C3F1 /* libdescriptions.a */; };
 		7B6E9CD32189947E00FB38FB /* MapsWithMeLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B6E9CD12189947E00FB38FB /* MapsWithMeLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B6E9D45218994B600FB38FB /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B6E9D42218994B500FB38FB /* Metal.framework */; };
@@ -159,6 +160,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7559ECF722730B5800C0677A /* MWMMapCountry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapCountry.h; sourceTree = "<group>"; };
 		7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		7B5CC72C223FA6120030C3F1 /* libvulkan_wrapper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libvulkan_wrapper.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B5CC72E223FA6400030C3F1 /* libdescriptions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libdescriptions.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -622,6 +624,7 @@
 		DCCFEA522256543F002B64E8 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				7559ECF722730B5800C0677A /* MWMMapCountry.h */,
 				DCDFC69D226624E000FA98BD /* MWMMapView.h */,
 				DCDFC69E226624E000FA98BD /* MWMMapView.mm */,
 				DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */,
@@ -715,6 +718,7 @@
 				DC1DE1032264941800D6AF4B /* MWMMapAnnotationManager.h in Headers */,
 				DCDFC69F226624E000FA98BD /* MWMMapView.h in Headers */,
 				DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */,
+				753E95FE22731C3C00A68504 /* MWMMapCountry.h in Headers */,
 				DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */,
 				DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */,
 				DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */,
