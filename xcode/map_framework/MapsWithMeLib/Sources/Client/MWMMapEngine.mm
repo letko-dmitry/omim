@@ -18,8 +18,6 @@
 #import "map/framework.hpp"
 #import "drape_frontend/animation_system.hpp"
 
-#import "Framework.h"
-
 
 @interface MWMMapEngine () {
 @public
@@ -66,7 +64,7 @@
     if (self) {
         _isPaused = NO;
 
-        _framework = &GetFramework();//new Framework(FrameworkParams(false, true));
+        _framework = new Framework(FrameworkParams(false, true));
         _framework->SetupMeasurementSystem();
 
         [self pause];
@@ -78,7 +76,7 @@
 - (void)dealloc {
     [self unsubscribeFromApplicationNotifications];
 
-    //delete _framework; _framework = nullptr;
+    delete _framework; _framework = nullptr;
 }
 
 - (BOOL)isAnimating {

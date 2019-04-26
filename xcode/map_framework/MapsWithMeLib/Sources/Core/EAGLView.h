@@ -1,5 +1,7 @@
-#include "drape/pointers.hpp"
-#include "drape/drape_global.hpp"
+#import "drape/pointers.hpp"
+#import "drape/drape_global.hpp"
+
+@class MWMMapEngine;
 
 namespace dp
 {
@@ -19,9 +21,14 @@ namespace dp
   bool m_presentAvailable;
 }
 
-@property(nonatomic, readonly) BOOL drapeEngineCreated;
-@property(nonatomic, getter=isLaunchByDeepLink) BOOL launchByDeepLink;
-@property(nonatomic, readonly) m2::PointU pixelSize;
+@property (nonatomic, readonly) MWMMapEngine *engine;
+@property (nonatomic, readonly) BOOL drapeEngineCreated;
+@property (nonatomic, readonly) m2::PointU pixelSize;
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithEngine:(MWMMapEngine *)engine NS_DESIGNATED_INITIALIZER;
 
 - (void)createDrapeEngine;
 - (void)deallocateNative;

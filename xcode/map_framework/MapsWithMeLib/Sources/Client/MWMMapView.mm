@@ -72,7 +72,7 @@
 
     if (self) {
         _engine = engine;
-        _mapView = [EAGLView new];
+        _mapView = [[EAGLView alloc] initWithEngine:engine];
 
         _delayedReportDidChangeViewportTimeInterval = 0.05;
 

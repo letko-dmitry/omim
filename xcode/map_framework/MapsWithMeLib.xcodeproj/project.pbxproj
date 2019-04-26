@@ -92,12 +92,10 @@
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
 		DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA432256543F002B64E8 /* MetalContextFactory.h */; };
-		DCCFEA5C22565440002B64E8 /* Framework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA442256543F002B64E8 /* Framework.cpp */; };
 		DCCFEA5D22565440002B64E8 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA452256543F002B64E8 /* EAGLView.h */; };
 		DCCFEA5E22565440002B64E8 /* MetalContextFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA462256543F002B64E8 /* MetalContextFactory.mm */; };
 		DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA492256543F002B64E8 /* iosOGLContextFactory.mm */; };
 		DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA4B2256543F002B64E8 /* iosOGLContext.h */; };
-		DCCFEA6622565440002B64E8 /* Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA4E2256543F002B64E8 /* Framework.h */; };
 		DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA502256543F002B64E8 /* iosOGLContextFactory.h */; };
 		DCCFEA6922565440002B64E8 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA512256543F002B64E8 /* EAGLView.mm */; };
 		DCCFEA8D2256573D002B64E8 /* drules_proto_vehicle_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */; };
@@ -297,12 +295,10 @@
 		DC8AC8E62264F96200D2421A /* MWMMapViewRegion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapViewRegion.mm; sourceTree = "<group>"; };
 		DCCFEA422256543F002B64E8 /* iosOGLContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContext.mm; sourceTree = "<group>"; };
 		DCCFEA432256543F002B64E8 /* MetalContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalContextFactory.h; sourceTree = "<group>"; };
-		DCCFEA442256543F002B64E8 /* Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Framework.cpp; sourceTree = "<group>"; };
 		DCCFEA452256543F002B64E8 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		DCCFEA462256543F002B64E8 /* MetalContextFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MetalContextFactory.mm; sourceTree = "<group>"; };
 		DCCFEA492256543F002B64E8 /* iosOGLContextFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContextFactory.mm; sourceTree = "<group>"; };
 		DCCFEA4B2256543F002B64E8 /* iosOGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iosOGLContext.h; sourceTree = "<group>"; };
-		DCCFEA4E2256543F002B64E8 /* Framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Framework.h; sourceTree = "<group>"; };
 		DCCFEA502256543F002B64E8 /* iosOGLContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iosOGLContextFactory.h; sourceTree = "<group>"; };
 		DCCFEA512256543F002B64E8 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
 		DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_clear.bin; path = ../../data/drules_proto_vehicle_clear.bin; sourceTree = SOURCE_ROOT; };
@@ -609,8 +605,6 @@
 			isa = PBXGroup;
 			children = (
 				DC1DE10D2264B48800D6AF4B /* User Mark */,
-				DCCFEA4E2256543F002B64E8 /* Framework.h */,
-				DCCFEA442256543F002B64E8 /* Framework.cpp */,
 				DCCFEA502256543F002B64E8 /* iosOGLContextFactory.h */,
 				DCCFEA492256543F002B64E8 /* iosOGLContextFactory.mm */,
 				DCCFEA4B2256543F002B64E8 /* iosOGLContext.h */,
@@ -725,7 +719,6 @@
 				DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */,
 				DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */,
 				DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */,
-				DCCFEA6622565440002B64E8 /* Framework.h in Headers */,
 				DC8AC8E42264F8F500D2421A /* MWMMapViewDelegate.h in Headers */,
 				DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */,
 				DC5750932260E793000B20B4 /* MWMMapEngine.h in Headers */,
@@ -883,7 +876,6 @@
 				DC5750942260E795000B20B4 /* MWMMapEngine.mm in Sources */,
 				DCCFEA5E22565440002B64E8 /* MetalContextFactory.mm in Sources */,
 				DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */,
-				DCCFEA5C22565440002B64E8 /* Framework.cpp in Sources */,
 				DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */,
 				DC8AC8E82264F96200D2421A /* MWMMapViewRegion.mm in Sources */,
 				DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */,

@@ -1,20 +1,22 @@
 #import "EAGLView.h"
-#import "iosOGLContextFactory.h"
 
-#import "3party/Alohalytics/src/alohalytics_objc.h"
+#import "MWMMapEngine.h"
+#import "MWMMapEngine+Private.h"
 
-#include "Framework.h"
-
-#include "drape/drape_global.hpp"
-#include "drape/visual_scale.hpp"
-
-#include "base/assert.hpp"
-#include "base/logging.hpp"
+#import "drape/drape_global.hpp"
+#import "drape/visual_scale.hpp"
+#import "base/assert.hpp"
+#import "base/logging.hpp"
+#import "map/framework.hpp"
 
 #ifdef OMIM_METAL_AVAILABLE
-#import "MetalContextFactory.h"
 #import <MetalKit/MetalKit.h>
+
+#import "MetalContextFactory.h"
 #endif
+
+#import "iosOGLContextFactory.h"
+
 
 @implementation EAGLView
 
@@ -39,54 +41,44 @@ double getExactDPI(double contentScaleFactor)
 }
 } //  namespace
 
-+ (dp::ApiVersion)getSupportedApiVersion
-{
-  static dp::ApiVersion apiVersion = dp::ApiVersion::Invalid;
-  if (apiVersion != dp::ApiVersion::Invalid)
-    return apiVersion;
-  
++ (dp::ApiVersion)getSupportedApiVersion {
 #ifdef OMIM_METAL_AVAILABLE
-  if (@available(iOS 10.0, *))
-  {
-    if (GetFramework().LoadMetalAllowed())
-    {
-      id<MTLDevice> tempDevice = MTLCreateSystemDefaultDevice();
-      if (tempDevice)
-        apiVersion = dp::ApiVersion::Metal;
+    id<MTLDevice> tempDevice = MTLCreateSystemDefaultDevice();
+    
+    if (tempDevice) {
+        return dp::ApiVersion::Metal;
     }
-  }
 #endif
-  
-  if (apiVersion == dp::ApiVersion::Invalid)
-  {
-    EAGLContext * tempContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    if (tempContext != nil)
-      apiVersion = dp::ApiVersion::OpenGLES3;
-    else
-      apiVersion = dp::ApiVersion::OpenGLES2;
-  }
-  
-  return apiVersion;
+    
+    EAGLContext *tempContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    
+    if (tempContext != nil) {
+        return dp::ApiVersion::OpenGLES3;
+    } else {
+        return dp::ApiVersion::OpenGLES2;
+    }
 }
 
 // You must implement this method
-+ (Class)layerClass
-{
++ (Class)layerClass {
 #ifdef OMIM_METAL_AVAILABLE
-  auto const apiVersion = [EAGLView getSupportedApiVersion];
-  return apiVersion == dp::ApiVersion::Metal ? [CAMetalLayer class] : [CAEAGLLayer class];
-#else
-  return [CAEAGLLayer class];
+    if ([EAGLView getSupportedApiVersion] == dp::ApiVersion::Metal) {
+        return [CAMetalLayer class];
+    }
 #endif
+    
+  return [CAEAGLLayer class];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-
+- (instancetype)initWithEngine:(MWMMapEngine *)engine {
+    self = [super initWithFrame:CGRectZero];
+    
     if (self) {
+        _engine = engine;
+        
         [self initialize];
     }
-
+    
     return self;
 }
 
@@ -145,10 +137,8 @@ double getExactDPI(double contentScaleFactor)
   p.m_surfaceWidth = width;
   p.m_surfaceHeight = height;
   p.m_visualScale = dp::VisualScale(getExactDPI(self.contentScaleFactor));
-  p.m_hints.m_isFirstLaunch = [Alohalytics isFirstSession];
-  p.m_hints.m_isLaunchByDeepLink = self.isLaunchByDeepLink;
 
-  GetFramework().CreateDrapeEngine(make_ref(m_factory), move(p));
+  MWMMapEngineFramework(_engine).CreateDrapeEngine(make_ref(m_factory), move(p));
 
   self->_drapeEngineCreated = YES;
   LOG(LINFO, ("CreateDrapeEngine Finished"));
@@ -168,14 +158,14 @@ double getExactDPI(double contentScaleFactor)
   {
     m_lastViewSize = self.frame;
     m2::PointU const s = [self pixelSize];
-    GetFramework().OnSize(s.x, s.y);
+    MWMMapEngineFramework(_engine).OnSize(s.x, s.y);
   }
   [super layoutSubviews];
 }
 
 - (void)deallocateNative
 {
-  GetFramework().PrepareToShutdown();
+  MWMMapEngineFramework(_engine).PrepareToShutdown();
   m_factory.reset();
 }
 
