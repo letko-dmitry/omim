@@ -22,7 +22,7 @@
 
 @interface MWMMapAnnotationManager () {
     std::map<id<MWMMapAnnotation>, kml::MarkId> _markIdentifiersByAnnotation;
-    std::map<kml::MarkId, id<MWMMapAnnotation>> _annotationsByMarkIdentifiers;
+    std::unordered_map<kml::MarkId, id<MWMMapAnnotation>> _annotationsByMarkIdentifiers;
 }
 
 - (void)deselectAnnotationAutomatically;
@@ -48,6 +48,8 @@
     NSParameterAssert(annotations != nil);
 
     auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
+    
+    _annotationsByMarkIdentifiers.reserve(_annotationsByMarkIdentifiers.size() + annotations.count);
 
     for (NSObject<MWMMapAnnotation> *annotation in annotations) {
         auto point = MercatorBounds::FromLatLon(annotation.coordinate.latitude, annotation.coordinate.longitude);
