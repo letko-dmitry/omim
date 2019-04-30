@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDialog;
@@ -53,6 +54,20 @@ public class AlertDialog extends BaseMwmDialogFragment
     if (fm.findFragmentByTag(tag) != null)
       return;
 
+    showInternal(tag, fm);
+  }
+
+  public void show(@NonNull FragmentActivity activity, @NonNull String tag)
+  {
+    FragmentManager fm = mFragmentManagerStrategy.resolve(activity);
+    if (fm.findFragmentByTag(tag) != null)
+      return;
+
+    showInternal(tag, fm);
+  }
+
+  private void showInternal(@NonNull String tag, @NonNull FragmentManager fm)
+  {
     FragmentTransaction transaction = fm.beginTransaction();
     transaction.add(this, tag);
     transaction.commitAllowingStateLoss();
@@ -74,8 +89,7 @@ public class AlertDialog extends BaseMwmDialogFragment
     super.onAttach(context);
     try
     {
-      mTargetCallback = (AlertDialogCallback) (getParentFragment() == null ? getTargetFragment()
-                                                                           : getParentFragment());
+      onAttachInternal();
     }
     catch (ClassCastException e)
     {
@@ -85,11 +99,22 @@ public class AlertDialog extends BaseMwmDialogFragment
     }
   }
 
+  protected void onAttachInternal()
+  {
+    mTargetCallback = (AlertDialogCallback) (getParentFragment() == null ? getTargetFragment()
+                                                                         : getParentFragment());
+  }
+
   @Override
   public void onDetach()
   {
     super.onDetach();
     mTargetCallback = null;
+  }
+
+  protected void setTargetCallback(@Nullable AlertDialogCallback targetCallback)
+  {
+    mTargetCallback = targetCallback;
   }
 
   @NonNull
@@ -321,6 +346,13 @@ public class AlertDialog extends BaseMwmDialogFragment
     {
       return baseFragment.getChildFragmentManager();
     }
+
+    @NonNull
+    @Override
+    public FragmentManager resolve(@NonNull FragmentActivity activity)
+    {
+      throw new UnsupportedOperationException("Not supported here!");
+    }
   }
 
   private static class ActivityFragmentManagerStrategy implements ResolveFragmentManagerStrategy
@@ -329,7 +361,14 @@ public class AlertDialog extends BaseMwmDialogFragment
     @Override
     public FragmentManager resolve(@NonNull Fragment baseFragment)
     {
-      return baseFragment.getActivity().getSupportFragmentManager();
+      return baseFragment.requireActivity().getSupportFragmentManager();
+    }
+
+    @NonNull
+    @Override
+    public FragmentManager resolve(@NonNull FragmentActivity activity)
+    {
+      return activity.getSupportFragmentManager();
     }
   }
 

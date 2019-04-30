@@ -30,14 +30,10 @@ Node::Ptr ShrinkToFit(Node::Ptr p)
 }
 }  // namespace
 
-RegionsBuilder::RegionsBuilder(Regions && regions,
-                               std::unique_ptr<ToStringPolicyInterface> toStringPolicy,
-                               size_t threadsCount)
-  : m_toStringPolicy(std::move(toStringPolicy))
-  , m_regions(std::move(regions))
+RegionsBuilder::RegionsBuilder(Regions && regions, size_t threadsCount)
+  : m_regions(std::move(regions))
   , m_threadsCount(threadsCount)
 {
-  ASSERT(m_toStringPolicy, ());
   ASSERT(m_threadsCount != 0, ());
 
   auto const isCountry = [](Region const & r) { return r.IsCountry(); };
@@ -46,9 +42,6 @@ RegionsBuilder::RegionsBuilder(Regions && regions,
   auto const cmp = [](Region const & l, Region const & r) { return l.GetArea() > r.GetArea(); };
   std::sort(std::begin(m_countries), std::end(m_countries), cmp);
 }
-
-RegionsBuilder::RegionsBuilder(Regions && regions, size_t threadsCount)
-  : RegionsBuilder(std::move(regions), std::make_unique<JsonPolicy>(), threadsCount) {}
 
 RegionsBuilder::Regions const & RegionsBuilder::GetCountries() const
 {
@@ -69,43 +62,17 @@ RegionsBuilder::StringsList RegionsBuilder::GetCountryNames() const
   return result;
 }
 
-RegionsBuilder::IdStringList RegionsBuilder::ToIdStringList(Node::Ptr const & tree) const
-{
-  IdStringList result;
-  std::queue<Node::Ptr> queue;
-  queue.push(tree);
-  while (!queue.empty())
-  {
-    const auto el = queue.front();
-    queue.pop();
-    Node::PtrList nodes;
-    auto current = el;
-    while (current)
-    {
-      nodes.push_back(current);
-      current = current->GetParent();
-    }
-
-    auto string = m_toStringPolicy->ToString(nodes);
-    auto const id = nodes.front()->GetData().GetId();
-    result.emplace_back(std::make_pair(id, std::move(string)));
-    for (auto const & n : el->GetChildren())
-      queue.push(n);
-  }
-
-  return result;
-}
-
 Node::PtrList RegionsBuilder::MakeSelectedRegionsByCountry(Region const & country,
                                                            Regions const & allRegions)
 {
-  Regions regionsInCountry;
-  auto filterCopy = [&country] (const Region & r) { return country.ContainsRect(r); };
-  std::copy_if(std::begin(allRegions), std::end(allRegions),
-               std::back_inserter(regionsInCountry), filterCopy);
+  std::vector<LevelRegion> regionsInCountry{{PlaceLevel::Country, country}};
+  for (auto const & region : allRegions)
+  {
+    if (country.ContainsRect(region))
+      regionsInCountry.emplace_back(GetLevel(region), region);
+  }
 
-  regionsInCountry.emplace_back(country);
-  auto const comp = [](const Region & l, const Region & r) {
+  auto const comp = [](LevelRegion const & l, LevelRegion const & r) {
     auto const lArea = l.GetArea();
     auto const rArea = r.GetArea();
     return lArea != rArea ? lArea > rArea : l.GetRank() < r.GetRank();
@@ -133,7 +100,7 @@ Node::Ptr RegionsBuilder::BuildCountryRegionTree(Region const & country,
     {
       auto const & currRegion = (*itCurr)->GetData();
       if (currRegion.Contains(firstRegion) ||
-          (firstRegion.GetWeight() < currRegion.GetWeight() &&
+          (GetWeight(firstRegion) < GetWeight(currRegion) &&
            currRegion.Contains(firstRegion.GetCenter()) &&
            currRegion.CalculateOverlapPercentage(firstRegion) > 50.0))
       {
@@ -185,6 +152,74 @@ std::vector<Node::Ptr> RegionsBuilder::BuildCountryRegionTrees(RegionsBuilder::R
   std::transform(std::begin(tmp), std::end(tmp),
                  std::back_inserter(res), [](auto & f) { return f.get(); });
   return res;
+}
+
+// static
+PlaceLevel RegionsBuilder::GetLevel(Region const & region)
+{
+  switch (region.GetPlaceType())
+  {
+  case PlaceType::City:
+  case PlaceType::Town:
+  case PlaceType::Village:
+  case PlaceType::Hamlet:
+    return PlaceLevel::Locality;
+  case PlaceType::Suburb:
+  case PlaceType::Neighbourhood:
+    return PlaceLevel::Suburb;
+  case PlaceType::IsolatedDwelling:
+    return PlaceLevel::Sublocality;
+  case PlaceType::Unknown:
+    break;
+  }
+
+  switch (region.GetAdminLevel())
+  {
+  case AdminLevel::Two:
+    return PlaceLevel::Country;
+  case AdminLevel::Four:
+    return PlaceLevel::Region;
+  case AdminLevel::Six:
+    return PlaceLevel::Subregion;
+  default:
+    break;
+  }
+
+  return PlaceLevel::Unknown;
+}
+
+// static
+size_t RegionsBuilder::GetWeight(Region const & region)
+{
+  switch (region.GetPlaceType())
+  {
+  case PlaceType::City:
+  case PlaceType::Town:
+  case PlaceType::Village:
+  case PlaceType::Hamlet:
+    return 3;
+  case PlaceType::Suburb:
+  case PlaceType::Neighbourhood:
+    return 2;
+  case PlaceType::IsolatedDwelling:
+    return 1;
+  case PlaceType::Unknown:
+    break;
+  }
+
+  switch (region.GetAdminLevel())
+  {
+  case AdminLevel::Two:
+    return 6;
+  case AdminLevel::Four:
+    return 5;
+  case AdminLevel::Six:
+    return 4;
+  default:
+    break;
+  }
+
+  return 0;
 }
 }  // namespace regions
 }  // namespace generator

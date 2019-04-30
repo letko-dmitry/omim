@@ -5,6 +5,7 @@
 #include "map/everywhere_search_callback.hpp"
 #include "map/search_product_info.hpp"
 #include "map/viewport_search_callback.hpp"
+#include "map/viewport_search_params.hpp"
 
 #include "search/downloader_search_callback.hpp"
 #include "search/engine.hpp"
@@ -18,6 +19,7 @@
 #include "geometry/rect2d.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>
@@ -32,7 +34,6 @@ namespace search
 {
 struct BookmarksSearchParams;
 struct EverywhereSearchParams;
-struct ViewportSearchParams;
 struct DiscoverySearchParams;
 }
 
@@ -84,6 +85,11 @@ public:
     {
     }
 
+    virtual void FilterHotels(booking::filter::Tasks const & filterTasks,
+                              std::vector<FeatureID> && featureIds)
+    {
+    }
+
     virtual void OnBookingFilterParamsUpdate(booking::filter::Tasks const & filterTasks) {}
 
     virtual search::ProductInfo GetProductInfo(search::Result const & result) const { return {}; };
@@ -94,6 +100,8 @@ public:
   virtual ~SearchAPI() = default;
 
   void OnViewportChanged(m2::RectD const & viewport);
+
+  void CacheWorldLocalities() { m_engine.CacheWorldLocalities(); }
 
   void LoadCitiesBoundaries() { m_engine.LoadCitiesBoundaries(); }
 
@@ -134,6 +142,8 @@ public:
   search::ProductInfo GetProductInfo(search::Result const & result) const override;
   void FilterResultsForHotelsQuery(booking::filter::Tasks const & filterTasks,
                                    search::Results const & results, bool inViewport) override;
+  void FilterAllHotelsInViewport(m2::RectD const & viewport,
+                                 booking::filter::Tasks const & filterTasks) override;
 
   void OnBookmarksCreated(std::vector<std::pair<kml::MarkId, kml::BookmarkData>> const & marks);
   void OnBookmarksUpdated(std::vector<std::pair<kml::MarkId, kml::BookmarkData>> const & marks);
@@ -169,4 +179,8 @@ private:
 
   m2::RectD m_viewport;
   bool m_isViewportInitialized = false;
+
+  // Viewport search callback should be changed every time when SearchAPI::PokeSearchInViewport
+  // is called and we need viewport search params to construct it.
+  search::ViewportSearchParams m_viewportParams;
 };

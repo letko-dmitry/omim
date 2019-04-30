@@ -19,6 +19,11 @@ namespace base
 {
 json_t * GetJSONObligatoryField(json_t * root, std::string const & field)
 {
+  return GetJSONObligatoryField(root, field.c_str());
+}
+
+json_t * GetJSONObligatoryField(json_t * root, char const * field)
+{
   auto * value = base::GetJSONOptionalField(root, field);
   if (!value)
     MYTHROW(base::Json::Exception, ("Obligatory field", field, "is absent."));
@@ -27,9 +32,14 @@ json_t * GetJSONObligatoryField(json_t * root, std::string const & field)
 
 json_t * GetJSONOptionalField(json_t * root, std::string const & field)
 {
+  return GetJSONOptionalField(root, field.c_str());
+}
+
+json_t * GetJSONOptionalField(json_t * root, char const * field)
+{
   if (!json_is_object(root))
     MYTHROW(base::Json::Exception, ("Bad json object while parsing", field));
-  return json_object_get(root, field.c_str());
+  return json_object_get(root, field);
 }
 
 bool JSONIsNull(json_t * root) { return json_is_null(root); }
@@ -68,6 +78,13 @@ string FromJSONToString(json_t * root)
 
 namespace std
 {
+void FromJSON(json_t * root, std::string_view & result)
+{
+  if (!json_is_string(root))
+    MYTHROW(base::Json::Exception, ("The field must contain a json string."));
+  result = json_string_value(root);
+}
+
 void FromJSON(json_t * root, string & result)
 {
   if (!json_is_string(root))

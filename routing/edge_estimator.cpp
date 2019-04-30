@@ -36,9 +36,11 @@ double TimeBetweenSec(m2::PointD const & from, m2::PointD const & to, double spe
 
 double CalcTrafficFactor(SpeedGroup speedGroup)
 {
-  double constexpr kImpossibleDrivingFactor = 1e4;
   if (speedGroup == SpeedGroup::TempBlock)
+  {
+    double constexpr kImpossibleDrivingFactor = 1e4;
     return kImpossibleDrivingFactor;
+  }
 
   double const percentage =
       0.01 * static_cast<double>(kSpeedGroupThresholdPercentage[static_cast<size_t>(speedGroup)]);
@@ -80,7 +82,7 @@ double CalcClimbSegment(Purpose purpose, Segment const & segment, RoadGeometry c
 {
   Junction const & from = road.GetJunction(segment.GetPointId(false /* front */));
   Junction const & to = road.GetJunction(segment.GetPointId(true /* front */));
-  VehicleModelInterface::SpeedKMpH const & speed = road.GetSpeed(segment.IsForward());
+  SpeedKMpH const & speed = road.GetSpeed(segment.IsForward());
 
   double const distance = MercatorBounds::DistanceOnEarth(from.GetPoint(), to.GetPoint());
   double const speedMpS = KMPH2MPS(purpose == Purpose::Weight ? speed.m_weight : speed.m_eta);
@@ -136,7 +138,6 @@ public:
 
   // EdgeEstimator overrides:
   double GetUTurnPenalty() const override { return 0.0 /* seconds */; }
-  bool LeapIsAllowed(NumMwmId /* mwmId */) const override { return false; }
 
   double CalcSegmentWeight(Segment const & segment, RoadGeometry const & road) const override
   {
@@ -160,7 +161,6 @@ public:
 
   // EdgeEstimator overrides:
   double GetUTurnPenalty() const override { return 20.0 /* seconds */; }
-  bool LeapIsAllowed(NumMwmId /* mwmId */) const override { return false; }
 
   double CalcSegmentWeight(Segment const & segment, RoadGeometry const & road) const override
   {
@@ -184,7 +184,6 @@ public:
   double CalcSegmentWeight(Segment const & segment, RoadGeometry const & road) const override;
   double CalcSegmentETA(Segment const & segment, RoadGeometry const & road) const override;
   double GetUTurnPenalty() const override;
-  bool LeapIsAllowed(NumMwmId mwmId) const override;
 
 private:
   double CalcSegment(Purpose purpose, Segment const & segment, RoadGeometry const & road) const;
@@ -215,16 +214,8 @@ double CarEstimator::GetUTurnPenalty() const
   return 2 * 60;  // seconds
 }
 
-bool CarEstimator::LeapIsAllowed(NumMwmId mwmId) const { return !m_trafficStash->Has(mwmId); }
-
 double CarEstimator::CalcSegment(Purpose purpose, Segment const & segment, RoadGeometry const & road) const
 {
-  // Current time estimation are too optimistic.
-  // Need more accurate tuning: traffic lights, traffic jams, road models and so on.
-  // Add some penalty to make estimation of a more realistic.
-  // TODO: make accurate tuning, remove penalty.
-  double constexpr kTimePenalty = 1.8;
-
   double result = CalcClimbSegment(purpose, segment, road, GetCarClimbPenalty);
 
   if (m_trafficStash)
@@ -234,7 +225,14 @@ double CarEstimator::CalcSegment(Purpose purpose, Segment const & segment, RoadG
     double const trafficFactor = CalcTrafficFactor(speedGroup);
     result *= trafficFactor;
     if (speedGroup != SpeedGroup::Unknown && speedGroup != SpeedGroup::G5)
+    {
+      // Current time estimation are too optimistic.
+      // Need more accurate tuning: traffic lights, traffic jams, road models and so on.
+      // Add some penalty to make estimation of a more realistic.
+      // TODO: make accurate tuning, remove penalty.
+      double constexpr kTimePenalty = 1.8;
       result *= kTimePenalty;
+    }
   }
 
   return result;

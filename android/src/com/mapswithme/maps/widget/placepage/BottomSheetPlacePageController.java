@@ -30,6 +30,7 @@ import com.mapswithme.maps.bookmarks.data.MapObject;
 import com.mapswithme.maps.location.LocationHelper;
 import com.mapswithme.maps.location.LocationListener;
 import com.mapswithme.maps.purchase.AdsRemovalPurchaseControllerProvider;
+import com.mapswithme.maps.bookmarks.data.RoadWarningMarkType;
 import com.mapswithme.util.Graphics;
 import com.mapswithme.util.NetworkPolicy;
 import com.mapswithme.util.UiUtils;
@@ -87,6 +88,8 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
   private final SlideListener mSlideListener;
   @NonNull
   private final GestureDetectorCompat mGestureDetector;
+  @Nullable
+  private final RoutingModeListener mRoutingModeListener;
   @NonNull
   private final AnchorBottomSheetBehavior.BottomSheetCallback mSheetCallback
       = new AnchorBottomSheetBehavior.BottomSheetCallback()
@@ -217,12 +220,14 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
 
   public BottomSheetPlacePageController(@NonNull Activity activity,
                                         @NonNull AdsRemovalPurchaseControllerProvider provider,
-                                        @NonNull SlideListener listener)
+                                        @NonNull SlideListener listener,
+                                        @Nullable RoutingModeListener routingModeListener)
   {
     mActivity = activity;
     mPurchaseControllerProvider = provider;
     mSlideListener = listener;
     mGestureDetector = new GestureDetectorCompat(activity, new PlacePageGestureListener());
+    mRoutingModeListener = routingModeListener;
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -242,6 +247,7 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
     mPlacePage.setOnTouchListener((v, event) -> mGestureDetector.onTouchEvent(event));
     mPlacePage.addOnLayoutChangeListener(this);
     mPlacePage.addClosable(this);
+    mPlacePage.setRoutingModeListener(mRoutingModeListener);
 
     ViewGroup bannerContainer = mPlacePage.findViewById(R.id.banner_container);
     DefaultAdTracker tracker = new DefaultAdTracker();
@@ -277,7 +283,7 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
       mBannerRatio = 0;
       mPlacePage.resetScroll();
 
-      if (object.isExtendedView())
+      if (object.getOpeningMode() == MapObject.OPENING_MODE_DETAILS)
       {
         mPlacePageBehavior.setState(AnchorBottomSheetBehavior.STATE_ANCHORED);
         return;
@@ -296,7 +302,8 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
   private void showBanner(@NonNull MapObject object, NetworkPolicy policy)
   {
     boolean canShowBanner = object.getMapObjectType() != MapObject.MY_POSITION
-                            && policy.сanUseNetwork();
+                            && policy.сanUseNetwork()
+                            && object.getRoadWarningMarkType() == RoadWarningMarkType.UNKNOWN;
     mBannerController.updateData(canShowBanner ? object.getBanners() : null);
   }
 
@@ -438,9 +445,12 @@ public class BottomSheetPlacePageController implements PlacePageController, Loca
       return;
     }
 
-    updateViewPortRect();
-
     mPlacePage.post(this::setPeekHeight);
+
+    if (isHiddenState(mPlacePageBehavior.getState()))
+      return;
+
+    updateViewPortRect();
   }
 
   private void updateViewPortRect()

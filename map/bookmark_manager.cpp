@@ -38,9 +38,9 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
-#include <list>
-#include <memory>
+#include <limits>
 #include <sstream>
+#include <utility>
 
 using namespace std::placeholders;
 
@@ -357,7 +357,7 @@ bool MigrateIfNeeded()
   }
 
   for (auto & f : files)
-    f = base::JoinFoldersToPath(dir, f);
+    f = base::JoinPath(dir, f);
 
   std::string failedStage;
   auto const backupDir = CheckAndCreateBackupFolder();
@@ -501,6 +501,7 @@ BookmarkManager::BookmarkManager(User & user, Callbacks && callbacks)
       std::bind(&BookmarkManager::OnRestoredFilesPrepared, this));
 
   m_bookmarkCloud.SetInvalidTokenHandler([this] { m_user.ResetAccessToken(); });
+  m_bookmarkCatalog.SetInvalidTokenHandler([this] { m_user.ResetAccessToken(); });
 }
 
 BookmarkManager::EditSession BookmarkManager::GetEditSession()
@@ -852,6 +853,30 @@ std::string BookmarkManager::GetCategoryFileName(kml::MarkGroupId categoryId) co
   return category->GetFileName();
 }
 
+m2::RectD BookmarkManager::GetCategoryRect(kml::MarkGroupId categoryId) const
+{
+  CHECK_THREAD_CHECKER(m_threadChecker, ());
+  auto const category = GetBmCategory(categoryId);
+  CHECK(category != nullptr, ());
+
+  m2::RectD rect;
+  if (category->IsEmpty())
+    return rect;
+
+  for (auto markId : category->GetUserMarks())
+  {
+    auto const bookmark = GetBookmark(markId);
+    rect.Add(bookmark->GetPivot());
+  }
+  for (auto trackId : category->GetUserLines())
+  {
+    auto const track = GetTrack(trackId);
+    rect.Add(track->GetLimitRect());
+  }
+
+  return rect;
+}
+
 kml::CategoryData const & BookmarkManager::GetCategoryData(kml::MarkGroupId categoryId) const
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
@@ -871,7 +896,8 @@ kml::MarkGroupId BookmarkManager::GetCategoryId(std::string const & name) const
   return kml::kInvalidMarkGroupId;
 }
 
-UserMark const * BookmarkManager::FindMarkInRect(kml::MarkGroupId groupId, m2::AnyRectD const & rect, double & d) const
+UserMark const * BookmarkManager::FindMarkInRect(kml::MarkGroupId groupId, m2::AnyRectD const & rect,
+                                                 bool findOnlyVisible, double & d) const
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
   auto const * group = GetGroup(groupId);
@@ -883,6 +909,9 @@ UserMark const * BookmarkManager::FindMarkInRect(kml::MarkGroupId groupId, m2::A
     for (auto markId : group->GetUserMarks())
     {
       auto const * mark = GetMark(markId);
+      if (findOnlyVisible && !mark->IsVisible())
+        continue;
+
       if (mark->IsAvailableForSearch() && rect.IsPointInside(mark->GetPivot()))
         f(mark);
     }
@@ -1213,7 +1242,7 @@ boost::optional<std::string> BookmarkManager::GetKMLPath(std::string const & fil
   {
     try
     {
-      ZipFileReader::FileListT files;
+      ZipFileReader::FileList files;
       ZipFileReader::FilesList(filePath, files);
       std::string kmlFileName;
       std::string ext;
@@ -1456,28 +1485,31 @@ class BestUserMarkFinder
 {
 public:
   explicit BestUserMarkFinder(BookmarkManager::TTouchRectHolder const & rectHolder,
+                              BookmarkManager::TFindOnlyVisibleChecker const & findOnlyVisible,
                               BookmarkManager const * manager)
     : m_rectHolder(rectHolder)
-    , m_d(numeric_limits<double>::max())
+    , m_findOnlyVisible(findOnlyVisible)
+    , m_d(std::numeric_limits<double>::max())
     , m_mark(nullptr)
     , m_manager(manager)
   {}
 
-  void operator()(kml::MarkGroupId groupId)
+  bool operator()(kml::MarkGroupId groupId)
   {
-    m2::AnyRectD const & rect = m_rectHolder(BookmarkManager::GetGroupType(groupId));
-    if (UserMark const * p = m_manager->FindMarkInRect(groupId, rect, m_d))
+    auto const groupType = BookmarkManager::GetGroupType(groupId);
+    if (auto const * p = m_manager->FindMarkInRect(groupId, m_rectHolder(groupType), m_findOnlyVisible(groupType), m_d))
     {
-      static double const kEps = 1e-5;
-      if (m_mark == nullptr || !p->GetPivot().EqualDxDy(m_mark->GetPivot(), kEps))
-        m_mark = p;
+      m_mark = p;
+      return true;
     }
+    return false;
   }
 
   UserMark const * GetFoundMark() const { return m_mark; }
 
 private:
-  BookmarkManager::TTouchRectHolder const & m_rectHolder;
+  BookmarkManager::TTouchRectHolder const m_rectHolder;
+  BookmarkManager::TFindOnlyVisibleChecker const m_findOnlyVisible;
   double m_d;
   UserMark const * m_mark;
   BookmarkManager const * m_manager;
@@ -1487,19 +1519,23 @@ private:
 UserMark const * BookmarkManager::FindNearestUserMark(m2::AnyRectD const & rect) const
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
-  return FindNearestUserMark([&rect](UserMark::Type) { return rect; });
+  return FindNearestUserMark([&rect](UserMark::Type) { return rect; }, [](UserMark::Type) { return false; });
 }
 
-UserMark const * BookmarkManager::FindNearestUserMark(TTouchRectHolder const & holder) const
+UserMark const * BookmarkManager::FindNearestUserMark(TTouchRectHolder const & holder,
+                                                      TFindOnlyVisibleChecker const & findOnlyVisible) const
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
-  BestUserMarkFinder finder(holder, this);
-  finder(UserMark::Type::ROUTING);
-  finder(UserMark::Type::SEARCH);
-  finder(UserMark::Type::API);
-  for (auto & pair : m_categories)
-    finder(pair.first);
-
+  BestUserMarkFinder finder(holder, findOnlyVisible, this);
+  auto const hasFound = finder(UserMark::Type::ROUTING) ||
+                        finder(UserMark::Type::ROAD_WARNING) ||
+                        finder(UserMark::Type::SEARCH) ||
+                        finder(UserMark::Type::API);
+  if (!hasFound)
+  {
+    for (auto const & pair : m_categories)
+      finder(pair.first);
+  }
   return finder.GetFoundMark();
 }
 
@@ -1592,7 +1628,7 @@ void BookmarkManager::CreateCategories(KMLDataCollection && dataCollection, bool
     }
     for (auto & trackData : fileData.m_tracksData)
     {
-      auto track = make_unique<Track>(std::move(trackData));
+      auto track = std::make_unique<Track>(std::move(trackData));
       auto * t = AddTrack(std::move(track));
       t->Attach(groupId);
       group->AttachTrack(t->GetId());

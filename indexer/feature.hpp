@@ -7,6 +7,7 @@
 #include "geometry/rect2d.hpp"
 
 #include "base/buffer_vector.hpp"
+#include "base/macros.hpp"
 
 #include <array>
 #include <cstdint>
@@ -23,7 +24,7 @@ class SharedLoadInfo;
 
 namespace osm
 {
-class EditableMapObject;
+class MapObject;
 }
 
 // Lazy feature loader. Loads needed data and caches it.
@@ -33,14 +34,15 @@ public:
   using Buffer = char const *;
   using GeometryOffsets = buffer_vector<uint32_t, feature::DataHeader::MAX_SCALES_COUNT>;
 
-  void Deserialize(feature::SharedLoadInfo const * loadInfo, Buffer buffer);
+  FeatureType(feature::SharedLoadInfo const * loadInfo, Buffer buffer);
+  FeatureType(osm::MapObject const & emo);
 
-  feature::EGeomType GetFeatureType() const;
+  feature::GeomType GetGeomType() const;
   FeatureParamsBase & GetParams() { return m_params; }
 
-  uint8_t GetTypesCount() const { return (m_header & feature::HEADER_TYPE_MASK) + 1; }
+  uint8_t GetTypesCount() const { return (m_header & feature::HEADER_MASK_TYPE) + 1; }
 
-  bool HasName() const { return (m_header & feature::HEADER_HAS_NAME) != 0; }
+  bool HasName() const { return (m_header & feature::HEADER_MASK_HAS_NAME) != 0; }
   StringUtf8Multilang const & GetNames();
 
   m2::PointD GetCenter();
@@ -68,34 +70,10 @@ public:
 
   int8_t GetLayer();
 
-  /// @name Editor methods.
-  //@{
-  /// Apply changes from UI for edited or newly created features.
-  /// Replaces all FeatureType's components.
-  std::vector<m2::PointD> GetTriangesAsPoints(int scale);
-
-  void ReplaceBy(osm::EditableMapObject const & ef);
-
-  void SetNames(StringUtf8Multilang const & newNames);
-  void SetTypes(std::array<uint32_t, feature::kMaxTypesCount> const & types, uint32_t count);
-  void SetMetadata(feature::Metadata const & newMetadata);
-
-  void UpdateHeader(bool commonParsed, bool metadataParsed);
-  bool UpdateMetadataValue(std::string const & key, std::string const & value);
-  void ForEachMetadataItem(
-      bool skipSponsored,
-      std::function<void(std::string const & tag, std::string const & value)> const & fn) const;
-
-  void SetCenter(m2::PointD const &pt);
-  //@}
+  std::vector<m2::PointD> GetTrianglesAsPoints(int scale);
 
   void SetID(FeatureID const & id) { m_id = id; }
   FeatureID const & GetID() const { return m_id; }
-
-  /// @name Parse functions.
-  //@{
-  /// Super-method to call all possible Parse* methods.
-  void ParseEverything();
 
   void ResetGeometry();
   uint32_t ParseGeometry(int scale);
@@ -119,7 +97,7 @@ public:
     if (m_points.empty())
     {
       // it's a point feature
-      if (GetFeatureType() == feature::GEOM_POINT)
+      if (GetGeomType() == feature::GeomType::Point)
         f(m_center);
     }
     else
@@ -157,8 +135,6 @@ public:
   std::string DebugString(int scale);
 
   std::string GetHouseNumber();
-  /// Needed for Editor, to change house numbers in runtime.
-  void SetHouseNumber(std::string const & number);
 
   /// @name Get names for feature.
   /// @param[out] defaultName corresponds to osm tag "name"
@@ -268,4 +244,6 @@ private:
   uint32_t m_ptsSimpMask = 0;
 
   InnerGeomStat m_innerStats;
+
+  DISALLOW_COPY_AND_MOVE(FeatureType);
 };

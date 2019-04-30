@@ -111,7 +111,7 @@ NSString * const kUserDefaultsLatLonAsDMSKey = @"UserDefaultsLatLonAsDMS";
     case taxi::Provider::Uber: provider = kStatUber; break;
     case taxi::Provider::Yandex: provider = kStatYandex; break;
     case taxi::Provider::Maxim: provider = kStatMaxim; break;
-    case taxi::Provider::Rutaxi: provider = kStatRutaxi; break;
+    case taxi::Provider::Rutaxi: provider = kStatVezet; break;
     case taxi::Provider::Count: LOG(LERROR, ("Incorrect taxi provider")); break;
     }
     [Statistics logEvent:kStatPlacepageTaxiShow withParameters:@{ @"provider" : provider }];
@@ -562,6 +562,20 @@ NSString * const kUserDefaultsLatLonAsDMSKey = @"UserDefaultsLatLonAsDMS";
              : nil;
 }
 
+- (NSURL *)sponsoredMoreURL
+{
+  return m_info.IsSponsored()
+             ? [NSURL URLWithString:@(m_info.GetSponsoredMoreUrl().c_str())]
+             : nil;
+}
+
+- (NSURL *)sponsoredReviewURL
+{
+  return m_info.IsSponsored()
+             ? [NSURL URLWithString:@(m_info.GetSponsoredReviewUrl().c_str())]
+             : nil;
+}
+
 - (NSURL *)bookingSearchURL
 {
   auto const & url = m_info.GetBookingSearchUrl();
@@ -792,7 +806,8 @@ NSString * const kUserDefaultsLatLonAsDMSKey = @"UserDefaultsLatLonAsDMS";
 - (BOOL)isMyPosition { return m_info.IsMyPosition(); }
 - (BOOL)isHTMLDescription { return strings::IsHTML(GetPreferredBookmarkStr(m_info.GetBookmarkData().m_description)); }
 - (BOOL)isRoutePoint { return m_info.IsRoutePoint(); }
-- (BOOL)isPreviewExtended { return m_info.IsPreviewExtended(); }
+- (RoadWarningMarkType)roadType { return m_info.GetRoadType(); }
+- (BOOL)isPreviewExtended { return m_info.GetOpeningMode() == place_page::OpeningMode::Details; }
 - (BOOL)isPartnerAppInstalled
 {
   // TODO(): Load list of registered schemas from plist.

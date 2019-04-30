@@ -66,8 +66,9 @@ public:
 }  // namespace
 
 // PreRankerResult ---------------------------------------------------------------------------------
-PreRankerResult::PreRankerResult(FeatureID const & id, PreRankingInfo const & info)
-  : m_id(id), m_info(info)
+PreRankerResult::PreRankerResult(FeatureID const & id, PreRankingInfo const & info,
+                                 vector<ResultTracer::Branch> const & provenance)
+  : m_id(id), m_info(info), m_provenance(provenance)
 {
   ASSERT(m_id.IsValid(), ());
 }
@@ -115,7 +116,7 @@ RankerResult::RankerResult(FeatureType & f, m2::PointD const & center, m2::Point
   , m_types(f)
   , m_str(displayName)
   , m_resultType(ftypes::IsBuildingChecker::Instance()(m_types) ? TYPE_BUILDING : TYPE_FEATURE)
-  , m_geomType(f.GetFeatureType())
+  , m_geomType(f.GetGeomType())
 {
   ASSERT(m_id.IsValid(), ());
   ASSERT(!m_types.Empty(), ());
@@ -145,7 +146,16 @@ bool RankerResult::GetCountryId(storage::CountryInfoGetter const & infoGetter, u
 
 bool RankerResult::IsEqualCommon(RankerResult const & r) const
 {
-  return m_geomType == r.m_geomType && GetBestType() == r.GetBestType() && m_str == r.m_str;
+  if ((m_geomType != r.m_geomType) || (m_str != r.m_str))
+    return false;
+
+  auto const bestType = GetBestType();
+  auto const rBestType = r.GetBestType();
+  if (bestType == rBestType)
+    return true;
+
+  auto const & checker = ftypes::IsWayChecker::Instance();
+  return checker(bestType) && checker(rBestType);
 }
 
 bool RankerResult::IsStreet() const { return ftypes::IsStreetOrSuburbChecker::Instance()(m_types); }
@@ -259,8 +269,12 @@ string DebugPrint(RankerResult const & r)
   stringstream ss;
   ss << "RankerResult ["
      << "Name: " << r.GetName()
-     << "; Type: " << r.GetBestType()
-     << "; " << DebugPrint(r.GetRankingInfo())
+     << "; Type: " << r.GetBestType();
+
+    if (!r.GetProvenance().empty())
+      ss << "; Provenance: " << ::DebugPrint(r.GetProvenance());
+
+     ss << "; " << DebugPrint(r.GetRankingInfo())
      << "; Linear model rank: " << r.GetLinearModelRank()
      << "]";
   return ss.str();

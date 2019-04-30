@@ -60,8 +60,8 @@ drape_ptr<df::UserPointMark::SymbolNameZoomInfo> DebugMarkPoint::GetSymbolNames(
   return symbol;
 }
 
-ColoredDebugMarkPoint::ColoredDebugMarkPoint(m2::PointD const & ptOrg)
-  : UserMark(ptOrg, UserMark::Type::DEBUG_MARK)
+ColoredMarkPoint::ColoredMarkPoint(m2::PointD const & ptOrg)
+  : UserMark(ptOrg, UserMark::Type::COLORED)
 {
   auto const vs = static_cast<float>(df::VisualParams::Instance().GetVisualScale());
 
@@ -71,16 +71,24 @@ ColoredDebugMarkPoint::ColoredDebugMarkPoint(m2::PointD const & ptOrg)
   params.m_radiusInPixels = 7.0f * vs;
   params.m_color = dp::Color::Green();
   m_coloredSymbols.m_needOverlay = false;
-  m_coloredSymbols.m_zoomInfo.insert(make_pair(1, params));
+  m_coloredSymbols.m_zoomInfo.insert(std::make_pair(1, params));
 }
 
-void ColoredDebugMarkPoint::SetColor(dp::Color const & color)
+void ColoredMarkPoint::SetColor(dp::Color const & color)
 {
   SetDirty();
   m_coloredSymbols.m_zoomInfo.begin()->second.m_color = color;
 }
 
-drape_ptr<df::UserPointMark::ColoredSymbolZoomInfo> ColoredDebugMarkPoint::GetColoredSymbols() const
+void ColoredMarkPoint::SetRadius(float radius)
+{
+  SetDirty();
+
+  auto const vs = static_cast<float>(df::VisualParams::Instance().GetVisualScale());
+  m_coloredSymbols.m_zoomInfo.begin()->second.m_radiusInPixels = radius * vs;
+}
+
+drape_ptr<df::UserPointMark::ColoredSymbolZoomInfo> ColoredMarkPoint::GetColoredSymbols() const
 {
   return make_unique_dp<ColoredSymbolZoomInfo>(m_coloredSymbols);
 }
@@ -95,9 +103,11 @@ string DebugPrint(UserMark::Type type)
   case UserMark::Type::BOOKMARK: return "BOOKMARK";
   case UserMark::Type::DEBUG_MARK: return "DEBUG_MARK";
   case UserMark::Type::ROUTING: return "ROUTING";
+  case UserMark::Type::ROAD_WARNING: return "ROAD_WARNING";
   case UserMark::Type::SPEED_CAM: return "SPEED_CAM";
   case UserMark::Type::LOCAL_ADS: return "LOCAL_ADS";
   case UserMark::Type::TRANSIT: return "TRANSIT";
+  case UserMark::Type::COLORED: return "COLORED";
   case UserMark::Type::USER_MARK_TYPES_COUNT: return "USER_MARK_TYPES_COUNT";
   case UserMark::Type::USER_MARK_TYPES_COUNT_MAX: return "USER_MARK_TYPES_COUNT_MAX";
   }

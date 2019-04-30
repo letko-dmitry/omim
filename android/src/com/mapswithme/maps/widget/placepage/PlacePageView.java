@@ -67,6 +67,8 @@ import com.mapswithme.maps.routing.RoutingController;
 import com.mapswithme.maps.search.FilterUtils;
 import com.mapswithme.maps.search.HotelsFilter;
 import com.mapswithme.maps.search.Popularity;
+import com.mapswithme.maps.settings.RoadType;
+import com.mapswithme.maps.bookmarks.data.RoadWarningMarkType;
 import com.mapswithme.maps.taxi.TaxiType;
 import com.mapswithme.maps.ugc.Impress;
 import com.mapswithme.maps.ugc.UGCController;
@@ -311,6 +313,9 @@ public class PlacePageView extends NestedScrollView
   @Nullable
   private Closable mClosable;
 
+  @Nullable
+  private RoutingModeListener mRoutingModeListener;
+
   void setScrollable(boolean scrollable)
   {
     mScrollable = scrollable;
@@ -528,82 +533,43 @@ public class PlacePageView extends NestedScrollView
         switch (item.getType())
         {
           case BOOKMARK:
-            if (mMapObject == null)
-            {
-              LOGGER.e(TAG, "Bookmark cannot be managed, mMapObject is null!");
-              return;
-            }
-
-            Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_BOOKMARK);
-            AlohaHelper.logClick(AlohaHelper.PP_BOOKMARK);
-            toggleIsBookmark(mMapObject);
-            mPlacePageButtonsListener.onBookmarkSet(mBookmarkSet);
+            onBookmarkBtnClicked();
             break;
 
           case SHARE:
-            if (mMapObject == null)
-            {
-              LOGGER.e(TAG, "A map object cannot be shared, it's null!");
-              return;
-            }
-            Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_SHARE);
-            AlohaHelper.logClick(AlohaHelper.PP_SHARE);
-            ShareOption.ANY.shareMapObject(getActivity(), mMapObject, mSponsored);
+            onShareBtnClicked();
             break;
 
           case BACK:
-            if (mMapObject == null)
-            {
-              LOGGER.e(TAG, "A mwm request cannot be handled, mMapObject is null!");
-              getActivity().finish();
-              return;
-            }
-
-            if (ParsedMwmRequest.hasRequest())
-            {
-              ParsedMwmRequest request = ParsedMwmRequest.getCurrentRequest();
-              if (ParsedMwmRequest.isPickPointMode())
-                request.setPointData(mMapObject.getLat(), mMapObject.getLon(), mMapObject.getTitle(), "");
-
-              request.sendResponseAndFinish(getActivity(), true);
-            }
-            else
-              getActivity().finish();
+            onBackBtnClicked();
             break;
 
           case ROUTE_FROM:
-            RoutingController controller = RoutingController.get();
-            if (!controller.isPlanning())
-            {
-              controller.prepare(mMapObject, null);
-              close();
-            }
-            else if (controller.setStartPoint(mMapObject))
-            {
-              close();
-            }
+            onRouteFromBtnClicked();
             break;
 
           case ROUTE_TO:
-            if (RoutingController.get().isPlanning())
-            {
-              RoutingController.get().setEndPoint(mMapObject);
-              close();
-            }
-            else
-            {
-              getActivity().startLocationToPoint(getMapObject(), true);
-            }
+            onRouteToBtnClicked();
             break;
 
           case ROUTE_ADD:
-            if (mMapObject != null)
-              RoutingController.get().addStop(mMapObject);
+            onRouteAddBtnClicked();
             break;
 
           case ROUTE_REMOVE:
-            if (mMapObject != null)
-              RoutingController.get().removeStop(mMapObject);
+            onRouteRemoveBtnClicked();
+            break;
+
+          case ROUTE_AVOID_TOLL:
+            onAvoidTollBtnClicked();
+            break;
+
+          case ROUTE_AVOID_UNPAVED:
+            onAvoidUnpavedBtnClicked();
+            break;
+
+          case ROUTE_AVOID_FERRY:
+            onAvoidFerryBtnClicked();
             break;
 
           case BOOKING:
@@ -625,19 +591,146 @@ public class PlacePageView extends NestedScrollView
             break;
 
           case BOOKING_SEARCH:
-            if (mMapObject != null && !TextUtils.isEmpty(mMapObject.getBookingSearchUrl()))
-            {
-              Statistics.INSTANCE.trackBookingSearchEvent(mMapObject);
-              Utils.openUrl(getContext(), mMapObject.getBookingSearchUrl());
-            }
+            onBookingSearchBtnClicked();
             break;
 
           case CALL:
-            Utils.callPhone(getContext(), mTvPhone.getText().toString());
+            onCallBtnClicked();
             break;
         }
       }
     });
+  }
+
+  private void onBookmarkBtnClicked()
+  {
+    if (mMapObject == null)
+    {
+      LOGGER.e(TAG, "Bookmark cannot be managed, mMapObject is null!");
+      return;
+    }
+
+    Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_BOOKMARK);
+    AlohaHelper.logClick(AlohaHelper.PP_BOOKMARK);
+    toggleIsBookmark(mMapObject);
+    mPlacePageButtonsListener.onBookmarkSet(mBookmarkSet);
+  }
+
+  private void onShareBtnClicked()
+  {
+    if (mMapObject == null)
+    {
+      LOGGER.e(TAG, "A map object cannot be shared, it's null!");
+      return;
+    }
+    Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_SHARE);
+    AlohaHelper.logClick(AlohaHelper.PP_SHARE);
+    ShareOption.ANY.shareMapObject(getActivity(), mMapObject, mSponsored);
+  }
+
+  private void onBackBtnClicked()
+  {
+    if (mMapObject == null)
+    {
+      LOGGER.e(TAG, "A mwm request cannot be handled, mMapObject is null!");
+      getActivity().finish();
+      return;
+    }
+
+    if (ParsedMwmRequest.hasRequest())
+    {
+      ParsedMwmRequest request = ParsedMwmRequest.getCurrentRequest();
+      if (ParsedMwmRequest.isPickPointMode())
+        request.setPointData(mMapObject.getLat(), mMapObject.getLon(), mMapObject.getTitle(), "");
+
+      request.sendResponseAndFinish(getActivity(), true);
+    }
+    else
+      getActivity().finish();
+  }
+
+  private void onRouteFromBtnClicked()
+  {
+    RoutingController controller = RoutingController.get();
+    if (!controller.isPlanning())
+    {
+      controller.prepare(mMapObject, null);
+      close();
+    }
+    else if (controller.setStartPoint(mMapObject))
+    {
+      close();
+    }
+  }
+
+  private void onRouteToBtnClicked()
+  {
+    if (RoutingController.get().isPlanning())
+    {
+      RoutingController.get().setEndPoint(mMapObject);
+      close();
+    }
+    else
+    {
+      getActivity().startLocationToPoint(getMapObject(), true);
+    }
+  }
+
+  private void onRouteAddBtnClicked()
+  {
+    if (mMapObject != null)
+      RoutingController.get().addStop(mMapObject);
+  }
+
+  private void onRouteRemoveBtnClicked()
+  {
+    if (mMapObject != null)
+      RoutingController.get().removeStop(mMapObject);
+  }
+
+  private void onCallBtnClicked()
+  {
+    Utils.callPhone(getContext(), mTvPhone.getText().toString());
+  }
+
+  private void onBookingSearchBtnClicked()
+  {
+    if (mMapObject != null && !TextUtils.isEmpty(mMapObject.getBookingSearchUrl()))
+    {
+      Statistics.INSTANCE.trackBookingSearchEvent(mMapObject);
+      Utils.openUrl(getContext(), mMapObject.getBookingSearchUrl());
+    }
+  }
+
+  public void setRoutingModeListener(@Nullable RoutingModeListener routingModeListener)
+  {
+    mRoutingModeListener = routingModeListener;
+  }
+
+  private void onAvoidUnpavedBtnClicked()
+  {
+    onAvoidBtnClicked(RoadType.Dirty);
+  }
+
+  private void onAvoidFerryBtnClicked()
+  {
+    onAvoidBtnClicked(RoadType.Ferry);
+  }
+
+  private void onAvoidTollBtnClicked()
+  {
+    onAvoidBtnClicked(RoadType.Toll);
+  }
+
+  private void onAvoidBtnClicked(@NonNull RoadType roadType)
+  {
+    if (mRoutingModeListener == null)
+      return;
+
+    mRoutingModeListener.toggleRouteSettings(roadType);
+    Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_DRIVING_OPTIONS_ACTION,
+                                   Statistics.params().add(Statistics.EventParam.TYPE,
+                                                                         roadType.name()));
   }
 
   private void initPlaceDescriptionView()
@@ -900,7 +993,7 @@ public class PlacePageView extends NestedScrollView
 //  TODO go to selected object on map
   }
 
-  private void onSponsoredClick(final boolean book, final boolean isMoreDetails)
+  private void onSponsoredClick(final boolean book, final boolean isDetails)
   {
     Utils.checkConnection(
         getActivity(), R.string.common_check_internet_connection_dialog, new Utils.Proc<Boolean>()
@@ -930,7 +1023,7 @@ public class PlacePageView extends NestedScrollView
                 }
                 else
                 {
-                  String event = isMoreDetails ? PP_SPONSORED_DETAILS : PP_HOTEL_DESCRIPTION_LAND;
+                  String event = isDetails ? PP_SPONSORED_DETAILS : PP_HOTEL_DESCRIPTION_LAND;
                   Statistics.INSTANCE.trackHotelEvent(event, info, mMapObject);
                 }
                 break;
@@ -957,7 +1050,11 @@ public class PlacePageView extends NestedScrollView
               }
               else
               {
-                Utils.openUrl(getContext(), book ? info.getUrl() : info.getDescriptionUrl());
+                if (book)
+                  Utils.openUrl(getContext(), info.getUrl());
+                else
+                  Utils.openUrl(getContext(), isDetails ? info.getDescriptionUrl()
+                                                            : info.getMoreUrl());
               }
             }
             catch (ActivityNotFoundException e)
@@ -1286,7 +1383,8 @@ public class PlacePageView extends NestedScrollView
 
     boolean showTaxiOffer = taxiTypes != null && !taxiTypes.isEmpty() &&
                             LocationHelper.INSTANCE.getMyPosition() != null &&
-                            ConnectionState.isConnected();
+                            ConnectionState.isConnected()
+                            && mapObject.getRoadWarningMarkType() == RoadWarningMarkType.UNKNOWN;
     UiUtils.showIf(showTaxiOffer, mTaxi, mTaxiShadow, mTaxiDivider);
 
     if (!showTaxiOffer)
@@ -1441,9 +1539,35 @@ public class PlacePageView extends NestedScrollView
     }
   }
 
+  @NonNull
+  private static PlacePageButtons.Item toPlacePageButton(@NonNull RoadWarningMarkType type)
+  {
+    switch (type)
+    {
+      case DIRTY:
+        return PlacePageButtons.Item.ROUTE_AVOID_UNPAVED;
+      case FERRY:
+        return PlacePageButtons.Item.ROUTE_AVOID_FERRY;
+      case TOLL:
+        return PlacePageButtons.Item.ROUTE_AVOID_TOLL;
+      default:
+        throw new AssertionError("Unsupported road warning type: " + type);
+    }
+  }
+
   private void setButtons(@NonNull MapObject mapObject, boolean showBackButton, boolean showRoutingButton)
   {
     List<PlacePageButtons.PlacePageButton> buttons = new ArrayList<>();
+
+    if (mapObject.getRoadWarningMarkType() != RoadWarningMarkType.UNKNOWN)
+    {
+      RoadWarningMarkType markType = mapObject.getRoadWarningMarkType();
+      PlacePageButtons.Item roadType = toPlacePageButton(markType);
+      buttons.add(roadType);
+      mButtons.setItems(buttons);
+      return;
+    }
+
     if (RoutingController.get().isRoutePoint(mapObject))
     {
       buttons.add(PlacePageButtons.Item.ROUTE_REMOVE);

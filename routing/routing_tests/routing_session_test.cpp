@@ -13,6 +13,7 @@
 #include "base/logging.hpp"
 
 #include <chrono>
+#include <initializer_list>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -87,6 +88,37 @@ private:
   bool m_flag;
 };
 
+/// \brief This class is developed to test callback on RoutingSession::m_state changing.
+/// An new instance of the class should be constructed for every new test.
+class SessionStateTest
+{
+public:
+  SessionStateTest(initializer_list<SessionState> expectedStates, RoutingSession & routingSession)
+    : m_expectedStates(expectedStates), m_session(routingSession)
+  {
+    m_session.SetChangeSessionStateCallback([this](SessionState previous, SessionState current) {
+      TestChangeSessionStateCallbackCall(previous, current);
+    });
+  }
+
+  ~SessionStateTest() { m_session.SetChangeSessionStateCallback(nullptr); }
+
+private:
+  void TestChangeSessionStateCallbackCall(SessionState previous, SessionState current)
+  {
+    TEST_LESS(m_numberOfTestCalls + 1, m_expectedStates.size(),
+              ("Too many calls of the method. previous:", previous, ", current:", current));
+    TEST_EQUAL(previous, m_expectedStates[m_numberOfTestCalls], (previous, current));
+    TEST_EQUAL(current, m_expectedStates[m_numberOfTestCalls + 1], (previous, current));
+
+    ++m_numberOfTestCalls;
+  }
+
+  size_t m_numberOfTestCalls = 0;
+  vector<SessionState> const m_expectedStates;
+  RoutingSession & m_session;
+};
+
 void FillSubroutesInfo(Route & route)
 {
   vector<Junction> junctions;
@@ -125,7 +157,7 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestRouteBuilding)
     m_session->BuildRoute(Checkpoints(kTestRoute.front(), kTestRoute.back()), 0);
   });
 
-  // Manual check of the routeBuilded mutex to avoid spurious results.
+  // Manual check of the routeBuilding mutex to avoid spurious results.
   TEST(timedSignal.WaitUntil(steady_clock::now() + kRouteBuildingMaxDuration), ("Route was not built."));
   TEST_EQUAL(counter, 1, ());
 }
@@ -164,12 +196,17 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestRouteRebuildingMovingA
     info.m_verticalAccuracy = 0.01;
     info.m_longitude = 0.;
     info.m_latitude = 1.;
-    RoutingSession::State code;
-    while (info.m_latitude < kTestRoute.back().y)
+    SessionState code = SessionState::RoutingNotActive;
+
     {
-      code = m_session->OnLocationPositionChanged(info);
-      TEST_EQUAL(code, RoutingSession::State::OnRoute, ());
-      info.m_latitude += 0.01;
+      SessionStateTest sessionStateTest({SessionState::RouteNotStarted, SessionState::OnRoute},
+                                        *m_session);
+      while (info.m_latitude < kTestRoute.back().y)
+      {
+        code = m_session->OnLocationPositionChanged(info);
+        TEST_EQUAL(code, SessionState::OnRoute, ());
+        info.m_latitude += 0.01;
+      }
     }
 
     // Rebuild route and go in opposite direction. So initiate a route rebuilding flag.
@@ -177,7 +214,13 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestRouteRebuildingMovingA
         [&oppositeTimedSignal](Route const &, RouterResultCode) { oppositeTimedSignal.Signal(); },
         nullptr /* rebuildReadyCallback */, nullptr /* needMoreMapsCallback */,
         nullptr /* removeRouteCallback */);
-    m_session->BuildRoute(Checkpoints(kTestRoute.front(), kTestRoute.back()), 0);
+    {
+      SessionStateTest sessionStateTest(
+          {SessionState::OnRoute, SessionState::RoutingNotActive, SessionState::RouteBuilding},
+          *m_session);
+
+      m_session->BuildRoute(Checkpoints(kTestRoute.front(), kTestRoute.back()), 0);
+    }
   });
   TEST(oppositeTimedSignal.WaitUntil(steady_clock::now() + kRouteBuildingMaxDuration), ("Route was not built."));
 
@@ -186,13 +229,13 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestRouteRebuildingMovingA
   GetPlatform().RunTask(Platform::Thread::Gui, [&checkTimedSignal, &info, this]() {
     info.m_longitude = 0.;
     info.m_latitude = 1.;
-    RoutingSession::State code = RoutingSession::State::RoutingNotActive;
+    SessionState code = SessionState::RoutingNotActive;
     for (size_t i = 0; i < 10; ++i)
     {
       code = m_session->OnLocationPositionChanged(info);
       info.m_latitude -= 0.1;
     }
-    TEST_EQUAL(code, RoutingSession::State::RouteNeedRebuild, ());
+    TEST_EQUAL(code, SessionState::RouteNeedRebuild, ());
     checkTimedSignal.Signal();
   });
   TEST(checkTimedSignal.WaitUntil(steady_clock::now() + kRouteBuildingMaxDuration),
@@ -231,13 +274,18 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestRouteRebuildingMovingT
   GetPlatform().RunTask(Platform::Thread::Gui, [&checkTimedSignalAway, &info, this]() {
     info.m_longitude = 0.0;
     info.m_latitude = 0.0;
-    RoutingSession::State code = RoutingSession::State::RoutingNotActive;
-    for (size_t i = 0; i < 8; ++i)
+    SessionState code = SessionState::RoutingNotActive;
     {
-      code = m_session->OnLocationPositionChanged(info);
-      info.m_latitude += 0.1;
+      SessionStateTest sessionStateTest(
+          {SessionState::RouteNotStarted, SessionState::RouteNeedRebuild},
+          *m_session);
+      for (size_t i = 0; i < 8; ++i)
+      {
+        code = m_session->OnLocationPositionChanged(info);
+        info.m_latitude += 0.1;
+      }
     }
-    TEST_EQUAL(code, RoutingSession::State::RouteNeedRebuild, ());
+    TEST_EQUAL(code, SessionState::RouteNeedRebuild, ());
     checkTimedSignalAway.Signal();
   });
   TEST(checkTimedSignalAway.WaitUntil(steady_clock::now() + kRouteBuildingMaxDuration),
@@ -304,20 +352,20 @@ UNIT_CLASS_TEST(AsyncGuiThreadTestWithRoutingSession, TestFollowRouteFlagPersist
     TEST(m_session->IsFollowing(), ());
     info.m_longitude = 0.;
     info.m_latitude = 1.;
-    RoutingSession::State code;
+    SessionState code = SessionState::RoutingNotActive;
     for (size_t i = 0; i < 10; ++i)
     {
       code = m_session->OnLocationPositionChanged(info);
       info.m_latitude -= 0.1;
     }
-    TEST_EQUAL(code, RoutingSession::State::RouteNeedRebuild, ());
+    TEST_EQUAL(code, SessionState::RouteNeedRebuild, ());
     TEST(m_session->IsFollowing(), ());
 
     m_session->RebuildRoute(
         kTestRoute.front(),
         [&rebuildTimedSignal](Route const &, RouterResultCode) { rebuildTimedSignal.Signal(); },
         nullptr /* needMoreMapsCallback */, nullptr /* removeRouteCallback */, 0,
-        RoutingSession::State::RouteBuilding, false /* adjust */);
+        SessionState::RouteBuilding, false /* adjust */);
   });
   TEST(rebuildTimedSignal.WaitUntil(steady_clock::now() + kRouteBuildingMaxDuration), ("Route was not built."));
 

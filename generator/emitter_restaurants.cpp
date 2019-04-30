@@ -10,7 +10,7 @@ EmitterRestaurants::EmitterRestaurants(std::vector<FeatureBuilder1> & features)
 {
 }
 
-void EmitterRestaurants::operator()(FeatureBuilder1 & fb)
+void EmitterRestaurants::Process(FeatureBuilder1 & fb)
 {
   if (!ftypes::IsEatChecker::Instance()(fb.GetParams().m_types) || fb.GetParams().name.IsEmpty())
   {
@@ -20,8 +20,8 @@ void EmitterRestaurants::operator()(FeatureBuilder1 & fb)
 
   switch (fb.GetGeomType())
   {
-  case feature::GEOM_POINT: ++m_stats.m_restaurantsPoi; break;
-  case feature::GEOM_AREA: ++m_stats.m_restaurantsBuilding; break;
+  case feature::GeomType::Point: ++m_stats.m_restaurantsPoi; break;
+  case feature::GeomType::Area: ++m_stats.m_restaurantsBuilding; break;
   default: ++m_stats.m_unexpectedFeatures;
   }
   m_features.emplace_back(fb);

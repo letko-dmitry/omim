@@ -49,6 +49,7 @@ public:
                                                         uint32_t maxTagsCount)>;
   using CustomProperties = std::vector<CustomProperty>;
   using CustomPropertiesCallback = platform::SafeCallback<void(bool success, CustomProperties const &)>;
+  using InvalidTokenHandler = std::function<void()>;
 
   void RegisterByServerId(std::string const & id);
   void UnregisterByServerId(std::string const & id);
@@ -112,7 +113,11 @@ public:
               UploadSuccessCallback && uploadSuccessCallback,
               UploadErrorCallback && uploadErrorCallback);
 
+  // Handler can be called from non-UI thread.
+  void SetInvalidTokenHandler(InvalidTokenHandler && onInvalidToken);
+
 private:
   std::set<std::string> m_downloadingIds;
   std::set<std::string> m_registeredInCatalog;
+  InvalidTokenHandler m_onInvalidToken;
 };

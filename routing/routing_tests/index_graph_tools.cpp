@@ -9,6 +9,7 @@
 #include "routing_common/car_model.hpp"
 
 #include "base/assert.hpp"
+#include "base/math.hpp"
 
 #include <unordered_map>
 
@@ -19,6 +20,33 @@ using namespace routing;
 namespace
 {
 double constexpr kEpsilon = 1e-6;
+
+class WorldGraphForAStar : public AStarGraph<Segment, SegmentEdge, RouteWeight>
+{
+public:
+
+  explicit WorldGraphForAStar(WorldGraph & graph) : m_graph(graph) {}
+
+  Weight HeuristicCostEstimate(Vertex const & from, Vertex const & to) override
+  {
+    return m_graph.HeuristicCostEstimate(from, to);
+  }
+
+  void GetOutgoingEdgesList(Vertex const & v, std::vector<Edge> & edges) override
+  {
+    m_graph.GetOutgoingEdgesList(v, edges);
+  }
+
+  void GetIngoingEdgesList(Vertex const & v, std::vector<Edge> & edges) override
+  {
+    m_graph.GetIngoingEdgesList(v, edges);
+  }
+
+  ~WorldGraphForAStar() override = default;
+
+private:
+  WorldGraph & m_graph;
+};
 
 template <typename Graph>
 Graph & GetGraph(unordered_map<NumMwmId, unique_ptr<Graph>> const & graphs, NumMwmId mwmId)
@@ -116,8 +144,6 @@ double WeightedEdgeEstimator::CalcSegmentWeight(Segment const & segment,
 
 double WeightedEdgeEstimator::GetUTurnPenalty() const { return 0.0; }
 
-bool WeightedEdgeEstimator::LeapIsAllowed(NumMwmId /* mwmId */) const { return false; }
-
 // TestIndexGraphTopology --------------------------------------------------------------------------
 TestIndexGraphTopology::TestIndexGraphTopology(uint32_t numVertices) : m_numVertices(numVertices) {}
 
@@ -158,6 +184,8 @@ void TestIndexGraphTopology::SetVertexAccess(Vertex v, RoadAccess::Type type)
   CHECK(found, ("Cannot set access for vertex that is not in the graph", v));
 }
 
+using AlgorithmForWorldGraph = AStarAlgorithm<Segment, SegmentEdge, RouteWeight>;
+
 bool TestIndexGraphTopology::FindPath(Vertex start, Vertex finish, double & pathWeight,
                                       vector<Edge> & pathEdges) const
 {
@@ -193,11 +221,13 @@ bool TestIndexGraphTopology::FindPath(Vertex start, Vertex finish, double & path
   auto const worldGraph = builder.PrepareIndexGraph();
   CHECK(worldGraph != nullptr, ());
 
-  AStarAlgorithm<WorldGraph> algorithm;
+  AlgorithmForWorldGraph algorithm;
 
-  AStarAlgorithm<WorldGraph>::ParamsForTests params(*worldGraph, startSegment, finishSegment,
-                                                    nullptr /* prevRoute */,
-                                                    {} /* checkLengthCallback */);
+  WorldGraphForAStar graphForAStar(*worldGraph);
+
+  AlgorithmForWorldGraph::ParamsForTests params(graphForAStar, startSegment, finishSegment,
+                                                nullptr /* prevRoute */,
+                                                {} /* checkLengthCallback */);
   RoutingResult<Segment, RouteWeight> routingResult;
   auto const resultCode = algorithm.FindPathBidirectional(params, routingResult);
 
@@ -211,10 +241,10 @@ bool TestIndexGraphTopology::FindPath(Vertex start, Vertex finish, double & path
           ("Distances differ:", routingResult.m_distance, unidirectionalRoutingResult.m_distance));
   }
 
-  if (resultCode == AStarAlgorithm<WorldGraph>::Result::NoPath)
+  if (resultCode == AlgorithmForWorldGraph::Result::NoPath)
     return false;
-  CHECK_EQUAL(resultCode, AStarAlgorithm<WorldGraph>::Result::OK, ());
 
+  CHECK_EQUAL(resultCode, AlgorithmForWorldGraph::Result::OK, ());
   CHECK_GREATER_OR_EQUAL(routingResult.m_path.size(), 2, ());
   CHECK_EQUAL(routingResult.m_path.front(), startSegment, ());
   CHECK_EQUAL(routingResult.m_path.back(), finishSegment, ());
@@ -380,14 +410,13 @@ shared_ptr<EdgeEstimator> CreateEstimatorForCar(shared_ptr<TrafficStash> traffic
   return EdgeEstimator::Create(VehicleType::Car, *carModel, trafficStash);
 }
 
-AStarAlgorithm<IndexGraphStarter>::Result CalculateRoute(IndexGraphStarter & starter,
-                                                         vector<Segment> & roadPoints,
-                                                         double & timeSec)
+AlgorithmForWorldGraph::Result CalculateRoute(IndexGraphStarter & starter, vector<Segment> & roadPoints,
+                                              double & timeSec)
 {
-  AStarAlgorithm<IndexGraphStarter> algorithm;
+  AlgorithmForWorldGraph algorithm;
   RoutingResult<Segment, RouteWeight> routingResult;
 
-  AStarAlgorithm<IndexGraphStarter>::ParamsForTests params(
+  AlgorithmForWorldGraph::ParamsForTests params(
       starter, starter.GetStartSegment(), starter.GetFinishSegment(), nullptr /* prevRoute */,
       [&](RouteWeight const & weight) { return starter.CheckLength(weight); });
 
@@ -399,7 +428,7 @@ AStarAlgorithm<IndexGraphStarter>::Result CalculateRoute(IndexGraphStarter & sta
 }
 
 void TestRouteGeometry(IndexGraphStarter & starter,
-                       AStarAlgorithm<IndexGraphStarter>::Result expectedRouteResult,
+                       AlgorithmForWorldGraph::Result expectedRouteResult,
                        vector<m2::PointD> const & expectedRouteGeom)
 {
   vector<Segment> routeSegs;
@@ -408,7 +437,7 @@ void TestRouteGeometry(IndexGraphStarter & starter,
 
   TEST_EQUAL(resultCode, expectedRouteResult, ());
 
-  if (AStarAlgorithm<IndexGraphStarter>::Result::NoPath == expectedRouteResult &&
+  if (AlgorithmForWorldGraph::Result::NoPath == expectedRouteResult &&
       expectedRouteGeom.empty())
   {
     // The route goes through a restriction. So there's no choice for building route
@@ -416,7 +445,7 @@ void TestRouteGeometry(IndexGraphStarter & starter,
     return;
   }
 
-  if (resultCode != AStarAlgorithm<IndexGraphStarter>::Result::OK)
+  if (resultCode != AlgorithmForWorldGraph::Result::OK)
     return;
 
   CHECK(!routeSegs.empty(), ());
@@ -427,20 +456,26 @@ void TestRouteGeometry(IndexGraphStarter & starter,
       geom.push_back(point);
   };
 
-  for (size_t i = 0; i < routeSegs.size(); ++i)
+  for (auto const & routeSeg : routeSegs)
   {
-    m2::PointD const & pnt = starter.GetPoint(routeSegs[i], false /* front */);
+    m2::PointD const & pnt = starter.GetPoint(routeSeg, false /* front */);
     // Note. In case of A* router all internal points of route are duplicated.
     // So it's necessary to exclude the duplicates.
     pushPoint(pnt);
   }
 
   pushPoint(starter.GetPoint(routeSegs.back(), false /* front */));
-  TEST_EQUAL(geom, expectedRouteGeom, ());
+  TEST_EQUAL(geom.size(), expectedRouteGeom.size(), ("geom:", geom, "expectedRouteGeom:", expectedRouteGeom));
+  for (size_t i = 0; i < geom.size(); ++i)
+  {
+    static double constexpr kEps = 1e-8;
+    TEST(base::AlmostEqualAbs(geom[i], expectedRouteGeom[i], kEps),
+         ("geom:", geom, "expectedRouteGeom:", expectedRouteGeom));
+  }
 }
 
 void TestRestrictions(vector<m2::PointD> const & expectedRouteGeom,
-                      AStarAlgorithm<IndexGraphStarter>::Result expectedRouteResult,
+                      AlgorithmForWorldGraph::Result expectedRouteResult,
                       FakeEnding const & start, FakeEnding const & finish,
                       RestrictionVec && restrictions, RestrictionTest & restrictionTest)
 {

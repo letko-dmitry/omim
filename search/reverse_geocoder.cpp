@@ -1,9 +1,10 @@
-#include "reverse_geocoder.hpp"
+#include "search/reverse_geocoder.hpp"
 
 #include "search/mwm_context.hpp"
 
-#include "indexer/data_source.hpp"
+#include "editor/osm_editor.hpp"
 
+#include "indexer/data_source.hpp"
 #include "indexer/fake_feature_ids.hpp"
 #include "indexer/feature.hpp"
 #include "indexer/feature_algo.hpp"
@@ -42,7 +43,7 @@ void AddStreet(FeatureType & ft, m2::PointD const & center, bool includeSquaresA
                vector<ReverseGeocoder::Street> & streets)
 {
   bool const addAsStreet =
-      ft.GetFeatureType() == feature::GEOM_LINE && ftypes::IsWayChecker::Instance()(ft);
+      ft.GetGeomType() == feature::GeomType::Line && ftypes::IsWayChecker::Instance()(ft);
   bool const isSquareOrSuburb =
       ftypes::IsSquareChecker::Instance()(ft) || ftypes::IsSuburbChecker::Instance()(ft);
   bool const addAsSquareOrSuburb = includeSquaresAndSuburbs && isSquareOrSuburb;
@@ -184,11 +185,15 @@ string ReverseGeocoder::GetFeatureStreetName(FeatureType & ft) const
   return addr.m_street.m_name;
 }
 
-string ReverseGeocoder::GetOriginalFeatureStreetName(FeatureType & ft) const
+string ReverseGeocoder::GetOriginalFeatureStreetName(FeatureID const & fid) const
 {
   Address addr;
   HouseTable table(m_dataSource);
-  GetNearbyAddress(table, FromFeature(ft, 0.0 /* distMeters */), true /* ignoreEdits */, addr);
+  Building bld;
+
+  m_dataSource.ReadFeature([&](FeatureType & ft) { bld = FromFeature(ft, 0.0 /* distMeters */); },
+                           fid);
+  GetNearbyAddress(table, bld, true /* ignoreEdits */, addr);
   return addr.m_street.m_name;
 }
 
@@ -236,6 +241,13 @@ bool ReverseGeocoder::GetExactAddress(FeatureType & ft, Address & addr) const
   HouseTable table(m_dataSource);
   return GetNearbyAddress(table, FromFeature(ft, 0.0 /* distMeters */), false /* ignoreEdits */,
                           addr);
+}
+
+bool ReverseGeocoder::GetExactAddress(FeatureID const & fid, Address & addr) const
+{
+  bool res;
+  m_dataSource.ReadFeature([&](FeatureType & ft) { res = GetExactAddress(ft, addr); }, fid);
+  return res;
 }
 
 bool ReverseGeocoder::GetNearbyAddress(HouseTable & table, Building const & bld, bool ignoreEdits,

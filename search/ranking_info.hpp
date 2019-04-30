@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <ostream>
 #include <string>
+#include <utility>
 
 class FeatureType;
 
@@ -17,6 +18,16 @@ struct RankingInfo
 {
   static double const kMaxDistMeters;
 
+  static void PrintCSVHeader(std::ostream & os);
+
+  void ToCSV(std::ostream & os) const;
+
+  // Returns rank calculated by a linear model. Large values
+  // correspond to important features.
+  double GetLinearModelRank() const;
+
+  size_t GetErrorsMade() const;
+
   // Distance from the feature to the pivot point.
   double m_distanceToPivot = kMaxDistMeters;
 
@@ -25,6 +36,9 @@ struct RankingInfo
 
   // Popularity rank of the feature.
   uint8_t m_popularity = 0;
+
+  // Confidence and UGC rating.
+  std::pair<uint8_t, float> m_rating = {0, 0.0f};
 
   // Score for the feature's name.
   NameScore m_nameScore = NAME_SCORE_ZERO;
@@ -53,16 +67,6 @@ struct RankingInfo
 
   // True iff the feature has a name.
   bool m_hasName = false;
-
-  static void PrintCSVHeader(std::ostream & os);
-
-  void ToCSV(std::ostream & os) const;
-
-  // Returns rank calculated by a linear model. Large values
-  // correspond to important features.
-  double GetLinearModelRank() const;
-
-  size_t GetErrorsMade() const;
 };
 
 std::string DebugPrint(RankingInfo const & info);

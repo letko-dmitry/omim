@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.SkuDetails;
@@ -79,10 +80,12 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
       Bundle savedInstanceState)
   {
-    mPurchaseController = PurchaseFactory.createBookmarkPurchaseController(getContext(),
+    mPurchaseController = PurchaseFactory.createBookmarkPurchaseController(requireContext(),
                                                                            mPaymentData.getProductId(),
                                                                            mPaymentData.getServerId());
-    mPurchaseController.initialize(getActivity());
+    if (savedInstanceState != null)
+      mPurchaseController.onRestore(savedInstanceState);
+    mPurchaseController.initialize(requireActivity());
     View root = inflater.inflate(R.layout.fragment_bookmark_payment, container, false);
     TextView buyButton = root.findViewById(R.id.buy_btn);
     buyButton.setOnClickListener(v -> onBuyClicked());
@@ -104,12 +107,18 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
   {
     Statistics.INSTANCE.trackPurchaseEvent(Statistics.EventName.INAPP_PURCHASE_PREVIEW_CANCEL,
                                            mPaymentData.getServerId());
-    getActivity().finish();
+    requireActivity().finish();
   }
 
   @Override
   public boolean onBackPressed()
   {
+    if (mState == BookmarkPaymentState.VALIDATION)
+    {
+      Toast.makeText(requireContext(), R.string.purchase_please_wait_toast, Toast.LENGTH_SHORT).show();
+      return true;
+    }
+
     Statistics.INSTANCE.trackPurchaseEvent(Statistics.EventName.INAPP_PURCHASE_PREVIEW_CANCEL,
                                            mPaymentData.getServerId());
     return super.onBackPressed();
@@ -166,7 +175,7 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
   public void onStart()
   {
     super.onStart();
-    PurchaseOperationObservable observable = PurchaseOperationObservable.from(getContext());
+    PurchaseOperationObservable observable = PurchaseOperationObservable.from(requireContext());
     observable.addTransactionObserver(mPurchaseCallback);
     mPurchaseController.addCallback(mPurchaseCallback);
     mPurchaseCallback.attach(this);
@@ -176,7 +185,7 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
   public void onStop()
   {
     super.onStop();
-    PurchaseOperationObservable observable = PurchaseOperationObservable.from(getContext());
+    PurchaseOperationObservable observable = PurchaseOperationObservable.from(requireContext());
     observable.removeTransactionObserver(mPurchaseCallback);
     mPurchaseController.removeCallback();
     mPurchaseCallback.detach();
@@ -189,6 +198,7 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
     LOGGER.d(TAG, "onSaveInstanceState");
     outState.putInt(EXTRA_CURRENT_STATE, mState.ordinal());
     outState.putParcelable(EXTRA_PRODUCT_DETAILS, mProductDetails);
+    mPurchaseController.onSave(outState);
   }
 
   @Override
@@ -259,7 +269,7 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
     switch (requestCode)
     {
       case REQ_CODE_PRODUCT_DETAILS_FAILURE:
-        getActivity().finish();
+        requireActivity().finish();
         break;
       case REQ_CODE_START_TRANSACTION_FAILURE:
       case REQ_CODE_PAYMENT_FAILURE:
@@ -283,8 +293,9 @@ public class BookmarkPaymentFragment extends BaseMwmFragment
   public void finishValidation()
   {
     if (mValidationResult)
-      getActivity().setResult(Activity.RESULT_OK);
-    getActivity().finish();
+      requireActivity().setResult(Activity.RESULT_OK);
+
+    requireActivity().finish();
   }
 
   private static class BookmarkPurchaseCallback

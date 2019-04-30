@@ -5,10 +5,14 @@
 #include "base/exception.hpp"
 #include "base/string_utils.hpp"
 
+#include "std/string_view.hpp"
+
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 #include "3party/jansson/src/jansson.h"
 
@@ -35,8 +39,8 @@ public:
   DECLARE_EXCEPTION(Exception, RootException);
 
   Json() = default;
-  explicit Json(std::string const & s) { ParseFrom(s); }
-  explicit Json(char const * s) { ParseFrom(s); }
+  explicit Json(std::string_view const & s) { ParseFrom(s); }
+  explicit Json(JSONPtr && json) { m_handle.AttachNew(json.release()); }
 
   Json GetDeepCopy() const
   {
@@ -44,11 +48,10 @@ public:
     copy.m_handle.AttachNew(get_deep_copy());
     return copy;
   }
-  void ParseFrom(std::string const & s) { ParseFrom(s.c_str()); }
-  void ParseFrom(char const * s)
+  void ParseFrom(std::string_view const & s)
   {
     json_error_t jsonError;
-    m_handle.AttachNew(json_loads(s, 0, &jsonError));
+    m_handle.AttachNew(json_loadb(s.data(), s.size(), 0, &jsonError));
     if (!m_handle)
       MYTHROW(Exception, (jsonError.line, jsonError.text));
   }
@@ -61,9 +64,19 @@ private:
 };
 
 json_t * GetJSONObligatoryField(json_t * root, std::string const & field);
+json_t * GetJSONObligatoryField(json_t * root, char const * field);
 json_t * GetJSONOptionalField(json_t * root, std::string const & field);
+json_t * GetJSONOptionalField(json_t * root, char const * field);
 bool JSONIsNull(json_t * root);
 }  // namespace base
+
+template <typename T>
+T FromJSON(json_t * root)
+{
+  T result{};
+  FromJSON(root, result);
+  return result;
+}
 
 inline void FromJSON(json_t * root, json_t *& value) { value = root; }
 
@@ -93,6 +106,18 @@ void FromJSONObject(json_t * root, std::string const & field, T & result)
   {
     MYTHROW(base::Json::Exception, ("An error occured while parsing field", field, e.Msg()));
   }
+}
+
+template <typename T>
+boost::optional<T> FromJSONObjectOptional(json_t * root, char const * field)
+{
+  auto * json = base::GetJSONOptionalField(root, field);
+  if (!json)
+    return {};
+
+  boost::optional<T> result{T{}};
+  FromJSON(json, *result);
+  return result;
 }
 
 template <typename T>
@@ -247,6 +272,7 @@ struct JSONFreeDeleter
 
 namespace std
 {
+void FromJSON(json_t * root, std::string_view & result);
 void FromJSON(json_t * root, std::string & result);
 inline base::JSONPtr ToJSON(std::string const & s) { return base::NewJSONString(s); }
 }  // namespace std

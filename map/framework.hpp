@@ -41,11 +41,12 @@
 #include "editor/new_feature_categories.hpp"
 #include "editor/user_stats.hpp"
 
+#include "indexer/caching_rank_table_loader.hpp"
 #include "indexer/data_header.hpp"
 #include "indexer/data_source.hpp"
 #include "indexer/data_source_helpers.hpp"
+#include "indexer/map_object.hpp"
 #include "indexer/map_style.hpp"
-#include "indexer/popularity_loader.hpp"
 
 #include "search/city_finder.hpp"
 #include "search/displayed_categories.hpp"
@@ -81,6 +82,7 @@
 #include "base/strings_bundle.hpp"
 #include "base/thread_checker.hpp"
 
+#include "std/cstdint.hpp"
 #include "std/function.hpp"
 #include "std/list.hpp"
 #include "std/set.hpp"
@@ -196,6 +198,10 @@ protected:
 
   LocalAdsManager m_localAdsManager;
 
+  // The order matters here: ugc::Api should be destroyed after
+  // SearchAPI and notifications::NotificationManager.
+  unique_ptr<ugc::Api> m_ugcApi;
+
   unique_ptr<SearchAPI> m_searchAPI;
 
   search::QuerySaver m_searchQuerySaver;
@@ -203,8 +209,8 @@ protected:
   ScreenBase m_currentModelView;
   m2::RectD m_visibleViewport;
 
-  using TViewportChanged = df::DrapeEngine::TModelViewListenerFn;
-  TViewportChanged m_viewportChanged;
+  using TViewportChangedFn = df::DrapeEngine::TModelViewListenerFn;
+  TViewportChangedFn m_viewportChangedFn;
 
   drape_ptr<df::DrapeEngine> m_drapeEngine;
 
@@ -237,9 +243,6 @@ protected:
   RoutingManager m_routingManager;
 
   TrafficManager m_trafficManager;
-
-  unique_ptr<ugc::Api> m_ugcApi;
-
   User m_user;
 
   booking::filter::FilterProcessor m_bookingFilterProcessor;
@@ -255,14 +258,15 @@ protected:
   void InitTransliteration();
 
 public:
-  Framework(FrameworkParams const & params = {});
+  explicit Framework(FrameworkParams const & params = {});
   virtual ~Framework();
-    
+
+
   /// This function will be called by m_storage when latest local files
   /// is downloaded.
   void OnCountryFileDownloaded(storage::CountryId const & countryId,
                                storage::LocalFilePtr const localFile);
-  
+
   /// This function will be called by m_storage before latest local files
   /// is deleted.
   bool OnCountryFileDelete(storage::CountryId const & countryId,
@@ -358,7 +362,7 @@ public:
   void ShowBookmark(Bookmark const * bookmark);
   void ShowTrack(kml::TrackId trackId);
   void ShowFeatureByMercator(m2::PointD const & pt);
-  void ShowBookmarkCategory(kml::MarkGroupId categoryId);
+  void ShowBookmarkCategory(kml::MarkGroupId categoryId, bool animation = true);
 
   void AddBookmarksFile(string const & filePath, bool isTemporaryFile);
 
@@ -423,6 +427,9 @@ public:
 
   vector<MwmSet::MwmId> GetMwmsByRect(m2::RectD const & rect, bool rough) const;
   MwmSet::MwmId GetMwmIdByName(string const & name) const;
+
+  // Use only for debug purposes!
+  vector<FeatureID> FindFeaturesByIndex(uint32_t featureIndex) const;
 
   void ReadFeatures(function<void(FeatureType &)> const & reader,
                     vector<FeatureID> const & features);
@@ -508,10 +515,10 @@ public:
   void DestroyDrapeEngine();
   /// Called when graphics engine should be temporarily paused and then resumed.
   void SetRenderingEnabled(ref_ptr<dp::GraphicsContextFactory> contextFactory = nullptr);
-  void SetRenderingDisabled(bool destroyContext);
+  void SetRenderingDisabled(bool destroySurface);
 
-  void OnRecoverGLContext(int width, int height);
-  void OnDestroyGLContext();
+  void OnRecoverSurface(int width, int height, bool recreateContextDependentResources);
+  void OnDestroySurface();
 
 private:
   /// Depends on initialized Drape engine.
@@ -553,7 +560,7 @@ private:
   void OnUpdateGpsTrackPointsCallback(vector<pair<size_t, location::GpsTrackInfo>> && toAdd,
                                       pair<size_t, size_t> const & toRemove);
 
-  CachingPopularityLoader m_popularityLoader;
+  CachingRankTableLoader m_popularityLoader;
 
   unique_ptr<descriptions::Loader> m_descriptionsLoader;
 
@@ -630,12 +637,18 @@ public:
   void SetVisibleViewport(m2::RectD const & rect);
 
   /// - Check minimal visible scale according to downloaded countries.
-  void ShowRect(m2::RectD const & rect, int maxScale = -1, bool animation = true);
-  void ShowRect(m2::AnyRectD const & rect);
+  void ShowRect(m2::RectD const & rect, int maxScale = -1, bool animation = true,
+                bool useVisibleViewport = false);
+  void ShowRect(m2::AnyRectD const & rect, bool animation = true, bool useVisibleViewport = false);
 
   void GetTouchRect(m2::PointD const & center, uint32_t pxRadius, m2::AnyRectD & rect);
 
-  void SetViewportListener(TViewportChanged const & fn);
+  void SetViewportListener(TViewportChangedFn const & fn);
+
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+  using TGraphicsReadyFn = df::DrapeEngine::TGraphicsReadyFn;
+  void NotifyGraphicsReady(TGraphicsReadyFn const & fn);
+#endif
 
   void StopLocationFollow();
 
@@ -654,6 +667,12 @@ public:
   void Scale(EScaleMode mode, m2::PointD const & pxPoint, bool isAnim);
   void Scale(double factor, bool isAnim);
   void Scale(double factor, m2::PointD const & pxPoint, bool isAnim);
+
+  /// Moves the viewport a distance of factorX * viewportWidth and factorY * viewportHeight.
+  /// E.g. factorX == 1.0 moves the map one screen size to the right, factorX == -0.5 moves the map
+  /// half screen size to the left, factorY == -2.0 moves the map two sizes down,
+  /// factorY = 1.5 moves the map one and a half size up.
+  void Move(double factorX, double factorY, bool isAnim);
 
   void TouchEvent(df::TouchEvent const & touch);
   //@}
@@ -697,6 +716,7 @@ private:
   void FillSearchResultInfo(SearchMarkPoint const & smp, place_page::Info & info) const;
   void FillMyPositionInfo(place_page::Info & info, df::TapInfo const & tapInfo) const;
   void FillRouteMarkInfo(RouteMarkPoint const & rmp, place_page::Info & info) const;
+  void FillRoadTypeMarkInfo(RoadWarningMark const & roadTypeMark, place_page::Info & info) const;
 
 public:
   void FillBookmarkInfo(Bookmark const & bmk, place_page::Info & info) const;
@@ -706,17 +726,15 @@ public:
 
   /// Get "best for the user" feature at given point even if it's invisible on the screen.
   /// Ignores coastlines and prefers buildings over other area features.
-  /// @returns nullptr if no feature was found at the given mercator point.
-  unique_ptr<FeatureType> GetFeatureAtPoint(m2::PointD const & mercator) const;
+  /// @returns invalid FeatureID if no feature was found at the given mercator point.
+  FeatureID GetFeatureAtPoint(m2::PointD const & mercator) const;
   template <typename TFn>
   void ForEachFeatureAtPoint(TFn && fn, m2::PointD const & mercator) const
   {
     indexer::ForEachFeatureAtPoint(m_model.GetDataSource(), fn, mercator, 0.0);
   }
-  /// Set parse to false if you don't need all feature fields ready.
-  /// TODO(AlexZ): Refactor code which uses this method to get rid of it.
-  /// FeatureType instances should not be used outside ForEach* core methods.
-  WARN_UNUSED_RESULT bool GetFeatureByID(FeatureID const & fid, FeatureType & ft) const;
+
+  osm::MapObject GetMapObjectByID(FeatureID const & fid) const;
 
   void MemoryWarning();
   void EnterBackground();
@@ -789,10 +807,8 @@ public:
   bool LoadTransitSchemeEnabled();
   void SaveTransitSchemeEnabled(bool enabled);
 
-#if defined(OMIM_METAL_AVAILABLE)
-  bool LoadMetalAllowed();
-  void SaveMetalAllowed(bool allowed);
-#endif
+  dp::ApiVersion LoadPreferredGraphicsAPI();
+  void SavePreferredGraphicsAPI(dp::ApiVersion apiVersion);
 
 public:
   template <typename ResultCallback>
@@ -848,7 +864,7 @@ public:
 
   // Reads user stats from server or gets it from cache calls |fn| on success.
   void UpdateUserStats(string const & userName, editor::UserStatsLoader::UpdatePolicy policy,
-                       editor::UserStatsLoader::TOnUpdateCallback fn)
+                       editor::UserStatsLoader::OnUpdateCallback fn)
   {
     m_userStatsLoader.Update(userName, policy, fn);
   }
@@ -891,6 +907,8 @@ private:
 public:
   void FilterResultsForHotelsQuery(booking::filter::Tasks const & filterTasks,
                                    search::Results const & results, bool inViewport) override;
+  void FilterHotels(booking::filter::Tasks const & filterTasks,
+                    vector<FeatureID> && featureIds) override;
   void OnBookingFilterParamsUpdate(booking::filter::Tasks const & filterTasks) override;
 
   booking::AvailabilityParams GetLastBookingAvailabilityParams() const;

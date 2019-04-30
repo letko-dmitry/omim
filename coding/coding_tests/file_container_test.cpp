@@ -7,6 +7,11 @@
 #include "base/string_utils.hpp"
 #include "base/scope_guard.hpp"
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+
+using namespace std;
 
 UNIT_TEST(FilesContainer_Smoke)
 {
@@ -240,7 +245,7 @@ UNIT_TEST(FilesMappingContainer_MoveHandle)
   class HandleWrapper
   {
   public:
-    HandleWrapper(FilesMappingContainer::Handle && handle) : m_handle(std::move(handle))
+    explicit HandleWrapper(FilesMappingContainer::Handle && handle) : m_handle(std::move(handle))
     {
       TEST(m_handle.IsValid(), ());
     }

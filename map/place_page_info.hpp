@@ -61,6 +61,14 @@ enum class LocalsStatus
   Available
 };
 
+enum class OpeningMode
+{
+  Preview = 0,
+  PreviewPlus,
+  Details,
+  Full
+};
+
 auto constexpr kIncorrectRating = kInvalidRatingValue;
 
 class Info : public osm::MapObject
@@ -76,6 +84,7 @@ public:
   bool IsBookmark() const { return m_markGroupId != kml::kInvalidMarkGroupId && m_markId != kml::kInvalidMarkId; }
   bool IsMyPosition() const { return m_isMyPosition; }
   bool IsRoutePoint() const { return m_isRoutePoint; }
+  bool IsRoadType() const { return m_roadType != RoadWarningMarkType::Count; }
 
   /// Edit and add
   bool ShouldShowAddPlace() const;
@@ -147,11 +156,15 @@ public:
   std::string const & GetSponsoredDeepLink() const { return m_sponsoredDeepLink; }
   void SetSponsoredDescriptionUrl(std::string const & url) { m_sponsoredDescriptionUrl = url; }
   std::string const & GetSponsoredDescriptionUrl() const { return m_sponsoredDescriptionUrl; }
+  void SetSponsoredMoreUrl(std::string const & url) { m_sponsoredMoreUrl = url; }
+  std::string const & GetSponsoredMoreUrl() const { return m_sponsoredMoreUrl; }
   void SetSponsoredReviewUrl(std::string const & url) { m_sponsoredReviewUrl = url; }
   std::string const & GetSponsoredReviewUrl() const { return m_sponsoredReviewUrl; }
   void SetSponsoredType(SponsoredType type) { m_sponsoredType = type; }
   SponsoredType GetSponsoredType() const { return m_sponsoredType; }
-  bool IsPreviewExtended() const { return false; }
+
+  void SetOpeningMode(OpeningMode openingMode) { m_openingMode = openingMode; }
+  OpeningMode GetOpeningMode() const { return m_openingMode; }
 
   /// Partners
   int GetPartnerIndex() const { return m_partnerIndex; }
@@ -195,6 +208,11 @@ public:
   void SetIntermediateIndex(size_t index) { m_intermediateIndex = index; }
   size_t GetIntermediateIndex() const { return m_intermediateIndex; }
   void SetIsRoutePoint() { m_isRoutePoint = true; }
+
+  /// Road type
+  void SetRoadType(FeatureType & ft, RoadWarningMarkType type, std::string const & localizedType,
+                   std::string const & distance);
+  RoadWarningMarkType GetRoadType() const { return m_roadType; }
 
   /// CountryId
   /// Which mwm this MapObject is in.
@@ -272,6 +290,9 @@ private:
   size_t m_intermediateIndex = 0;
   bool m_isRoutePoint = false;
 
+  /// Road type
+  RoadWarningMarkType m_roadType = RoadWarningMarkType::Count;
+
   bool m_isMyPosition = false;
 
   /// Editor
@@ -295,6 +316,7 @@ private:
   std::string m_sponsoredUrl;
   std::string m_sponsoredDeepLink;
   std::string m_sponsoredDescriptionUrl;
+  std::string m_sponsoredMoreUrl;
   std::string m_sponsoredReviewUrl;
 
   /// Booking
@@ -315,6 +337,8 @@ private:
   uint8_t m_popularity = 0;
 
   std::string m_primaryFeatureName;
+
+  OpeningMode m_openingMode = OpeningMode::Preview;
 };
 
 namespace rating

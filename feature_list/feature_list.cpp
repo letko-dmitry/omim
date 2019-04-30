@@ -30,9 +30,16 @@
 #include "storage/storage.hpp"
 #include "storage/storage_defines.hpp"
 
-#include "std/algorithm.hpp"
-#include "std/iostream.hpp"
-#include "std/sstream.hpp"
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <limits>
+#include <map>
+#include <sstream>
+#include <vector>
+
+using namespace std;
 
 class ClosestPoint
 {
@@ -41,7 +48,8 @@ class ClosestPoint
   double m_distance = numeric_limits<double>::max();
 
 public:
-  ClosestPoint(m2::PointD const & center) : m_center(center), m_best(0, 0) {}
+  explicit ClosestPoint(m2::PointD const & center) : m_center(center), m_best(0, 0) {}
+
   m2::PointD GetBest() const { return m_best; }
 
   void operator()(m2::PointD const & point)
@@ -58,7 +66,7 @@ public:
 m2::PointD FindCenter(FeatureType & f)
 {
   ClosestPoint closest(f.GetLimitRect(FeatureType::BEST_GEOMETRY).Center());
-  if (f.GetFeatureType() == feature::GEOM_AREA)
+  if (f.GetGeomType() == feature::GeomType::Area)
   {
     f.ForEachTriangle([&closest](m2::PointD const & p1, m2::PointD const & p2,
                                  m2::PointD const & p3) { closest((p1 + p2 + p3) / 3); },
@@ -175,7 +183,7 @@ class Processor
   search::LocalityFinder m_finder;
 
 public:
-  Processor(DataSource const & dataSource)
+  explicit Processor(DataSource const & dataSource)
     : m_geocoder(dataSource)
     , m_boundariesTable(dataSource)
     , m_villagesCache(m_cancellable)
@@ -200,7 +208,7 @@ public:
     string const & operatr = f.GetMetadata().Get(feature::Metadata::FMD_OPERATOR);
     auto const & osmIt = ft2osm.find(f.GetID().m_index);
     if ((!f.HasName() && operatr.empty()) ||
-        (f.GetFeatureType() == feature::GEOM_LINE && category != "highway-pedestrian") ||
+        (f.GetGeomType() == feature::GeomType::Line && category != "highway-pedestrian") ||
         category.empty())
     {
       return;
@@ -223,7 +231,7 @@ public:
       name = primary;
     if (name.empty())
       name = operatr;
-    string osmId = osmIt != ft2osm.cend() ? std::to_string(osmIt->second.GetEncodedId()) : "";
+    string osmId = osmIt != ft2osm.cend() ? to_string(osmIt->second.GetEncodedId()) : "";
     if (osmId.empty())
     {
       // For sponsored types, adding invented sponsored ids (booking = 00) to the id tail.
@@ -366,9 +374,8 @@ int main(int argc, char ** argv)
     FeaturesLoaderGuard loader(dataSource, mwmId);
     for (uint32_t ftIndex = 0; ftIndex < loader.GetNumFeatures(); ftIndex++)
     {
-      FeatureType ft;
-      if (loader.GetFeatureByIndex(static_cast<uint32_t>(ftIndex), ft))
-        doProcess.Process(ft, featureIdToOsmId);
+      if (auto ft = loader.GetFeatureByIndex(static_cast<uint32_t>(ftIndex)))
+        doProcess.Process(*ft, featureIdToOsmId);
     }
     doProcess.ClearCache();
   }

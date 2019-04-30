@@ -78,7 +78,10 @@ public class RoutingController implements TaxiManager.TaxiListener
     void onAddedStop();
     void onRemovedStop();
     void onBuiltRoute();
+    void onRouteWarningReceived();
     boolean isSubwayEnabled();
+    void onBuildError(int lastResultCode, @NonNull String[] lastMissingMaps);
+    void onCalculateRouteError();
 
     /**
      * @param progress progress to be displayed.
@@ -128,20 +131,32 @@ public class RoutingController implements TaxiManager.TaxiListener
       mContainsCachedResult = true;
 
       if (mLastResultCode == ResultCodesHelper.NO_ERROR
-        || ResultCodesHelper.isMoreMapsNeeded(mLastResultCode))
-      {
-        mCachedRoutingInfo = Framework.nativeGetRouteFollowingInfo();
-        if (mLastRouterType == Framework.ROUTER_TYPE_TRANSIT)
-          mCachedTransitRouteInfo = Framework.nativeGetTransitRouteInfo();
-        setBuildState(BuildState.BUILT);
-        mLastBuildProgress = 100;
-        if (mContainer != null)
-          mContainer.onBuiltRoute();
-      }
+          || ResultCodesHelper.isMoreMapsNeeded(mLastResultCode))
+        onBuiltRoute();
+      else if (mLastResultCode == ResultCodesHelper.HAS_WARNINGS)
+        onWarningReceived();
 
       processRoutingEvent();
     }
   };
+
+  private void onWarningReceived()
+  {
+    onBuiltRoute();
+    if (mContainer != null)
+      mContainer.onRouteWarningReceived();
+  }
+
+  private void onBuiltRoute()
+  {
+    mCachedRoutingInfo = Framework.nativeGetRouteFollowingInfo();
+    if (mLastRouterType == Framework.ROUTER_TYPE_TRANSIT)
+      mCachedTransitRouteInfo = Framework.nativeGetTransitRouteInfo();
+    setBuildState(BuildState.BUILT);
+    mLastBuildProgress = 100;
+    if (mContainer != null)
+      mContainer.onBuiltRoute();
+  }
 
   @SuppressWarnings("FieldCanBeLocal")
   private final Framework.RoutingProgressListener mRoutingProgressListener = new Framework.RoutingProgressListener()
@@ -182,8 +197,7 @@ public class RoutingController implements TaxiManager.TaxiListener
       return;
 
     mContainsCachedResult = false;
-
-    if (mLastResultCode == ResultCodesHelper.NO_ERROR)
+    if (mLastResultCode == ResultCodesHelper.NO_ERROR || mLastResultCode == ResultCodesHelper.HAS_WARNINGS)
     {
       updatePlan();
       return;
@@ -196,15 +210,18 @@ public class RoutingController implements TaxiManager.TaxiListener
       return;
     }
 
-    if (!ResultCodesHelper.isMoreMapsNeeded(mLastResultCode))
+    if (ResultCodesHelper.isMoreMapsNeeded(mLastResultCode))
     {
-      setBuildState(BuildState.ERROR);
-      mLastBuildProgress = 0;
-      updateProgress();
+      mContainer.onBuildError(mLastResultCode, mLastMissingMaps);
+      return;
     }
 
-    RoutingErrorDialogFragment fragment = RoutingErrorDialogFragment.create(mLastResultCode, mLastMissingMaps);
-    fragment.show(mContainer.getActivity().getSupportFragmentManager(), RoutingErrorDialogFragment.class.getSimpleName());
+    setBuildState(BuildState.ERROR);
+    mLastBuildProgress = 0;
+    updateProgress();
+
+    if (RoutingOptions.hasAnyOptions())
+      mContainer.onCalculateRouteError();
   }
 
   private void setState(State newState)
@@ -387,6 +404,11 @@ public class RoutingController implements TaxiManager.TaxiListener
   public void deleteSavedRoute()
   {
     Framework.nativeDeleteSavedRoutePoints();
+  }
+
+  public void prepare()
+  {
+    prepare(getStartPoint(), getEndPoint(), false);
   }
 
   public void prepare(boolean canUseMyPositionAsStart, @Nullable MapObject endPoint)
@@ -821,21 +843,21 @@ public class RoutingController implements TaxiManager.TaxiListener
 
   private void setPointsInternal(@Nullable MapObject startPoint, @Nullable MapObject endPoint)
   {
-    if (startPoint != null)
-    {
-      applyRemovingIntermediatePointsTransaction();
-      addRoutePoint(RoutePointInfo.ROUTE_MARK_START, startPoint);
-      if (mContainer != null)
-        mContainer.updateMenu();
-    }
+    final boolean hasStart = startPoint != null;
+    final boolean hasEnd = endPoint != null;
+    final boolean hasOnePointAtLeast = hasStart || hasEnd;
 
-    if (endPoint != null)
-    {
+    if (hasOnePointAtLeast)
       applyRemovingIntermediatePointsTransaction();
-      addRoutePoint(RoutePointInfo.ROUTE_MARK_FINISH, endPoint);
-      if (mContainer != null)
-        mContainer.updateMenu();
-    }
+
+    if (hasStart)
+      addRoutePoint(RoutePointInfo.ROUTE_MARK_START , startPoint);
+
+    if (hasEnd)
+      addRoutePoint(RoutePointInfo.ROUTE_MARK_FINISH , endPoint);
+
+    if (hasOnePointAtLeast && mContainer != null)
+      mContainer.updateMenu();
   }
 
   void checkAndBuildRoute()

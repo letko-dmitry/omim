@@ -20,15 +20,19 @@
 #include "generator/platform_helpers.hpp"
 #include "generator/popular_places_section_builder.hpp"
 #include "generator/popularity.hpp"
+#include "generator/ratings_section_builder.hpp"
 #include "generator/regions/collector_region_info.hpp"
 #include "generator/regions/regions.hpp"
 #include "generator/restriction_generator.hpp"
 #include "generator/road_access_generator.hpp"
 #include "generator/routing_index_generator.hpp"
 #include "generator/search_index_builder.hpp"
+#include "generator/streets/streets.hpp"
 #include "generator/statistics.hpp"
 #include "generator/traffic_generator.hpp"
 #include "generator/transit_generator.hpp"
+#include "generator/translator_collection.hpp"
+#include "generator/translator_factory.hpp"
 #include "generator/ugc_section_builder.hpp"
 #include "generator/unpack_mwm.hpp"
 #include "generator/wiki_url_dumper.hpp"
@@ -57,11 +61,15 @@
 
 #include "base/timer.hpp"
 
+#include <csignal>
 #include <cstdlib>
 #include <fstream>
 #include <memory>
 #include <string>
 #include <thread>
+
+#define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED
+#include <boost/stacktrace.hpp>
 
 #include "defines.hpp"
 
@@ -106,6 +114,8 @@ DEFINE_bool(preprocess, false, "1st pass - create nodes/ways/relations data.");
 DEFINE_bool(generate_features, false, "2nd pass - generate intermediate features.");
 DEFINE_bool(generate_region_features, false,
             "Generate intermediate features for regions to use in regions index and borders generation.");
+DEFINE_bool(generate_streets_features, false,
+            "Generate intermediate features for streets to use in server-side forward geocoder.");
 DEFINE_bool(generate_geo_objects_features, false,
             "Generate intermediate features for geo objects to use in geo objects index.");
 DEFINE_bool(generate_geometry, false,
@@ -189,9 +199,13 @@ DEFINE_bool(generate_traffic_keys, false,
 // Generating geo objects key-value.
 DEFINE_string(regions_index, "", "Input regions index file.");
 DEFINE_string(regions_key_value, "", "Input regions key-value file.");
+DEFINE_string(streets_features, "", "Input tmp.mwm file with streets.");
+DEFINE_string(streets_key_value, "", "Output streets key-value file.");
 DEFINE_string(geo_objects_features, "", "Input tmp.mwm file with geo objects.");
 DEFINE_string(ids_without_addresses, "", "Output file with objects ids without addresses.");
 DEFINE_string(geo_objects_key_value, "", "Output geo objects key-value file.");
+DEFINE_string(allow_addressless_for_countries, "*",
+              "Allow addressless buildings for only specified countries separated by commas.");
 
 DEFINE_string(regions_features, "", "Input tmp.mwm file with regions.");
 
@@ -211,7 +225,7 @@ int GeneratorToolMain(int argc, char ** argv)
 
   google::ParseCommandLineFlags(&argc, &argv, true);
 
-  auto threadsCount = std::thread::hardware_concurrency();
+  auto threadsCount = thread::hardware_concurrency();
   if (threadsCount == 0)
     threadsCount = 1;
 
@@ -268,7 +282,7 @@ int GeneratorToolMain(int argc, char ** argv)
     LOG(LINFO, ("Generating intermediate data ...."));
     if (!GenerateIntermediateData(genInfo))
     {
-      return -1;
+      return EXIT_FAILURE;
     }
   }
 
@@ -284,6 +298,7 @@ int GeneratorToolMain(int argc, char ** argv)
       FLAGS_make_routing_index || FLAGS_make_cross_mwm || FLAGS_make_transit_cross_mwm ||
       FLAGS_make_city_roads || FLAGS_generate_maxspeed || FLAGS_generate_traffic_keys ||
       FLAGS_transit_path != "" || FLAGS_ugc_data != "" || FLAGS_popular_places_data != "" ||
+      FLAGS_generate_streets_features || FLAGS_streets_key_value != "" ||
       FLAGS_generate_geo_objects_features || FLAGS_geo_objects_key_value != "" ||
       FLAGS_dump_wikipedia_urls != "" || FLAGS_wikipedia_pages != "" || FLAGS_popularity_csv != "")
   {
@@ -296,12 +311,9 @@ int GeneratorToolMain(int argc, char ** argv)
     countryParentGetter = make_unique<storage::CountryParentGetter>();
 
   // Generate dat file.
-  if (FLAGS_generate_features || FLAGS_make_coasts)
+  if (FLAGS_generate_features || FLAGS_make_coasts || FLAGS_generate_world)
   {
     LOG(LINFO, ("Generating final data ..."));
-    CHECK(!FLAGS_generate_region_features, ("FLAGS_generate_features and FLAGS_make_coasts should "
-                                            "not be used with FLAGS_generate_region_features"));
-
     genInfo.m_splitByPolygons = FLAGS_split_by_polygons;
     genInfo.m_createWorld = FLAGS_generate_world;
     genInfo.m_makeCoasts = FLAGS_make_coasts;
@@ -310,9 +322,33 @@ int GeneratorToolMain(int argc, char ** argv)
     genInfo.m_genAddresses = FLAGS_generate_addresses_file;
     genInfo.m_idToWikidataFilename = FLAGS_idToWikidata;
 
-    auto emitter = CreateEmitter(EmitterType::Planet, genInfo);
-    if (!GenerateFeatures(genInfo, emitter))
-      return -1;
+    CHECK(!(FLAGS_generate_features && FLAGS_make_coasts), ());
+    CHECK(!(FLAGS_generate_world && FLAGS_make_coasts), ());
+    if (FLAGS_dump_cities_boundaries)
+      CHECK(FLAGS_generate_features, ());
+
+    CacheLoader cacheLoader(genInfo);
+    TranslatorCollection translators;
+    if (FLAGS_generate_features)
+    {
+      auto emitter = CreateEmitter(EmitterType::Country, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::Country, emitter, cacheLoader.GetCache(), genInfo));
+    }
+
+    if (FLAGS_generate_world)
+    {
+      auto emitter = CreateEmitter(EmitterType::World, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::World, emitter, cacheLoader.GetCache(), genInfo));
+    }
+
+    if (FLAGS_make_coasts)
+    {
+      auto emitter = CreateEmitter(EmitterType::Coastline, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::Coastline, emitter, cacheLoader.GetCache()));
+    }
+
+    if (!GenerateRaw(genInfo, translators))
+      return EXIT_FAILURE;
 
     if (FLAGS_generate_world)
     {
@@ -331,34 +367,56 @@ int GeneratorToolMain(int argc, char ** argv)
       }
     }
   }
-
-  if (FLAGS_generate_region_features || FLAGS_generate_geo_objects_features)
+  else if (FLAGS_generate_region_features || FLAGS_generate_streets_features ||
+           FLAGS_generate_geo_objects_features)
   {
     CHECK(!FLAGS_generate_features && !FLAGS_make_coasts,
           ("FLAGS_generate_features and FLAGS_make_coasts should "
            "not be used with FLAGS_generate_region_features"));
-    CHECK(!(FLAGS_generate_region_features && FLAGS_generate_geo_objects_features), ());
+    CHECK((FLAGS_generate_region_features + FLAGS_generate_streets_features +
+           FLAGS_generate_geo_objects_features) == 1,
+          ("At most one features generation option is allowed simultaneously"));
 
     genInfo.m_fileName = FLAGS_output;
+
+    CacheLoader cacheLoader(genInfo);
+    TranslatorCollection translators;
     if (FLAGS_generate_region_features)
     {
-      if (!GenerateRegionFeatures(genInfo))
-        return -1;
+      auto emitter = CreateEmitter(EmitterType::SimpleWithPreserialize, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::Regions, emitter, cacheLoader.GetCache(), genInfo));
+    }
+
+    if (FLAGS_generate_streets_features)
+    {
+      auto emitter = CreateEmitter(EmitterType::SimpleWithPreserialize, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::Streets, emitter, cacheLoader.GetCache()));
     }
 
     if (FLAGS_generate_geo_objects_features)
     {
-      if (!GenerateGeoObjectsFeatures(genInfo))
-        return -1;
+      auto emitter = CreateEmitter(EmitterType::SimpleWithPreserialize, genInfo);
+      translators.Append(CreateTranslator(TranslatorType::GeoObjects, emitter, cacheLoader.GetCache()));
     }
+
+    if (!GenerateRaw(genInfo, translators))
+      return EXIT_FAILURE;
+  }
+
+  if (!FLAGS_streets_key_value.empty())
+  {
+    streets::GenerateStreets(FLAGS_regions_index, FLAGS_regions_key_value,
+                             FLAGS_streets_features, FLAGS_geo_objects_features,
+                             FLAGS_streets_key_value, FLAGS_verbose);
   }
 
   if (!FLAGS_geo_objects_key_value.empty())
   {
     if (!geo_objects::GenerateGeoObjects(FLAGS_regions_index, FLAGS_regions_key_value,
                                          FLAGS_geo_objects_features, FLAGS_ids_without_addresses,
-                                         FLAGS_geo_objects_key_value, FLAGS_verbose))
-      return -1;
+                                         FLAGS_geo_objects_key_value,
+                                         FLAGS_allow_addressless_for_countries, FLAGS_verbose))
+      return EXIT_FAILURE;
   }
 
   if (genInfo.m_bucketNames.empty() && !FLAGS_output.empty())
@@ -369,7 +427,7 @@ int GeneratorToolMain(int argc, char ** argv)
     if (FLAGS_output.empty())
     {
       LOG(LCRITICAL, ("Bad output or intermediate_data_path. Output:", FLAGS_output));
-      return -1;
+      return EXIT_FAILURE;
     }
 
     auto const locDataFile = base::JoinPath(path, FLAGS_output + LOC_DATA_FILE_EXTENSION);
@@ -379,7 +437,7 @@ int GeneratorToolMain(int argc, char ** argv)
       if (!feature::GenerateGeoObjectsData(FLAGS_geo_objects_features, FLAGS_nodes_list_path, locDataFile))
       {
         LOG(LCRITICAL, ("Error generating geo objects data."));
-        return -1;
+        return EXIT_FAILURE;
       }
 
       LOG(LINFO, ("Saving geo objects index to", outFile));
@@ -387,7 +445,7 @@ int GeneratorToolMain(int argc, char ** argv)
       if (!indexer::BuildGeoObjectsIndexFromDataFile(locDataFile, outFile))
       {
         LOG(LCRITICAL, ("Error generating geo objects index."));
-        return -1;
+        return EXIT_FAILURE;
       }
     }
 
@@ -396,7 +454,7 @@ int GeneratorToolMain(int argc, char ** argv)
       if (!feature::GenerateRegionsData(FLAGS_regions_features, locDataFile))
       {
         LOG(LCRITICAL, ("Error generating regions data."));
-        return -1;
+        return EXIT_FAILURE;
       }
 
       LOG(LINFO, ("Saving regions index to", outFile));
@@ -404,12 +462,12 @@ int GeneratorToolMain(int argc, char ** argv)
       if (!indexer::BuildRegionsIndexFromDataFile(locDataFile, outFile))
       {
         LOG(LCRITICAL, ("Error generating regions index."));
-        return -1;
+        return EXIT_FAILURE;
       }
       if (!feature::GenerateBorders(FLAGS_regions_features, outFile))
       {
         LOG(LCRITICAL, ("Error generating regions borders."));
-        return -1;
+        return EXIT_FAILURE;
       }
     }
   }
@@ -551,7 +609,7 @@ int GeneratorToolMain(int argc, char ** argv)
         // All the mwms should use proper VehicleModels.
         LOG(LCRITICAL, ("Countries file is needed. Please set countries file name (countries.txt or "
                         "countries_obsolete.txt). File must be located in data directory."));
-        return -1;
+        return EXIT_FAILURE;
       }
 
       string const restrictionsFilename =
@@ -589,7 +647,7 @@ int GeneratorToolMain(int argc, char ** argv)
         // All the mwms should use proper VehicleModels.
         LOG(LCRITICAL, ("Countries file is needed. Please set countries file name (countries.txt or "
                         "countries_obsolete.txt). File must be located in data directory."));
-        return -1;
+        return EXIT_FAILURE;
       }
 
       if (FLAGS_make_cross_mwm)
@@ -605,9 +663,10 @@ int GeneratorToolMain(int argc, char ** argv)
     if (!FLAGS_ugc_data.empty())
     {
       if (!BuildUgcMwmSection(FLAGS_ugc_data, datFile, osmToFeatureFilename))
-      {
         LOG(LCRITICAL, ("Error generating UGC mwm section."));
-      }
+
+      if (!BuildRatingsMwmSection(FLAGS_ugc_data, datFile, osmToFeatureFilename))
+        LOG(LCRITICAL, ("Error generating ratings mwm section."));
     }
 
     if (!FLAGS_wikipedia_pages.empty())
@@ -687,26 +746,40 @@ int GeneratorToolMain(int argc, char ** argv)
   return 0;
 }
 
-
-int main(int argc, char ** argv)
+void ErrorHandler(int signum)
 {
+  // Avoid recursive calls.
+  signal(signum, SIG_DFL);
+
+  // If there was an exception, then we will print the message.
   try
   {
-    return GeneratorToolMain(argc, argv);
+    if (auto const eptr = current_exception())
+      rethrow_exception(eptr);
   }
   catch (RootException const & e)
   {
-    LOG(LERROR, ("Unhandled core exception:", e.Msg()));
-    return EXIT_FAILURE;
+    cerr << "Core exception: " << e.Msg() << "\n";
   }
-  catch (std::exception const & e)
+  catch (exception const & e)
   {
-    LOG(LERROR, ("Unhandled std exception:", e.what()));
-    return EXIT_FAILURE;
+    cerr << "Std exception: " << e.what() << "\n";
   }
   catch (...)
   {
-    LOG(LERROR, ("Unhandled unknown exception."));
-    return EXIT_FAILURE;
+    cerr << "Unknown exception.\n";
   }
+
+  // Print stack stack.
+  cerr << boost::stacktrace::stacktrace();
+  // We raise the signal SIGABRT, so that there would be an opportunity to make a core dump.
+  raise(SIGABRT);
+}
+
+int main(int argc, char ** argv)
+{
+  signal(SIGABRT, ErrorHandler);
+  signal(SIGSEGV, ErrorHandler);
+
+  return GeneratorToolMain(argc, argv);
 }

@@ -13,6 +13,8 @@ include_directories(
   ${OMIM_ROOT}/3party/icu/i18n
   ${OMIM_ROOT}/3party/stb_image
   ${OMIM_ROOT}/3party/sdf_image
+  ${OMIM_ROOT}/3party/Vulkan-Headers/include
+  ${OMIM_ROOT}/3party/vulkan_wrapper
   ${OMIM_ROOT}/android/jni
 )
 
@@ -37,6 +39,7 @@ set(
   # JNI sources
   com/mapswithme/core/jni_helper.cpp
   com/mapswithme/core/logging.cpp
+  com/mapswithme/maps/analytics/ExternalLibrariesMediator.cpp
   com/mapswithme/maps/bookmarks/data/Bookmark.cpp
   com/mapswithme/maps/bookmarks/data/BookmarkManager.cpp
   com/mapswithme/maps/discovery/DiscoveryManager.cpp
@@ -46,7 +49,6 @@ set(
   com/mapswithme/maps/editor/OpeningHours.cpp
   com/mapswithme/maps/editor/Editor.cpp
   com/mapswithme/maps/editor/OsmOAuth.cpp
-  com/mapswithme/maps/metrics/UserActionsLogger.cpp
   com/mapswithme/maps/Framework.cpp
   com/mapswithme/maps/LightFramework.cpp
   com/mapswithme/maps/LocationState.cpp
@@ -54,8 +56,9 @@ set(
   com/mapswithme/maps/MapFragment.cpp
   com/mapswithme/maps/MapManager.cpp
   com/mapswithme/maps/MwmApplication.cpp
-  com/mapswithme/maps/analytics/ExternalLibrariesMediator.cpp
+  com/mapswithme/maps/metrics/UserActionsLogger.cpp
   com/mapswithme/maps/PrivateVariables.cpp
+  com/mapswithme/maps/routing/RoutingOptions.cpp
   com/mapswithme/maps/SearchEngine.cpp
   com/mapswithme/maps/SearchRecents.cpp
   com/mapswithme/maps/settings/UnitLocale.cpp
@@ -89,6 +92,8 @@ set(
   com/mapswithme/util/NetworkPolicy.cpp
   com/mapswithme/util/StringUtils.cpp
   com/mapswithme/util/statistics/PushwooshHelper.cpp
+  com/mapswithme/vulkan/android_vulkan_context_factory.cpp
+  com/mapswithme/vulkan/android_vulkan_context_factory.hpp
 )
 
 omim_add_library(mapswithme SHARED ${SRC})
@@ -142,4 +147,5 @@ target_link_libraries(
   sdf_image
   icu
   agg
+  vulkan_wrapper
 )

@@ -9,10 +9,14 @@
 
 #include "base/assert.hpp"
 
+#include <functional>
+#include <string>
+
 #include <QtGui/QMouseEvent>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
 
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLVertexArrayObject>
@@ -23,10 +27,11 @@ namespace common
 {
 //#define ENABLE_AA_SWITCH
 
-MapWidget::MapWidget(Framework & framework, bool apiOpenGLES3, QWidget * parent)
+MapWidget::MapWidget(Framework & framework, bool apiOpenGLES3, bool isScreenshotMode, QWidget * parent)
   : QOpenGLWidget(parent)
   , m_framework(framework)
   , m_apiOpenGLES3(apiOpenGLES3)
+  , m_screenshotMode(isScreenshotMode)
   , m_slider(nullptr)
   , m_sliderState(SliderState::Released)
   , m_ratio(1.0)
@@ -86,9 +91,11 @@ void MapWidget::CreateEngine()
   Framework::DrapeCreationParams p;
 
   p.m_apiVersion = m_apiOpenGLES3 ? dp::ApiVersion::OpenGLES3 : dp::ApiVersion::OpenGLES2;
-  p.m_surfaceWidth = m_ratio * width();
-  p.m_surfaceHeight = m_ratio * height();
-  p.m_visualScale = m_ratio;
+
+  p.m_surfaceWidth = m_screenshotMode ? width() : static_cast<int>(m_ratio * width());
+  p.m_surfaceHeight = m_screenshotMode ? height() : static_cast<int>(m_ratio * height());
+  p.m_visualScale = static_cast<float>(m_ratio);
+  p.m_hints.m_screenshotMode = m_screenshotMode;
 
   m_skin.reset(new gui::Skin(gui::ResolveGuiSkinFile("default"), m_ratio));
   m_skin->Resize(p.m_surfaceWidth, p.m_surfaceHeight);
@@ -98,9 +105,7 @@ void MapWidget::CreateEngine()
   p.m_widgetsInitInfo[gui::WIDGET_SCALE_FPS_LABEL] = gui::Position(dp::LeftBottom);
 
   m_framework.CreateDrapeEngine(make_ref(m_contextFactory), std::move(p));
-  m_framework.SetViewportListener([this](ScreenBase const & /* screen */) {
-    UpdateScaleControl();
-  });
+  m_framework.SetViewportListener(std::bind(&MapWidget::OnViewportChanged, this, std::placeholders::_1));
 }
 
 void MapWidget::ScalePlus() { m_framework.Scale(Framework::SCALE_MAG, true); }
@@ -176,6 +181,11 @@ df::Touch MapWidget::GetSymmetrical(df::Touch const & touch) const
   result.m_location = symmetricalLocation;
 
   return result;
+}
+
+void MapWidget::OnViewportChanged(ScreenBase const & screen)
+{
+  UpdateScaleControl();
 }
 
 void MapWidget::UpdateScaleControl()
@@ -265,10 +275,45 @@ void MapWidget::Build()
   m_vao->release();
 }
 
+void MapWidget::ShowInfoPopup(QMouseEvent * e, m2::PointD const & pt)
+{
+  // show feature types
+  QMenu menu;
+  auto const addStringFn = [&menu](string const & s) {
+    if (s.empty())
+      return;
+
+    menu.addAction(QString::fromUtf8(s.c_str()));
+  };
+
+  m_framework.ForEachFeatureAtPoint(
+      [&](FeatureType & ft) {
+        string concat;
+        auto types = feature::TypesHolder(ft);
+        types.SortBySpec();
+        for (auto const & type : types.ToObjectNames())
+          concat += type + " ";
+        addStringFn(concat);
+
+        std::string name;
+        ft.GetReadableName(name);
+        addStringFn(name);
+
+        auto const info = GetFeatureAddressInfo(m_framework, ft);
+        addStringFn(info.FormatAddress());
+
+        menu.addSeparator();
+      },
+      m_framework.PtoG(pt));
+
+  menu.exec(e->pos());
+}
+
 void MapWidget::initializeGL()
 {
   ASSERT(m_contextFactory == nullptr, ());
-  m_ratio = devicePixelRatio();
+  if (!m_screenshotMode)
+    m_ratio = devicePixelRatio();
   m_contextFactory.reset(new QtOGLContextFactory(context()));
 
   emit BeforeEngineCreation();
@@ -317,8 +362,8 @@ void MapWidget::paintGL()
 
 void MapWidget::resizeGL(int width, int height)
 {
-  float w = m_ratio * width;
-  float h = m_ratio * height;
+  float w = m_screenshotMode ? width : static_cast<float>(m_ratio * width);
+  float h = m_screenshotMode ? height : static_cast<float>(m_ratio * height);
   m_framework.OnSize(w, h);
   m_framework.SetVisibleViewport(m2::RectD(0, 0, w, h));
   if (m_skin)
@@ -335,6 +380,9 @@ void MapWidget::resizeGL(int width, int height)
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mouseDoubleClickEvent(e);
   if (IsLeftButton(e))
     m_framework.Scale(Framework::SCALE_MAG_LIGHT, GetDevicePoint(e), true);
@@ -342,6 +390,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent * e)
 
 void MapWidget::mousePressEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mousePressEvent(e);
   if (IsLeftButton(e))
     m_framework.TouchEvent(GetTouchEvent(e, df::TouchEvent::TOUCH_DOWN));
@@ -349,6 +400,9 @@ void MapWidget::mousePressEvent(QMouseEvent * e)
 
 void MapWidget::mouseMoveEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mouseMoveEvent(e);
   if (IsLeftButton(e))
     m_framework.TouchEvent(GetTouchEvent(e, df::TouchEvent::TOUCH_MOVE));
@@ -356,6 +410,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent * e)
 
 void MapWidget::mouseReleaseEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   if (e->button() == Qt::RightButton)
     emit OnContextMenuRequested(e->globalPos());
 
@@ -366,8 +423,21 @@ void MapWidget::mouseReleaseEvent(QMouseEvent * e)
 
 void MapWidget::wheelEvent(QWheelEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::wheelEvent(e);
   m_framework.Scale(exp(e->delta() / 360.0), m2::PointD(L2D(e->x()), L2D(e->y())), false);
+}
+
+search::ReverseGeocoder::Address GetFeatureAddressInfo(Framework const & framework,
+                                                       FeatureType & ft)
+{
+  search::ReverseGeocoder const coder(framework.GetDataSource());
+  search::ReverseGeocoder::Address address;
+  coder.GetExactAddress(ft, address);
+
+  return address;
 }
 }  // namespace common
 }  // namespace qt

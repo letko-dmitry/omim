@@ -21,8 +21,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 #include <boost/optional.hpp>
@@ -45,8 +45,8 @@ public:
 private:
   std::string m_mwmPath;
   std::string m_idToWikidataPath;
-  std::map<uint32_t, base::GeoObjectId> m_featureIdToOsmId;
-  std::map<base::GeoObjectId, std::string> m_osmIdToWikidataId;
+  std::unordered_map<uint32_t, base::GeoObjectId> m_featureIdToOsmId;
+  std::unordered_map<base::GeoObjectId, std::string> m_osmIdToWikidataId;
 };
 
 template <class T>

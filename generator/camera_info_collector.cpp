@@ -30,7 +30,7 @@ CamerasInfoCollector::CamerasInfoCollector(std::string const & dataFilePath,
                                            std::string const & osmIdsToFeatureIdsPath)
 {
   std::map<base::GeoObjectId, uint32_t> osmIdToFeatureId;
-  if (!routing::ParseOsmIdToFeatureIdMapping(osmIdsToFeatureIdsPath, osmIdToFeatureId))
+  if (!routing::ParseRoadsOsmIdToFeatureIdMapping(osmIdsToFeatureIdsPath, osmIdToFeatureId))
   {
     LOG(LCRITICAL, ("An error happened while parsing feature id to osm ids mapping from file:",
                     osmIdsToFeatureIdsPath));
@@ -206,7 +206,7 @@ void CamerasInfoCollector::Camera::FindClosestSegmentWithGeometryIndex(FrozenDat
 
   // Look at each segment of roads and find the closest.
   auto const updateClosestFeatureCallback = [&](FeatureType & ft) {
-    if (ft.GetFeatureType() != feature::GEOM_LINE)
+    if (ft.GetGeomType() != feature::GeomType::Line)
       return;
 
     if (!routing::IsCarRoad(feature::TypesHolder(ft)))

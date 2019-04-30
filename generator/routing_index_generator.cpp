@@ -5,12 +5,17 @@
 #include "generator/routing_helpers.hpp"
 
 #include "routing/base/astar_algorithm.hpp"
+#include "routing/base/astar_graph.hpp"
+
 #include "routing/cross_mwm_connector.hpp"
 #include "routing/cross_mwm_connector_serialization.hpp"
 #include "routing/cross_mwm_ids.hpp"
+#include "routing/fake_feature_ids.hpp"
 #include "routing/index_graph.hpp"
 #include "routing/index_graph_loader.hpp"
 #include "routing/index_graph_serialization.hpp"
+#include "routing/index_graph_starter_joints.hpp"
+#include "routing/joint_segment.hpp"
 #include "routing/vehicle_mask.hpp"
 
 #include "routing_common/bicycle_model.hpp"
@@ -40,6 +45,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <functional>
+#include <limits>
 #include <map>
 #include <memory>
 #include <unordered_map>
@@ -151,35 +157,69 @@ private:
   unordered_map<uint32_t, VehicleMask> m_masks;
 };
 
-class DijkstraWrapper final
+class IndexGraphWrapper final
 {
 public:
-  // AStarAlgorithm types aliases:
-  using Vertex = Segment;
-  using Edge = SegmentEdge;
-  using Weight = RouteWeight;
+  IndexGraphWrapper(IndexGraph & graph, Segment const & start)
+    : m_graph(graph), m_start(start) {}
 
-  explicit DijkstraWrapper(IndexGraph & graph) : m_graph(graph) {}
-
-  void GetOutgoingEdgesList(Vertex const & vertex, vector<Edge> & edges)
+  // Just for compatibility with IndexGraphStarterJoints
+  // @{
+  Segment GetStartSegment() const { return m_start; }
+  Segment GetFinishSegment() const { return {}; }
+  bool ConvertToReal(Segment const & /* segment */) const { return false; }
+  RouteWeight HeuristicCostEstimate(Segment const & /* from */, m2::PointD const & /* to */)
   {
-    edges.clear();
-    m_graph.GetEdgeList(vertex, true /* isOutgoing */, edges);
+    CHECK(false, ("This method exists only for compatibility with IndexGraphStarterJoints"));
+    return GetAStarWeightZero<RouteWeight>();
+  }
+  // @}
+
+  m2::PointD const & GetPoint(Segment const & s, bool forward)
+  {
+    return m_graph.GetPoint(s, forward);
   }
 
-  void GetIngoingEdgesList(Vertex const & vertex, vector<Edge> & edges)
+  void GetEdgesList(Segment const & from, bool isOutgoing, vector<SegmentEdge> & edges)
   {
-    edges.clear();
-    m_graph.GetEdgeList(vertex, false /* isOutgoing */, edges);
+    m_graph.GetEdgeList(from, isOutgoing, edges);
   }
 
-  Weight HeuristicCostEstimate(Vertex const & /* from */, Vertex const & /* to */)
+  void GetEdgeList(Segment const & segment, bool isOutgoing,
+                   vector<JointEdge> & edges, vector<RouteWeight> & parentWeights) const
   {
-    return GetAStarWeightZero<Weight>();
+    return m_graph.GetEdgeList(segment, isOutgoing, edges, parentWeights);
+  }
+
+  bool IsJoint(Segment const & segment, bool fromStart) const
+  {
+    if (m_graph.IsJoint(segment.GetRoadPoint(fromStart)))
+      return true;
+
+    // For features, that ends out of mwm. In this case |m_graph.IsJoint| returns false, but we should
+    // think, that it's Joint anyway.
+    uint32_t const pointId = segment.GetPointId(fromStart);
+    uint32_t const pointsNumber = m_graph.GetGeometry().GetRoad(segment.GetFeatureId()).GetPointsCount();
+    return pointId == 0 || pointId + 1 == pointsNumber;
   }
 
 private:
   IndexGraph & m_graph;
+  Segment m_start;
+};
+
+class DijkstraWrapperJoints : public IndexGraphStarterJoints<IndexGraphWrapper>
+{
+public:
+
+  DijkstraWrapperJoints(IndexGraphWrapper & graph, Segment const & start)
+    : IndexGraphStarterJoints<IndexGraphWrapper>(graph, start) {}
+
+    // IndexGraphStarterJoints overrides
+  Weight HeuristicCostEstimate(Vertex const & /* from */, Vertex const & /* to */) override
+  {
+    return GetAStarWeightZero<Weight>();
+  }
 };
 
 // Calculate distance from the starting border point to the transition along the border.
@@ -227,7 +267,7 @@ void CalcCrossMwmTransitions(
 {
   VehicleMaskBuilder const maskMaker(country, countryParentNameGetterFn);
   map<uint32_t, base::GeoObjectId> featureIdToOsmId;
-  CHECK(ParseFeatureIdToOsmIdMapping(mappingFile, featureIdToOsmId),
+  CHECK(ParseRoadsFeatureIdToOsmIdMapping(mappingFile, featureIdToOsmId),
         ("Can't parse feature id to osm id mapping. File:", mappingFile));
 
   ForEachFromDat(mwmFile, [&](FeatureType & f, uint32_t featureId) {
@@ -404,28 +444,88 @@ void FillWeights(string const & path, string const & mwmFile, string const & cou
   size_t notFoundCount = 0;
   for (size_t i = 0; i < numEnters; ++i)
   {
-    if (!disableCrossMwmProgress && (i % 10 == 0) && (i != 0))
+    if (i % 10 == 0)
       LOG(LINFO, ("Building leaps:", i, "/", numEnters, "waves passed"));
 
     Segment const & enter = connector.GetEnter(i);
 
-    AStarAlgorithm<DijkstraWrapper> astar;
-    DijkstraWrapper wrapper(graph);
-    AStarAlgorithm<DijkstraWrapper>::Context context;
-    astar.PropagateWave(wrapper, enter,
-                        [](Segment const & /* vertex */) { return true; } /* visitVertex */,
+    using Algorithm = AStarAlgorithm<JointSegment, JointEdge, RouteWeight>;
+
+    Algorithm astar;
+    IndexGraphWrapper indexGraphWrapper(graph, enter);
+    DijkstraWrapperJoints wrapper(indexGraphWrapper, enter);
+    Algorithm::Context context;
+    unordered_map<uint32_t, vector<JointSegment>> visitedVertexes;
+    astar.PropagateWave(wrapper, wrapper.GetStartJoint(),
+                        [&](JointSegment const & vertex)
+                        {
+                          if (vertex.IsFake())
+                          {
+                            Segment start = wrapper.GetSegmentOfFakeJoint(vertex, true /* start */);
+                            Segment end = wrapper.GetSegmentOfFakeJoint(vertex, false /* start */);
+                            if (start.IsForward() != end.IsForward())
+                              return true;
+
+                            visitedVertexes[end.GetFeatureId()].emplace_back(start, end);
+                          }
+                          else
+                          {
+                            visitedVertexes[vertex.GetFeatureId()].emplace_back(vertex);
+                          }
+
+                          return true;
+                        } /* visitVertex */,
                         context);
 
     for (Segment const & exit : connector.GetExits())
     {
-      if (context.HasDistance(exit))
-      {
-        weights[enter][exit] = context.GetDistance(exit);
-        ++foundCount;
-      }
-      else
+      auto const it = visitedVertexes.find(exit.GetFeatureId());
+      if (it == visitedVertexes.cend())
       {
         ++notFoundCount;
+        continue;
+      }
+
+      uint32_t const id = exit.GetSegmentIdx();
+      bool const forward = exit.IsForward();
+      for (auto const & jointSegment : it->second)
+      {
+        if (jointSegment.IsForward() != forward)
+          continue;
+
+        if ((jointSegment.GetStartSegmentId() <= id && id <= jointSegment.GetEndSegmentId()) ||
+            (jointSegment.GetEndSegmentId() <= id && id <= jointSegment.GetStartSegmentId()))
+        {
+          RouteWeight weight;
+          Segment parentSegment;
+          if (context.HasParent(jointSegment))
+          {
+            JointSegment const & parent = context.GetParent(jointSegment);
+            parentSegment = parent.IsFake() ? wrapper.GetSegmentOfFakeJoint(parent, false /* start */)
+                                            : parent.GetSegment(false /* start */);
+
+            weight = context.GetDistance(parent);
+          }
+          else
+          {
+            parentSegment = enter;
+          }
+
+          Segment const & firstChild = jointSegment.GetSegment(true /* start */);
+          uint32_t const lastPoint = exit.GetPointId(true /* front */);
+
+          auto optionalEdge =  graph.GetJointEdgeByLastPoint(parentSegment, firstChild,
+                                                             true /* isOutgoing */, lastPoint);
+
+          if (!optionalEdge)
+            continue;
+
+          weight += (*optionalEdge).GetWeight();
+          weights[enter][exit] = weight;
+
+          ++foundCount;
+          break;
+        }
       }
     }
   }

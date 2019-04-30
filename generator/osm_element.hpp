@@ -5,6 +5,8 @@
 #include "base/math.hpp"
 #include "base/string_utils.hpp"
 
+#include "std/string_view.hpp"
+
 #include <exception>
 #include <functional>
 #include <iomanip>
@@ -35,7 +37,7 @@ struct OsmElement
 
     Member() = default;
     Member(uint64_t ref, EntityType type, std::string const & role)
-    : ref(ref), type(type), role(role)
+      : ref(ref), type(type), role(role)
     {}
 
     bool operator == (Member const & e) const
@@ -120,17 +122,17 @@ struct OsmElement
   bool operator==(OsmElement const & e) const
   {
     return type == e.type
-            && id == e.id
-            && base::AlmostEqualAbs(lon, e.lon, 1e-7)
-            && base::AlmostEqualAbs(lat, e.lat, 1e-7)
-            && ref == e.ref
-            && k == e.k
-            && v == e.v
-            && memberType == e.memberType
-            && role == e.role
-            && m_nds == e.m_nds
-            && m_members == e.m_members
-            && m_tags == e.m_tags;
+        && id == e.id
+        && base::AlmostEqualAbs(lon, e.lon, 1e-7)
+        && base::AlmostEqualAbs(lat, e.lat, 1e-7)
+        && ref == e.ref
+        && k == e.k
+        && v == e.v
+        && memberType == e.memberType
+        && role == e.role
+        && m_nds == e.m_nds
+        && m_members == e.m_members
+        && m_tags == e.m_tags;
   }
 
   void AddNd(uint64_t ref) { m_nds.emplace_back(ref); }
@@ -139,8 +141,10 @@ struct OsmElement
     m_members.emplace_back(ref, type, role);
   }
 
-  void AddTag(std::string const & k, std::string const & v);
-  bool HasTagValue(std::string const & k, std::string const & v) const;
+  void AddTag(std::string_view const & k, std::string_view const & v);
+  bool HasTag(std::string_view const & key) const;
+  bool HasTag(std::string_view const & k, std::string_view const & v) const;
+  bool HasAnyTag(std::unordered_multimap<std::string, std::string> const & tags) const;
 
   template <class Fn>
   void UpdateTag(std::string const & k, Fn && fn)
@@ -161,6 +165,7 @@ struct OsmElement
   }
 
   std::string GetTag(std::string const & key) const;
+  std::string_view GetTagValue(std::string_view const & key, std::string_view const & defaultValue) const;
 };
 
 base::GeoObjectId GetGeoObjectId(OsmElement const & element);

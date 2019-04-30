@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.mapswithme.maps.Framework;
 import com.mapswithme.maps.MwmApplication;
 import com.mapswithme.maps.R;
+import com.mapswithme.maps.settings.DrivingOptionsActivity;
 import com.mapswithme.maps.taxi.TaxiInfo;
 import com.mapswithme.maps.taxi.TaxiManager;
 import com.mapswithme.maps.widget.RoutingToolbarButton;
@@ -28,7 +30,9 @@ public class RoutingPlanController extends ToolbarController
 {
   static final int ANIM_TOGGLE = MwmApplication.get().getResources().getInteger(R.integer.anim_default);
 
-  protected final View mFrame;
+  private final View mFrame;
+  @NonNull
+  private final RoutingPlanInplaceController.RoutingPlanListener mRoutingPlanListener;
   private final RadioGroup mRouterTypes;
   @NonNull
   private final WheelProgressView mProgressVehicle;
@@ -45,6 +49,15 @@ public class RoutingPlanController extends ToolbarController
   private final RoutingBottomMenuController mRoutingBottomMenuController;
 
   int mFrameHeight;
+
+  @NonNull
+  private final View mDrivingOptionsBtnContainer;
+
+  @NonNull
+  private final View.OnLayoutChangeListener mDriverOptionsLayoutListener;
+
+  @NonNull
+  private final View mDrivingOptionsImage;
 
   private RadioButton setupRouterButton(@IdRes int buttonId, final @DrawableRes int iconRes, View.OnClickListener clickListener)
   {
@@ -70,10 +83,12 @@ public class RoutingPlanController extends ToolbarController
   }
 
   RoutingPlanController(View root, Activity activity,
+                        @NonNull RoutingPlanInplaceController.RoutingPlanListener routingPlanListener,
                         @Nullable RoutingBottomMenuListener listener)
   {
     super(root, activity);
     mFrame = root;
+    mRoutingPlanListener = routingPlanListener;
 
     mRouterTypes = (RadioGroup) getToolbar().findViewById(R.id.route_type);
 
@@ -87,6 +102,25 @@ public class RoutingPlanController extends ToolbarController
     mProgressTaxi = (WheelProgressView) progressFrame.findViewById(R.id.progress_taxi);
 
     mRoutingBottomMenuController = RoutingBottomMenuController.newInstance(getActivity(), mFrame, listener);
+
+    mDrivingOptionsBtnContainer = mFrame.findViewById(R.id.driving_options_btn_container);
+    View btn = mDrivingOptionsBtnContainer.findViewById(R.id.driving_options_btn);
+    mDrivingOptionsImage = mFrame.findViewById(R.id.driving_options_btn_img);
+
+    btn.setOnClickListener(v -> DrivingOptionsActivity.start(getActivity()));
+    mDriverOptionsLayoutListener = new SelfTerminatedDrivingOptionsLayoutListener();
+  }
+
+  @NonNull
+  protected View getFrame()
+  {
+    return mFrame;
+  }
+
+  @NonNull
+  private View getDrivingOptionsBtnContainer()
+  {
+    return mDrivingOptionsBtnContainer;
   }
 
   private void setupRouterButtons()
@@ -299,11 +333,6 @@ public class RoutingPlanController extends ToolbarController
     mRoutingBottomMenuController.restoreRoutingPanelState(state);
   }
 
-  public int getHeight()
-  {
-    return mFrameHeight;
-  }
-
   public void showAddStartFrame()
   {
     mRoutingBottomMenuController.showAddStartFrame();
@@ -317,5 +346,46 @@ public class RoutingPlanController extends ToolbarController
   public void hideActionFrame()
   {
     mRoutingBottomMenuController.hideActionFrame();
+  }
+
+  public void showDrivingOptionView()
+  {
+    mDrivingOptionsBtnContainer.addOnLayoutChangeListener(mDriverOptionsLayoutListener);
+    UiUtils.show(mDrivingOptionsBtnContainer);
+    UiUtils.showIf(RoutingOptions.hasAnyOptions(), mDrivingOptionsImage);
+    TextView title = mDrivingOptionsBtnContainer.findViewById(R.id.driving_options_btn_title);
+    title.setText(RoutingOptions.hasAnyOptions() ? R.string.change_driving_options_btn
+                                                 : R.string.define_to_avoid_btn);
+  }
+
+  public void hideDrivingOptionsView()
+  {
+    mDrivingOptionsBtnContainer.addOnLayoutChangeListener(mDriverOptionsLayoutListener);
+    UiUtils.hide(mDrivingOptionsBtnContainer);
+  }
+
+  public int calcHeight()
+  {
+    int frameHeight = getFrame().getHeight();
+    if (frameHeight == 0)
+      return 0;
+
+    View driverOptionsView = getDrivingOptionsBtnContainer();
+    int extraOppositeOffset = UiUtils.isVisible(driverOptionsView)
+                              ? 0
+                              : driverOptionsView.getHeight();
+
+    return frameHeight - extraOppositeOffset;
+  }
+
+  private class SelfTerminatedDrivingOptionsLayoutListener implements View.OnLayoutChangeListener
+  {
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+                               int oldTop, int oldRight, int oldBottom)
+    {
+      mRoutingPlanListener.onRoutingPlanStartAnimate(UiUtils.isVisible(getFrame()));
+      mDrivingOptionsBtnContainer.removeOnLayoutChangeListener(this);
+    }
   }
 }

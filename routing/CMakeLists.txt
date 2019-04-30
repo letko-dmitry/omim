@@ -10,6 +10,8 @@ set(
   async_router.cpp
   async_router.hpp
   base/astar_algorithm.hpp
+  base/astar_progress.cpp
+  base/astar_progress.hpp
   base/astar_weight.hpp
   base/followed_polyline.cpp
   base/followed_polyline.hpp
@@ -54,7 +56,6 @@ set(
   index_graph_serialization.hpp
   index_graph_starter.cpp
   index_graph_starter.hpp
-  index_graph_starter_joints.cpp
   index_graph_starter_joints.hpp
   index_road_graph.cpp
   index_road_graph.hpp
@@ -105,6 +106,8 @@ set(
   routing_exceptions.hpp
   routing_helpers.cpp
   routing_helpers.hpp
+  routing_options.cpp
+  routing_options.hpp
   routing_result_graph.hpp
   routing_session.cpp
   routing_session.hpp

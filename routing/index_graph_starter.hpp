@@ -1,6 +1,8 @@
 #pragma once
 
+#include "routing/base/astar_graph.hpp"
 #include "routing/base/routing_result.hpp"
+
 #include "routing/fake_ending.hpp"
 #include "routing/fake_feature_ids.hpp"
 #include "routing/fake_graph.hpp"
@@ -26,13 +28,9 @@ namespace routing
 class FakeEdgesContainer;
 
 // IndexGraphStarter adds fake start and finish vertices for AStarAlgorithm.
-class IndexGraphStarter final
+class IndexGraphStarter : public AStarGraph<IndexGraph::Vertex, IndexGraph::Edge, IndexGraph::Weight>
 {
 public:
-  // AStarAlgorithm types aliases:
-  using Vertex = IndexGraph::Vertex;
-  using Edge = IndexGraph::Edge;
-  using Weight = IndexGraph::Weight;
 
   friend class FakeEdgesContainer;
 
@@ -53,7 +51,7 @@ public:
   void Append(FakeEdgesContainer const & container);
 
   WorldGraph & GetGraph() const { return m_graph; }
-  WorldGraph::Mode GetMode() const { return m_graph.GetMode(); }
+  WorldGraphMode GetMode() const { return m_graph.GetMode(); }
   Junction const & GetStartJunction() const;
   Junction const & GetFinishJunction() const;
   Segment GetStartSegment() const { return GetFakeSegment(m_start.m_id); }
@@ -65,6 +63,7 @@ public:
   Junction const & GetJunction(Segment const & segment, bool front) const;
   Junction const & GetRouteJunction(std::vector<Segment> const & route, size_t pointIndex) const;
   m2::PointD const & GetPoint(Segment const & segment, bool front) const;
+  bool IsRoutingOptionsGood(Segment const & segment) const;
   uint32_t GetNumFakeSegments() const
   {
     // Maximal number of fake segments in fake graph is numeric_limits<uint32_t>::max()
@@ -81,20 +80,26 @@ public:
   // start and finish in pass-through/non-pass-through area and number of non-pass-through crosses.
   bool CheckLength(RouteWeight const & weight);
 
+  void GetEdgeList(Segment const & segment, bool isOutgoing,
+                   std::vector<JointEdge> & edges, std::vector<RouteWeight> & parentWeights) const
+  {
+    return m_graph.GetEdgeList(segment, isOutgoing, edges, parentWeights);
+  }
+
   void GetEdgesList(Segment const & segment, bool isOutgoing,
                     std::vector<SegmentEdge> & edges) const;
 
-  void GetOutgoingEdgesList(Vertex const & segment, std::vector<Edge> & edges) const
+  void GetOutgoingEdgesList(Vertex const & segment, std::vector<Edge> & edges) override
   {
     GetEdgesList(segment, true /* isOutgoing */, edges);
   }
 
-  void GetIngoingEdgesList(Vertex const & segment, std::vector<Edge> & edges) const
+  void GetIngoingEdgesList(Vertex const & segment, std::vector<Edge> & edges) override
   {
     GetEdgesList(segment, false /* isOutgoing */, edges);
   }
 
-  RouteWeight HeuristicCostEstimate(Vertex const & from, Vertex const & to) const
+  RouteWeight HeuristicCostEstimate(Vertex const & from, Vertex const & to) override
   {
     return m_graph.HeuristicCostEstimate(GetPoint(from, true /* front */),
                                          GetPoint(to, true /* front */));
@@ -105,8 +110,15 @@ public:
     return m_graph.HeuristicCostEstimate(GetPoint(from, true /* front */), to);
   }
 
+  bool IsJoint(Segment const & segment, bool fromStart)
+  {
+    return GetGraph().GetIndexGraph(segment.GetMwmId()).IsJoint(segment.GetRoadPoint(fromStart));
+  }
+
   RouteWeight CalcSegmentWeight(Segment const & segment) const;
   double CalcSegmentETA(Segment const & segment) const;
+
+  ~IndexGraphStarter() override = default;
 
 private:
   // Start or finish ending information. 
@@ -162,5 +174,6 @@ private:
   Ending m_finish;
   double m_startToFinishDistanceM;
   FakeGraph<Segment, FakeVertex> m_fake;
+  RoutingOptions m_avoidRoutingOptions;
 };
 }  // namespace routing

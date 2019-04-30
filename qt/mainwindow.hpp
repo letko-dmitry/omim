@@ -1,7 +1,5 @@
 #pragma once
 
-#include "qt/draw_widget.hpp"
-
 #include "storage/storage_defines.hpp"
 
 #include "platform/location.hpp"
@@ -11,6 +9,7 @@
 #include <QtWidgets/QMainWindow>
 
 #include <array>
+#include <string>
 #include <memory>
 
 class Framework;
@@ -24,6 +23,7 @@ namespace search { class Result; }
 namespace qt
 {
 class DrawWidget;
+struct ScreenshotParams;
 
 class MainWindow : public QMainWindow, location::LocationObserver
 {
@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow, location::LocationObserver
   storage::CountryId m_lastCountry;
 
   std::unique_ptr<location::LocationService> const m_locationService;
+  bool const m_screenshotMode;
 
   QAction * m_pMyPositionAction = nullptr;
   QAction * m_pCreateFeatureAction = nullptr;
@@ -65,7 +66,8 @@ class MainWindow : public QMainWindow, location::LocationObserver
   Q_OBJECT
 
 public:
-  MainWindow(Framework & framework, bool apiOpenGLES3, QString const & mapcssFilePath = QString());
+  MainWindow(Framework & framework, bool apiOpenGLES3, std::unique_ptr<ScreenshotParams> && screenshotParams,
+             QString const & mapcssFilePath = QString());
 
   static void SetDefaultSurfaceFormat(bool apiOpenGLES3);
 
@@ -118,6 +120,7 @@ protected Q_SLOTS:
   void OnIntermediatePointSelected();
   void OnFollowRoute();
   void OnClearRoute();
+  void OnRoutingSettings();
 
   void OnBookmarksAction();
 

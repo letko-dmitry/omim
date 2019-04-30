@@ -60,10 +60,14 @@ public:
 
   ms::LatLon GetLatLon() const;
   m2::PointD const & GetMercator() const;
+  std::vector<m2::PointD> const & GetTriangesAsPoints() const;
+  std::vector<m2::PointD> const & GetPoints() const;
 
   feature::TypesHolder const & GetTypes() const;
   std::string GetDefaultName() const;
   StringUtf8Multilang const & GetNameMultilang() const;
+
+  std::string const & GetHouseNumber() const;
 
   /// @name Metadata fields.
   //@{
@@ -98,6 +102,7 @@ public:
   feature::Metadata const & GetMetadata() const;
 
   bool IsPointType() const;
+  feature::GeomType GetGeomType() const { return m_geomType; };
   /// @returns true if object is of building type.
   bool IsBuilding() const;
 
@@ -107,11 +112,16 @@ protected:
   
   FeatureID m_featureID;
   m2::PointD m_mercator;
+
+  std::vector<m2::PointD> m_points;
+  std::vector<m2::PointD> m_triangles;
+
   StringUtf8Multilang m_name;
+  std::string m_houseNumber;
   feature::TypesHolder m_types;
   feature::Metadata m_metadata;
 
-  feature::EGeomType m_geomType = feature::EGeomType::GEOM_UNDEFINED;
+  feature::GeomType m_geomType = feature::GeomType::Undefined;
 };
 
 /// Helper to convert internal feature::Metadata::FMD_* enum into a users-visible one.

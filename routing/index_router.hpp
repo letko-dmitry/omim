@@ -1,6 +1,7 @@
 #pragma once
 
 #include "routing/base/astar_algorithm.hpp"
+#include "routing/base/astar_progress.hpp"
 #include "routing/base/routing_result.hpp"
 
 #include "routing/cross_mwm_graph.hpp"
@@ -25,9 +26,8 @@
 
 #include "geometry/tree4d.hpp"
 
-#include "std/unique_ptr.hpp"
-
 #include <functional>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -69,7 +69,7 @@ public:
   IndexRouter(VehicleType vehicleType, bool loadAltitudes,
               CountryParentNameGetterFn const & countryParentNameGetterFn,
               TCountryFileFn const & countryFileFn, CourntryRectFn const & countryRectFn,
-              shared_ptr<NumMwmIds> numMwmIds, unique_ptr<m4::Tree<NumMwmId>> numMwmTree,
+              std::shared_ptr<NumMwmIds> numMwmIds, std::unique_ptr<m4::Tree<NumMwmId>> numMwmTree,
               traffic::TrafficCache const & trafficCache, DataSource & dataSource);
 
   std::unique_ptr<WorldGraph> MakeSingleMwmWorldGraph();
@@ -87,8 +87,8 @@ private:
                                     m2::PointD const & startDirection,
                                     RouterDelegate const & delegate, Route & route);
   RouterResultCode CalculateSubroute(Checkpoints const & checkpoints, size_t subrouteIdx,
-                                     RouterDelegate const & delegate, IndexGraphStarter & graph,
-                                     std::vector<Segment> & subroute);
+                                     RouterDelegate const & delegate, AStarProgress & progress,
+                                     IndexGraphStarter & graph, std::vector<Segment> & subroute);
 
   RouterResultCode AdjustRoute(Checkpoints const & checkpoints,
                                m2::PointD const & startDirection,
@@ -112,8 +112,8 @@ private:
   // Input route may contains 'leaps': shortcut edges from mwm border enter to exit.
   // ProcessLeaps replaces each leap with calculated route through mwm.
   RouterResultCode ProcessLeapsJoints(vector<Segment> const & input, RouterDelegate const & delegate,
-                                      WorldGraph::Mode prevMode, IndexGraphStarter & starter,
-                                      vector<Segment> & output);
+                                      WorldGraphMode prevMode, IndexGraphStarter & starter,
+                                      AStarProgress & progress, vector<Segment> & output);
   RouterResultCode RedressRoute(std::vector<Segment> const & segments,
                                 RouterDelegate const & delegate, IndexGraphStarter & starter,
                                 Route & route) const;
@@ -129,31 +129,31 @@ private:
   void FillSpeedCamProhibitedMwms(std::vector<Segment> const & segments,
                                   std::vector<platform::CountryFile> & speedCamProhibitedMwms) const;
 
-  template <typename Graph>
-  RouterResultCode ConvertResult(typename AStarAlgorithm<Graph>::Result result) const
+  template <typename Vertex, typename Edge, typename Weight>
+  RouterResultCode ConvertResult(typename AStarAlgorithm<Vertex, Edge, Weight>::Result result) const
   {
     switch (result)
     {
-    case AStarAlgorithm<Graph>::Result::NoPath: return RouterResultCode::RouteNotFound;
-    case AStarAlgorithm<Graph>::Result::Cancelled: return RouterResultCode::Cancelled;
-    case AStarAlgorithm<Graph>::Result::OK: return RouterResultCode::NoError;
+    case AStarAlgorithm<Vertex, Edge, Weight>::Result::NoPath: return RouterResultCode::RouteNotFound;
+    case AStarAlgorithm<Vertex, Edge, Weight>::Result::Cancelled: return RouterResultCode::Cancelled;
+    case AStarAlgorithm<Vertex, Edge, Weight>::Result::OK: return RouterResultCode::NoError;
     }
     UNREACHABLE();
   }
 
-  template <typename Graph>
+  template <typename Vertex, typename Edge, typename Weight>
   RouterResultCode FindPath(
-      typename AStarAlgorithm<Graph>::Params & params, std::set<NumMwmId> const & mwmIds,
-      RoutingResult<typename Graph::Vertex, typename Graph::Weight> & routingResult) const
+      typename AStarAlgorithm<Vertex, Edge, Weight>::Params & params, std::set<NumMwmId> const & mwmIds,
+      RoutingResult<Vertex, Weight> & routingResult, WorldGraphMode mode) const
   {
-    AStarAlgorithm<Graph> algorithm;
-    if (params.m_graph.GetMode() == WorldGraph::Mode::LeapsOnly)
+    AStarAlgorithm<Vertex, Edge, Weight> algorithm;
+    if (mode == WorldGraphMode::LeapsOnly)
     {
       return ConvertTransitResult(mwmIds,
-                                  ConvertResult<Graph>(algorithm.FindPath(params, routingResult)));
+                                  ConvertResult<Vertex, Edge, Weight>(algorithm.FindPath(params, routingResult)));
     }
     return ConvertTransitResult(
-        mwmIds, ConvertResult<Graph>(algorithm.FindPathBidirectional(params, routingResult)));
+        mwmIds, ConvertResult<Vertex, Edge, Weight>(algorithm.FindPathBidirectional(params, routingResult)));
   }
 
   VehicleType m_vehicleType;

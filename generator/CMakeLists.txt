@@ -20,8 +20,6 @@ set(SRC
   brands_loader.hpp
   camera_info_collector.cpp
   camera_info_collector.hpp
-  camera_node_processor.cpp
-  camera_node_processor.hpp
   centers_table_builder.cpp
   centers_table_builder.hpp
   check_model.cpp
@@ -30,10 +28,19 @@ set(SRC
   cities_boundaries_builder.hpp
   cities_boundaries_checker.cpp
   cities_boundaries_checker.hpp
+  city_boundary_processor.cpp
+  city_boundary_processor.hpp
   city_roads_generator.cpp
   city_roads_generator.hpp
   coastlines_generator.cpp
   coastlines_generator.hpp
+  collection_base.hpp
+  collector_addresses.cpp
+  collector_addresses.hpp
+  collector_camera.cpp
+  collector_camera.hpp
+  collector_collection.cpp
+  collector_collection.hpp
   collector_interface.hpp
   collector_tag.cpp
   collector_tag.hpp
@@ -42,14 +49,19 @@ set(SRC
   dumper.cpp
   dumper.hpp
   emitter_booking.hpp
+  emitter_coastline.cpp
+  emitter_coastline.hpp
+  emitter_country.cpp
+  emitter_country.hpp
   emitter_factory.hpp
   emitter_interface.hpp
-  emitter_planet.cpp
-  emitter_planet.hpp
-  emitter_restaurants.hpp
+  emitter_noop.hpp
   emitter_restaurants.cpp
-  emitter_simple.hpp
+  emitter_restaurants.hpp
   emitter_simple.cpp
+  emitter_simple.hpp
+  emitter_world.cpp
+  emitter_world.hpp
   factory_utils.hpp
   feature_builder.cpp
   feature_builder.hpp
@@ -58,22 +70,39 @@ set(SRC
   feature_generator.hpp
   feature_helpers.cpp
   feature_helpers.hpp
+  feature_maker.cpp
+  feature_maker.hpp
+  feature_maker_base.cpp
+  feature_maker_base.hpp
   feature_merger.cpp
   feature_merger.hpp
+  feature_processing_layers.cpp
+  feature_processing_layers.hpp
   feature_sorter.cpp
   feature_sorter.hpp
+  filter_collection.cpp
+  filter_collection.hpp
   filter_elements.cpp
   filter_elements.hpp
+  filter_interface.hpp
+  filter_planet.cpp
+  filter_planet.hpp
   gen_mwm_info.hpp
   generate_info.hpp
   geometry_holder.hpp
   geo_objects/geo_objects.cpp
   geo_objects/geo_objects.hpp
+  geo_objects/geo_object_info_getter.cpp
+  geo_objects/geo_object_info_getter.hpp
+  geo_objects/geo_objects_filter.cpp
+  geo_objects/geo_objects_filter.hpp
   holes.cpp
   holes.hpp
   intermediate_data.cpp
   intermediate_data.hpp
   intermediate_elements.hpp
+  key_value_storage.cpp
+  key_value_storage.hpp
   locality_sorter.cpp
   locality_sorter.hpp
   maxspeeds_builder.cpp
@@ -110,21 +139,28 @@ set(SRC
   place_node.hpp
   platform_helpers.cpp
   platform_helpers.hpp
+  ratings_section_builder.cpp
+  ratings_section_builder.hpp
   relation_tags.cpp
   relation_tags.hpp
+  relation_tags_enricher.cpp
+  relation_tags_enricher.hpp
   region_meta.cpp
   region_meta.hpp
-  regions/city.hpp
   regions/collector_region_info.cpp
   regions/collector_region_info.hpp
+  regions/level_region.hpp
   regions/node.cpp
   regions/node.hpp
+  regions/place_point.hpp
   regions/region.cpp
   regions/region.hpp
   regions/region_base.cpp
   regions/region_base.hpp
   regions/region_info.cpp
   regions/region_info.hpp
+  regions/region_info_getter.cpp
+  regions/region_info_getter.hpp
   regions/regions.cpp
   regions/regions.hpp
   regions/regions_builder.cpp
@@ -157,6 +193,12 @@ set(SRC
   srtm_parser.hpp
   statistics.cpp
   statistics.hpp
+  streets/streets.cpp
+  streets/streets.hpp
+  streets/streets_builder.cpp
+  streets/streets_builder.hpp
+  streets/streets_filter.cpp
+  streets/streets_filter.hpp
   tag_admixer.hpp
   tesselator.cpp
   tesselator.hpp
@@ -166,16 +208,26 @@ set(SRC
   traffic_generator.hpp
   transit_generator.cpp
   transit_generator.hpp
+  translator.cpp
+  translator.hpp
+  translator_coastline.cpp
+  translator_coastline.hpp
+  translator_collection.cpp
+  translator_collection.hpp
+  translator_country.cpp
+  translator_country.hpp
   translator_factory.hpp
   translator_geo_objects.cpp
   translator_geo_objects.hpp
-  translator_geocoder_base.hpp
-  translator_geocoder_base.cpp
   translator_interface.hpp
-  translator_planet.cpp
-  translator_planet.hpp
   translator_region.cpp
   translator_region.hpp
+  translator_streets.cpp
+  translator_streets.hpp
+  translator_world.cpp
+  translator_world.hpp
+  type_helper.cpp
+  type_helper.hpp
   ugc_db.cpp
   ugc_db.hpp
   ugc_section_builder.cpp

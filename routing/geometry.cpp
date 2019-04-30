@@ -3,9 +3,12 @@
 #include "routing/city_roads.hpp"
 #include "routing/maxspeeds.hpp"
 #include "routing/routing_exceptions.hpp"
+#include "routing/routing_options.hpp"
 
 #include "indexer/altitude_loader.hpp"
+#include "indexer/classificator.hpp"
 #include "indexer/data_source.hpp"
+#include "indexer/ftypes_matcher.hpp"
 
 #include "geometry/mercator.hpp"
 
@@ -62,18 +65,17 @@ GeometryLoaderImpl::GeometryLoaderImpl(DataSource const & dataSource,
 
 void GeometryLoaderImpl::Load(uint32_t featureId, RoadGeometry & road)
 {
-  FeatureType feature;
-  bool const isFound = m_guard.GetFeatureByIndex(featureId, feature);
-  if (!isFound)
+  auto feature = m_guard.GetFeatureByIndex(featureId);
+  if (!feature)
     MYTHROW(RoutingException, ("Feature", featureId, "not found in ", m_country));
 
-  feature.ParseGeometry(FeatureType::BEST_GEOMETRY);
+  feature->ParseGeometry(FeatureType::BEST_GEOMETRY);
 
   feature::TAltitudes const * altitudes = nullptr;
   if (m_loadAltitudes)
-    altitudes = &(m_altitudeLoader.GetAltitudes(featureId, feature.GetPointsCount()));
+    altitudes = &(m_altitudeLoader.GetAltitudes(featureId, feature->GetPointsCount()));
 
-  road.Load(*m_vehicleModel, feature, altitudes, m_attrLoader.m_cityRoads->IsCityRoad(featureId),
+  road.Load(*m_vehicleModel, *feature, altitudes, m_attrLoader.m_cityRoads->IsCityRoad(featureId),
             m_attrLoader.m_maxspeeds->GetMaxspeed(featureId));
   m_altitudeLoader.ClearCache();
 }
@@ -120,12 +122,12 @@ FileGeometryLoader::FileGeometryLoader(string const & fileName,
 
 void FileGeometryLoader::Load(uint32_t featureId, RoadGeometry & road)
 {
-  FeatureType feature;
-  m_featuresVector.GetVector().GetByIndex(featureId, feature);
-  feature.ParseGeometry(FeatureType::BEST_GEOMETRY);
+  auto feature = m_featuresVector.GetVector().GetByIndex(featureId);
+  CHECK(feature, ());
+  feature->ParseGeometry(FeatureType::BEST_GEOMETRY);
   // Note. If FileGeometryLoader is used for generation cross mwm section for bicycle or
   // pedestrian routing |altitudes| should be used here.
-  road.Load(*m_vehicleModel, feature, nullptr /* altitudes */, m_cityRoads.IsCityRoad(featureId),
+  road.Load(*m_vehicleModel, *feature, nullptr /* altitudes */, m_cityRoads.IsCityRoad(featureId),
             m_maxspeeds.GetMaxspeed(featureId));
 }
 }  // namespace
@@ -159,6 +161,14 @@ void RoadGeometry::Load(VehicleModelInterface const & vehicleModel, FeatureType 
   m_backwardSpeed = vehicleModel.GetSpeed(feature, {false /* forward */, inCity, maxspeed});
   m_isPassThroughAllowed = vehicleModel.IsPassThroughAllowed(feature);
 
+  feature::TypesHolder types(feature);
+  auto const & optionsClassfier = RoutingOptionsClassifier::Instance();
+  for (uint32_t type : types)
+  {
+    if (auto const it = optionsClassfier.Get(type))
+      m_routingOptions.Add(*it);
+  }
+
   m_junctions.clear();
   m_junctions.reserve(feature.GetPointsCount());
   for (size_t i = 0; i < feature.GetPointsCount(); ++i)
@@ -180,7 +190,7 @@ void RoadGeometry::Load(VehicleModelInterface const & vehicleModel, FeatureType 
   }
 }
 
-VehicleModelInterface::SpeedKMpH const & RoadGeometry::GetSpeed(bool forward) const
+SpeedKMpH const & RoadGeometry::GetSpeed(bool forward) const
 {
   return forward ? m_forwardSpeed : m_backwardSpeed;
 }

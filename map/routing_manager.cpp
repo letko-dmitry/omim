@@ -12,6 +12,7 @@
 #include "routing/index_router.hpp"
 #include "routing/online_absent_fetcher.hpp"
 #include "routing/route.hpp"
+#include "routing/routing_callbacks.hpp"
 #include "routing/routing_helpers.hpp"
 #include "routing/speed_camera.hpp"
 
@@ -210,6 +211,48 @@ VehicleType GetVehicleType(RouterType routerType)
   }
   UNREACHABLE();
 }
+
+RoadWarningMarkType GetRoadType(RoutingOptions::Road road)
+{
+  if (road == RoutingOptions::Road::Toll)
+    return RoadWarningMarkType::Toll;
+  if (road == RoutingOptions::Road::Ferry)
+    return RoadWarningMarkType::Ferry;
+  if (road == RoutingOptions::Road::Dirty)
+    return RoadWarningMarkType::Dirty;
+
+  CHECK(false, ("Invalid road type to avoid:", road));
+  return RoadWarningMarkType::Count;
+}
+
+drape_ptr<df::Subroute> CreateDrapeSubroute(vector<RouteSegment> const & segments, m2::PointD const & startPt,
+                                            double baseDistance, double baseDepth, bool isTransit)
+{
+  auto subroute = make_unique_dp<df::Subroute>();
+  subroute->m_baseDistance = baseDistance;
+  subroute->m_baseDepthIndex = baseDepth;
+
+  if (isTransit)
+  {
+    subroute->m_polyline.Add(startPt);
+    return subroute;
+  }
+
+  vector<m2::PointD> points;
+  points.reserve(segments.size() + 1);
+  points.push_back(startPt);
+  for (auto const & s : segments)
+    points.push_back(s.GetJunction().GetPoint());
+
+  if (points.size() < 2)
+  {
+    LOG(LWARNING, ("Invalid subroute. Points number =", points.size()));
+    return nullptr;
+  }
+
+  subroute->m_polyline = m2::PolylineD(points);
+  return subroute;
+}
 }  // namespace
 
 namespace marketing
@@ -322,7 +365,7 @@ void RoutingManager::OnBuildRouteReady(Route const & route, RouterResultCode cod
   CHECK_EQUAL(code, RouterResultCode::NoError, ());
   HidePreviewSegments();
 
-  InsertRoute(route);
+  auto const hasWarnings = InsertRoute(route);
   m_drapeEngine.SafeCall(&df::DrapeEngine::StopLocationFollow);
 
   // Validate route (in case of bicycle routing it can be invalid).
@@ -332,10 +375,11 @@ void RoutingManager::OnBuildRouteReady(Route const & route, RouterResultCode cod
     m2::RectD routeRect = route.GetPoly().GetLimitRect();
     routeRect.Scale(kRouteScaleMultiplier);
     m_drapeEngine.SafeCall(&df::DrapeEngine::SetModelViewRect, routeRect,
-                           true /* applyRotation */, -1 /* zoom */, true /* isAnim */);
+                           true /* applyRotation */, -1 /* zoom */, true /* isAnim */,
+                           true /* useVisibleViewport */);
   }
 
-  CallRouteBuilded(code, storage::CountriesVec());
+  CallRouteBuilded(hasWarnings ? RouterResultCode::HasWarnings : code, storage::CountriesVec());
 }
 
 void RoutingManager::OnRebuildRouteReady(Route const & route, RouterResultCode code)
@@ -345,8 +389,8 @@ void RoutingManager::OnRebuildRouteReady(Route const & route, RouterResultCode c
   if (code != RouterResultCode::NoError)
     return;
 
-  InsertRoute(route);
-  CallRouteBuilded(code, storage::CountriesVec());
+  auto const hasWarnings = InsertRoute(route);
+  CallRouteBuilded(hasWarnings ? RouterResultCode::HasWarnings : code, storage::CountriesVec());
 }
 
 void RoutingManager::OnNeedMoreMaps(uint64_t routeId, vector<string> const & absentCountries)
@@ -457,9 +501,12 @@ void RoutingManager::RemoveRoute(bool deactivateFollowing)
 {
   GetPlatform().RunTask(Platform::Thread::Gui, [this, deactivateFollowing]()
   {
-    m_bmManager->GetEditSession().ClearGroup(UserMark::Type::TRANSIT);
-    m_bmManager->GetEditSession().ClearGroup(UserMark::Type::SPEED_CAM);
-
+    {
+      auto es = m_bmManager->GetEditSession();
+      es.ClearGroup(UserMark::Type::TRANSIT);
+      es.ClearGroup(UserMark::Type::SPEED_CAM);
+      es.ClearGroup(UserMark::Type::ROAD_WARNING);
+    }
     if (deactivateFollowing)
       SetPointsFollowingMode(false /* enabled */);
   });
@@ -489,86 +536,129 @@ void RoutingManager::RemoveRoute(bool deactivateFollowing)
   }
 }
 
-void RoutingManager::InsertRoute(Route const & route)
+void RoutingManager::CollectRoadWarnings(vector<routing::RouteSegment> const & segments,
+                                         m2::PointD const & startPt, double baseDistance,
+                                         GetMwmIdFn const & getMwmIdFn, RoadWarningsCollection & roadWarnings)
+{
+  auto const isWarnedType = [](RoutingOptions::Road roadType)
+  {
+    return roadType == RoutingOptions::Road::Toll || roadType == RoutingOptions::Road::Ferry ||
+      roadType == RoutingOptions::Road::Dirty;
+  };
+
+  double currentDistance = baseDistance;
+  double startDistance = baseDistance;
+  RoutingOptions::Road lastType = RoutingOptions::Road::Usual;
+  for (size_t i = 0; i < segments.size(); ++i)
+  {
+    auto const currentType = ChooseMainRoutingOptionRoad(segments[i].GetRoadTypes());
+    if (currentType != lastType)
+    {
+      if (isWarnedType(lastType))
+      {
+        ASSERT(!roadWarnings[lastType].empty(), ());
+        roadWarnings[lastType].back().m_distance = segments[i].GetDistFromBeginningMeters() - startDistance;
+      }
+
+      if (isWarnedType(currentType))
+      {
+        startDistance = currentDistance;
+        auto const featureId = FeatureID(getMwmIdFn(segments[i].GetSegment().GetMwmId()),
+                                         segments[i].GetSegment().GetFeatureId());
+        auto const markPoint = i == 0 ? startPt : segments[i - 1].GetJunction().GetPoint();
+        roadWarnings[currentType].push_back(RoadInfo(markPoint, featureId));
+      }
+      lastType = currentType;
+    }
+    currentDistance = segments[i].GetDistFromBeginningMeters();
+  }
+  if (isWarnedType(lastType))
+    roadWarnings[lastType].back().m_distance = segments.back().GetDistFromBeginningMeters() - startDistance;
+}
+
+void RoutingManager::CreateRoadWarningMarks(RoadWarningsCollection && roadWarnings)
+{
+  if (roadWarnings.empty())
+    return;
+
+  GetPlatform().RunTask(Platform::Thread::Gui, [this, roadWarnings = move(roadWarnings)]()
+  {
+    auto es = m_bmManager->GetEditSession();
+    for (auto const & typeInfo : roadWarnings)
+    {
+      auto const type = GetRoadType(typeInfo.first);
+      for (size_t i = 0; i < typeInfo.second.size(); ++i)
+      {
+        auto const & routeInfo = typeInfo.second[i];
+        auto mark = es.CreateUserMark<RoadWarningMark>(routeInfo.m_startPoint);
+        mark->SetIndex(static_cast<uint32_t>(i));
+        mark->SetRoadWarningType(type);
+        mark->SetFeatureId(routeInfo.m_featureId);
+        std::string distanceStr;
+        measurement_utils::FormatDistance(routeInfo.m_distance, distanceStr);
+        mark->SetDistance(distanceStr);
+      }
+    }
+  });
+}
+
+bool RoutingManager::InsertRoute(Route const & route)
 {
   if (!m_drapeEngine)
-    return;
+    return false;
 
   // TODO: Now we always update whole route, so we need to remove previous one.
   RemoveRoute(false /* deactivateFollowing */);
 
-  shared_ptr<TransitRouteDisplay> transitRouteDisplay;
   auto numMwmIds = make_shared<NumMwmIds>();
-  if (m_currentRouterType == RouterType::Transit)
+  m_delegate.RegisterCountryFilesOnRoute(numMwmIds);
+  auto const getMwmId = [this, numMwmIds](routing::NumMwmId numMwmId)
   {
-    m_delegate.RegisterCountryFilesOnRoute(numMwmIds);
-    auto getMwmId = [this, numMwmIds](routing::NumMwmId numMwmId)
-    {
-      return m_callbacks.m_dataSourceGetter().GetMwmIdByCountryFile(numMwmIds->GetFile(numMwmId));
-    };
+    return m_callbacks.m_dataSourceGetter().GetMwmIdByCountryFile(numMwmIds->GetFile(numMwmId));
+  };
+
+  RoadWarningsCollection roadWarnings;
+
+  auto const isTransitRoute = m_currentRouterType == RouterType::Transit;
+  shared_ptr<TransitRouteDisplay> transitRouteDisplay;
+  if (isTransitRoute)
+  {
     transitRouteDisplay = make_shared<TransitRouteDisplay>(*m_transitReadManager, getMwmId,
                                                            m_callbacks.m_stringsBundleGetter,
                                                            m_bmManager, m_transitSymbolSizes);
   }
 
   vector<RouteSegment> segments;
-  vector<m2::PointD> points;
   double distance = 0.0;
-
   auto const subroutesCount = route.GetSubrouteCount();
   for (size_t subrouteIndex = route.GetCurrentSubrouteIdx(); subrouteIndex < subroutesCount; ++subrouteIndex)
   {
     route.GetSubrouteInfo(subrouteIndex, segments);
 
-    // Fill points.
-    double const currentBaseDistance = distance;
-    auto subroute = make_unique_dp<df::Subroute>();
-    subroute->m_baseDistance = currentBaseDistance;
-    subroute->m_baseDepthIndex = static_cast<double>(subroutesCount - subrouteIndex - 1);
     auto const startPt = route.GetSubrouteAttrs(subrouteIndex).GetStart().GetPoint();
-    if (m_currentRouterType != RouterType::Transit)
-    {
-      points.clear();
-      points.reserve(segments.size() + 1);
-      points.push_back(startPt);
-      for (auto const & s : segments)
-        points.push_back(s.GetJunction().GetPoint());
-      if (points.size() < 2)
-      {
-        LOG(LWARNING, ("Invalid subroute. Points number =", points.size()));
-        continue;
-      }
-      subroute->m_polyline = m2::PolylineD(points);
-    }
-    else
-    {
-      subroute->m_polyline.Add(startPt);
-    }
+    auto subroute = CreateDrapeSubroute(segments, startPt, distance,
+                                        static_cast<double>(subroutesCount - subrouteIndex - 1), isTransitRoute);
+    if (!subroute)
+      continue;
     distance = segments.back().GetDistFromBeginningMerc();
-
     switch (m_currentRouterType)
     {
       case RouterType::Vehicle:
       case RouterType::Taxi:
         {
-          subroute->m_routeType = m_currentRouterType == RouterType::Vehicle ?
-                                  df::RouteType::Car : df::RouteType::Taxi;
+          subroute->m_routeType = m_currentRouterType == RouterType::Vehicle ? df::RouteType::Car : df::RouteType::Taxi;
           subroute->AddStyle(df::SubrouteStyle(df::kRouteColor, df::kRouteOutlineColor));
           FillTrafficForRendering(segments, subroute->m_traffic);
-          FillTurnsDistancesForRendering(segments, subroute->m_baseDistance,
-                                         subroute->m_turns);
+          FillTurnsDistancesForRendering(segments, subroute->m_baseDistance, subroute->m_turns);
+          if (m_currentRouterType == RouterType::Vehicle)
+            CollectRoadWarnings(segments, startPt, subroute->m_baseDistance, getMwmId, roadWarnings);
           break;
         }
       case RouterType::Transit:
         {
           subroute->m_routeType = df::RouteType::Transit;
-          transitRouteDisplay->ProcessSubroute(segments, *subroute.get());
-
-          if (subroute->m_polyline.GetSize() < 2)
-          {
-            LOG(LWARNING, ("Invalid transit subroute. Points number =", subroute->m_polyline.GetSize()));
+          if (!transitRouteDisplay->ProcessSubroute(segments, *subroute.get()))
             continue;
-          }
           break;
         }
       case RouterType::Pedestrian:
@@ -581,8 +671,7 @@ void RoutingManager::InsertRoute(Route const & route)
         {
           subroute->m_routeType = df::RouteType::Bicycle;
           subroute->AddStyle(df::SubrouteStyle(df::kRouteBicycle, df::RoutePattern(8.0, 2.0)));
-          FillTurnsDistancesForRendering(segments, subroute->m_baseDistance,
-                                         subroute->m_turns);
+          FillTurnsDistancesForRendering(segments, subroute->m_baseDistance, subroute->m_turns);
           break;
         }
       default: ASSERT(false, ("Unknown router type"));
@@ -599,17 +688,23 @@ void RoutingManager::InsertRoute(Route const & route)
 
   {
     lock_guard<mutex> lock(m_drapeSubroutesMutex);
-    m_transitRouteInfo = m_currentRouterType == RouterType::Transit ? transitRouteDisplay->GetRouteInfo()
-                                                                    : TransitRouteInfo();
+    m_transitRouteInfo = isTransitRoute ? transitRouteDisplay->GetRouteInfo() : TransitRouteInfo();
   }
 
-  if (m_currentRouterType == RouterType::Transit)
+  if (isTransitRoute)
   {
     GetPlatform().RunTask(Platform::Thread::Gui, [transitRouteDisplay = move(transitRouteDisplay)]()
     {
       transitRouteDisplay->CreateTransitMarks();
     });
   }
+
+  if (!roadWarnings.empty())
+  {
+    CreateRoadWarningMarks(move(roadWarnings));
+    return true;
+  }
+  return false;
 }
 
 void RoutingManager::FollowRoute()
@@ -619,11 +714,12 @@ void RoutingManager::FollowRoute()
 
   m_transitReadManager->BlockTransitSchemeMode(true /* isBlocked */);
 
-  // Switching on the extrapolatior only for following mode in car and bicycle navigation.
+  // Switching on the extrapolator only for following mode in car and bicycle navigation.
   m_extrapolator.Enable(m_currentRouterType == RouterType::Vehicle ||
                         m_currentRouterType == RouterType::Bicycle);
   m_delegate.OnRouteFollow(m_currentRouterType);
 
+  m_bmManager->GetEditSession().ClearGroup(UserMark::Type::ROAD_WARNING);
   HideRoutePoint(RouteMarkType::Start);
   SetPointsFollowingMode(true /* enabled */);
 
@@ -912,7 +1008,7 @@ void RoutingManager::BuildRoute(uint32_t timeoutSec)
   m2::RectD rect = ShowPreviewSegments(routePoints);
   rect.Scale(kRouteScaleMultiplier);
   m_drapeEngine.SafeCall(&df::DrapeEngine::SetModelViewRect, rect, true /* applyRotation */,
-                         -1 /* zoom */, true /* isAnim */);
+                         -1 /* zoom */, true /* isAnim */, true /* useVisibleViewport */);
 
   m_routingSession.SetUserCurrentPosition(routePoints.front().m_position);
 
@@ -959,14 +1055,14 @@ void RoutingManager::CheckLocationForRouting(location::GpsInfo const & info)
   if (!IsRoutingActive())
     return;
 
-  RoutingSession::State const state = m_routingSession.OnLocationPositionChanged(info);
-  if (state == RoutingSession::RouteNeedRebuild)
+  SessionState const state = m_routingSession.OnLocationPositionChanged(info);
+  if (state == SessionState::RouteNeedRebuild)
   {
     m_routingSession.RebuildRoute(
         MercatorBounds::FromLatLon(info.m_latitude, info.m_longitude),
         [this](Route const & route, RouterResultCode code) { OnRebuildRouteReady(route, code); },
         nullptr /* needMoreMapsCallback */, nullptr /* removeRouteCallback */, 0 /* timeoutSec */,
-        RoutingSession::State::RouteRebuilding, true /* adjustToPrevRoute */);
+        SessionState::RouteRebuilding, true /* adjustToPrevRoute */);
   }
 }
 

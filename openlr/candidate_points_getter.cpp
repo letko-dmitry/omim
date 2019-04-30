@@ -12,8 +12,8 @@ using namespace routing;
 
 namespace openlr
 {
-void CandidatePointsGetter::GetJunctionPointCandidates(m2::PointD const & p,
-                                                       vector<m2::PointD> & candidates)
+void CandidatePointsGetter::FillJunctionPointCandidates(m2::PointD const & p,
+                                                        vector<m2::PointD> & candidates)
 {
   // TODO(mgsergio): Get optimal value using experiments on a sample.
   // Or start with small radius and scale it up when there are too few points.
@@ -34,7 +34,7 @@ void CandidatePointsGetter::GetJunctionPointCandidates(m2::PointD const & p,
 
   // TODO: Move this to a separate stage.
   // 1030292476 Does not match. Some problem occur with points.
-  // Either points duplicatate or something alike. Check this
+  // Either points duplicate or something alike. Check this
   // later. The idea to fix this was to move SortUnique to the stage
   // after enriching with projections.
 

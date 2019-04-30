@@ -47,7 +47,7 @@ class TrafficDrawerDelegate : public TrafficDrawerDelegateBase
   static constexpr char const * kGoldenLineId = "goldenPath";
 
 public:
-  TrafficDrawerDelegate(Framework & framework)
+  explicit TrafficDrawerDelegate(Framework & framework)
     : m_framework(framework)
     , m_drapeApi(m_framework.GetDrapeApi())
     , m_bm(framework.GetBookmarkManager())
@@ -122,7 +122,7 @@ bool PointsMatch(m2::PointD const & a, m2::PointD const & b)
 class PointsControllerDelegate : public PointsControllerDelegateBase
 {
 public:
-  PointsControllerDelegate(Framework & framework)
+  explicit PointsControllerDelegate(Framework & framework)
     : m_framework(framework)
     , m_dataSource(framework.GetDataSource())
     , m_roadGraph(m_dataSource, routing::IRoadGraph::Mode::ObeyOnewayTag,
@@ -146,7 +146,7 @@ public:
     };
 
     auto const pushFeaturePoints = [&pushPoint](FeatureType & ft) {
-      if (ft.GetFeatureType() != feature::GEOM_LINE)
+      if (ft.GetGeomType() != feature::GeomType::Line)
         return;
       auto const roadClass = ftypes::GetHighwayClass(feature::TypesHolder(ft));
       if (roadClass == ftypes::HighwayClass::Error ||
@@ -169,7 +169,7 @@ public:
     std::vector<FeaturePoint> points;
     m2::PointD pointOnFt;
     indexer::ForEachFeatureAtPoint(m_dataSource, [&points, &p, &pointOnFt](FeatureType & ft) {
-        if (ft.GetFeatureType() != feature::GEOM_LINE)
+        if (ft.GetGeomType() != feature::GeomType::Line)
           return;
 
         ft.ParseGeometry(FeatureType::BEST_GEOMETRY);

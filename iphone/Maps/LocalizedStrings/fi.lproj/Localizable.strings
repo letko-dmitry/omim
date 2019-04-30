@@ -81,8 +81,6 @@
 /* View and button titles for accessibility */
 "core_my_position" = "Sijaintini";
 
-"ok" = "OK";
-
 /* Settings/Downloader - No free space dialog message */
 "free_disk_space_for_country_x" = "Vapauta tilaa laitteellasi ladataksesi tiedoston %@";
 
@@ -1342,10 +1340,6 @@
 
 "onboarding_permissions_message" = "Jotta voisit ladata karttoja, nähdä lähistöllä olevat paikan ja liikenteen sekä käyttää navigointia.";
 
-"onboarding_welcome_title" = "Tervetuloa käyttämään MAPS.ME:tä";
-
-"onboarding_welcome_first_subtitle" = "Ilmaiset, nopeat, yksityiskohtaiset ja offline-tilassa täysin toimivat kartat käännös käännökseltä -navigoinnilla.";
-
 "onboarding_welcome_second_subtitle" = "Käynnistämällä sovelluksen hyväksyt <a href=\"%s\">käyttöehdot</a> ja <a href=\"%s\">tietosuojakäytännön</a>.";
 
 "dialog_incorrect_feature_position" = "Vaihda sijaintia";
@@ -2195,8 +2189,6 @@
 
 "whats_new_message_ugc_travel" = "Arvioi ja kirjoita arvosteluja vierailemistasi paikoista!";
 
-"dialog_pedestrian_route_is_long" = "Jalankulkureitti on liian pitkä";
-
 "dialog_message_transit_not_found_connection" = "Suunnittele reitti yhdellä läpikulkuverkolla";
 
 "bookmarks_error_message_share_general" = "Ei voitu jakaa sovellusvirheen vuoksi";
@@ -2388,8 +2380,6 @@
 "guide_downloaded_title" = "Opas on onnistuneesti ladattu";
 
 "download_guides" = "Lataa oppaat";
-
-"cached_guides_placeholder_subtitle" = "Yksityiskohtaiset offline-oppaat kaikenlaisille matkoille. Valitse se, joka sopii sinulle parhaiten, ja lataa se suoraan kartalle. Tarvitset internetyhteyden oppaiden lataamiseksi.";
 
 "guides_groups_cached" = "Ladatut oppaat";
 
@@ -2741,6 +2731,123 @@
 
 "whats_new_wiki_message" = "Olemme lisänneet suosituimpien turistikohteiden sivuille Wikipedia.org-artikkelit. Ne ovat saatilla myös ilman nettiä";
 
+"driving_options_title" = "Kiertotien asetukset";
+
+"driving_options_subheader" = "Vältettävä kaikissa reiteissä";
+
+"avoid_tolls" = "Maksulliset tiet";
+
+"avoid_unpaved" = "Päällystämättömät tiet";
+
+"avoid_ferry" = "Lauttaliikenne";
+
+"avoid_motorways" = "Valtatiet";
+
+"unable_to_calc_alert_title" = "Reittiä ei voi luoda";
+
+"unable_to_calc_alert_subtitle" = "Valitettavasti emme voineet luoda reittiä valituilla vaihtoehdoilla. Vaihda asetuksia ja yritä uudelleen";
+
+"define_to_avoid_btn" = "Muodosta kiertotietä";
+
+"change_driving_options_btn" = "Muuta kiertotien asetuksia";
+
+"toll_road" = "Maksullinen tie";
+
+"unpaved_road" = "Päällystämätön tie";
+
+"ferry_crossing" = "Lauttaliikenne";
+
+"operated_by" = "Hallinnoitu \"%s\"";
+
+"avoid_toll_roads_placepage" = "Vältä maksullisia teitä";
+
+"avoid_unpaved_roads_placepage" = "Vältä maanteitä";
+
+"avoid_ferry_crossing_placepage" = "Vältä lautan käyttöä";
+
+"cached_guides_placeholder_subtitle" = "MAPS.ME:n valmiit oppaat ovat valittuja paikkoja valokuvien ja kuvauksien kanssa, jotka näkyvät kartalla ja ovat käytettävissä offline-tilassa.";
+
+"guides_catalogue_title" = "Oppaiden luettelo";
+
+"download_guides_button" = "Mene hakemistoon";
+
+"type.cuisine.uzbek" = "Uzbekistanilainen ruokaa";
+
+"onboarding_welcome_title" = "Suunnittele ja matkusta MAPS.ME:n kanssa";
+
+"onboarding_welcome_first_subtitle" = "Tallenna mielenkiintoisia paikkoja, varaa hotelleja, luo reittejä offline-tilassa";
+
+"onboarding_guide_direct_download_title" = "Opas on valmis ladattavaksi";
+
+"onboarding_guide_direct_download_subtitle" = "Opas näkyy kartalla ja toimii offline-tilassa";
+
+"onboarding_guide_direct_download_button" = "Ladata";
+
+"onboarding_bydeeplink_guide_title" = "Valmiit oppaat MAPS.ME:ssä";
+
+"onboarding_bydeeplink_guide_subtitle" = "Valittuja paikkoja valokuvien ja kuvauksien kanssa, jotka näkyvät kartalla ja ovat käytettävissä offline-tilassa.";
+
+"whats_new_auto_update_bydeeplink_title" = "Ennen kuin siirtytään oppaille…";
+
+"whats_new_auto_update_bydeeplink_message" = "Päivitä kartat saadaksesi ajankohtaista tietoa kohteista!";
+
+"whats_new_auto_update_and_proceed_button_size" = "Päivitä (%s) ja jatka";
+
+"dialog_pedestrian_route_is_long" = "Jalankulkureitti on liian pitkä";
+
+"whatsnew_toll_unpaved_title" = "Luo reittejä ottaen huomioon kaikentyyppiset tiet";
+
+"whatsnew_toll_unpaved_message" = "Valitse kiertoreitit maksullisten teiden, päällystämättömien teiden ja lauttojen ohi";
+
+"whatsnew_new_catalogue_title" = "Päivitetyt hakemistosivut";
+
+"whatsnew_new_catalogue_message" = "Me lisäsimme yksityiskohtaisia tietoja kumppaneiden oppaista, jotta reitin valinta on helppoa ja kätevää";
+
+"purchase_please_wait_toast" = "Älä poistu näytöltä ennen kuin ostos on tehty";
+
+"trip_start" = "Mennään";
+
+"pick_destination" = "Kohde";
+
+"follow_my_position" = "Kohdista";
+
+"search_results" = "Hakutulokset";
+
+"then_turn" = "Sitten";
+
+"redirect_route_alert" = "Haluatko luoda reitin uudelleen?";
+
+"redirect_route_yes" = "Kyllä";
+
+"redirect_route_no" = "Ei";
+
+"trip_finished" = "Olet saapunut!";
+
+"keyboard_availability_alert" = "Näppäimistö ei ole käytettävissä ajon aikana";
+
+"dialog_routing_change_start_carplay" = "Reittiä ei ole mahdollista luoda nykyisestä sijainnista";
+
+"dialog_routing_change_end_carplay" = "Reittiä ei ole mahdollista luoda loppupisteeseen. Valitse toinen";
+
+"dialog_routing_check_gps_carplay" = "Ei ole GPS-signaalia. Siirry avaralle alueelle";
+
+"dialog_routing_unable_locate_route_carplay" = "Reittiä ei ole mahdollista luoda. Valitse muut reittipisteet";
+
+"dialog_routing_download_files_carplay" = "Kaikki kartat eivät ole käytettävissä reitin luomiseen. Lataa ne puhelimen sovellukseen";
+
+"dialog_routing_system_error_carplay" = "On tapahtunut virhe. Käynnistä sovellus uudelleen";
+
+"dialog_routing_rebuild_from_current_location_carplay" = "Reitti luodaan nykyisestä sijainnista";
+
+"dialog_routing_rebuild_for_vehicle_carplay" = "Reitti muutetaan autoilijan reitiksi";
+
+"ok" = "Ok";
+
+"vezet_taxi" = "Vezet";
+
+
+/**********  Partners  **********/
+
 "sponsored_partner1_action" = "Outlets";
 
 "sponsored_partner2_action" = "Discount";
@@ -2788,9 +2895,9 @@
 
 "type.aeroway.terminal" = "aeroway-terminal";
 
-"type.amenity" = "amenity";
+"type.amenity" = "Infrastruktuurikohteet";
 
-"type.amenity.arts_centre" = "amenity-arts_centre";
+"type.amenity.arts_centre" = "Taidekeskus";
 
 "type.amenity.atm" = "Pankkiautomaatti";
 
@@ -2854,7 +2961,7 @@
 
 "type.amenity.fire_station" = "Paloasema";
 
-"type.amenity.food_court" = "amenity-food_court";
+"type.amenity.food_court" = "Food court";
 
 "type.amenity.fountain" = "Suihkulähde";
 
@@ -2970,7 +3077,7 @@
 
 "type.amenity.vending_machine.parking_tickets" = "Pysäköintimaksuautomaatti";
 
-"type.amenity.vending_machine.public_transport_tickets" = "amenity-vending_machine-public_transport_tickets";
+"type.amenity.vending_machine.public_transport_tickets" = "Julkisen liikenteen lippuautomaatti";
 
 "type.amenity.veterinary" = "Eläinlääkäri";
 
@@ -3286,7 +3393,7 @@
 
 "type.highway.bus_stop" = "Bussipysäkki";
 
-"type.highway.construction" = "highway-construction";
+"type.highway.construction" = "Rakenteilla oleva tie";
 
 "type.highway.cycleway" = "highway-cycleway";
 
@@ -3592,7 +3699,7 @@
 
 "type.landuse" = "landuse";
 
-"type.landuse.allotments" = "landuse-allotments";
+"type.landuse.allotments" = "Allotments";
 
 "type.landuse.basin" = "Vesi";
 
@@ -3606,13 +3713,13 @@
 
 "type.landuse.construction" = "landuse-construction";
 
-"type.landuse.farm" = "landuse-farm";
+"type.landuse.farm" = "Farm";
 
-"type.landuse.farmland" = "landuse-farmland";
+"type.landuse.farmland" = "Maatalousmaa";
 
-"type.landuse.farmyard" = "landuse-farmyard";
+"type.landuse.farmyard" = "Farmyard";
 
-"type.landuse.field" = "landuse-field";
+"type.landuse.field" = "Field";
 
 "type.landuse.forest" = "Metsä";
 
@@ -3622,27 +3729,27 @@
 
 "type.landuse.forest.mixed" = "Metsä";
 
-"type.landuse.garages" = "landuse-garages";
+"type.landuse.garages" = "Garages";
 
-"type.landuse.grass" = "landuse-grass";
+"type.landuse.grass" = "Ruohikko";
 
 "type.landuse.greenfield" = "landuse-greenfield";
 
 "type.landuse.greenhouse_horticulture" = "landuse-greenhouse_horticulture";
 
-"type.landuse.industrial" = "landuse-industrial";
+"type.landuse.industrial" = "Industrial land";
 
-"type.landuse.landfill" = "landuse-landfill";
+"type.landuse.landfill" = "Kaatopaikka";
 
-"type.landuse.meadow" = "landuse-meadow";
+"type.landuse.meadow" = "Meadow";
 
-"type.landuse.military" = "landuse-military";
+"type.landuse.military" = "Military area";
 
-"type.landuse.orchard" = "landuse-orchard";
+"type.landuse.orchard" = "Orchard";
 
-"type.landuse.quarry" = "landuse-quarry";
+"type.landuse.quarry" = "Quarry";
 
-"type.landuse.railway" = "landuse-railway";
+"type.landuse.railway" = "Rautatierakennukset";
 
 "type.landuse.recreation_ground" = "landuse-recreation_ground";
 
@@ -3660,13 +3767,13 @@
 
 "type.landuse.village_green" = "landuse-village_green";
 
-"type.landuse.vineyard" = "landuse-vineyard";
+"type.landuse.vineyard" = "Vineyard";
 
 "type.leisure" = "leisure";
 
 "type.leisure.common" = "leisure-common";
 
-"type.leisure.dog_park" = "Koirapuisto";
+"type.leisure.dog_park" = "Koirien ulkoilupaikka";
 
 "type.leisure.dog_park.tennis" = "Koirapuisto";
 
@@ -3678,11 +3785,11 @@
 
 "type.leisure.golf_course" = "Golf-rata";
 
-"type.leisure.ice_rink" = "leisure-ice_rink";
+"type.leisure.ice_rink" = "Ice rink";
 
-"type.leisure.landscape_reserve" = "leisure-landscape_reserve";
+"type.leisure.landscape_reserve" = "Landscape reserve";
 
-"type.leisure.marina" = "leisure-marina";
+"type.leisure.marina" = "Marina";
 
 "type.leisure.nature_reserve" = "Luonnonsuojelualue";
 
@@ -3706,7 +3813,7 @@
 
 "type.leisure.playing_fields.tennis" = "leisure-playing_fields-tennis";
 
-"type.leisure.recreation_ground" = "leisure-recreation_ground";
+"type.leisure.recreation_ground" = "Recreation ground";
 
 "type.leisure.sauna" = "Sauna";
 
@@ -3786,7 +3893,7 @@
 
 "type.natural" = "natural";
 
-"type.natural.bare_rock" = "natural-bare_rock";
+"type.natural.bare_rock" = "Bare rock";
 
 "type.natural.bay" = "Lahti";
 
@@ -3796,53 +3903,53 @@
 
 "type.natural.cave_entrance" = "Luolan sisäänkäynti";
 
-"type.natural.cliff" = "natural-cliff";
+"type.natural.cliff" = "Cliff";
 
-"type.natural.coastline" = "natural-coastline";
+"type.natural.coastline" = "Coastline";
 
 "type.natural.geyser" = "Geysir";
 
 "type.natural.glacier" = "Jäätikkö";
 
-"type.natural.grassland" = "natural-grassland";
+"type.natural.grassland" = "Pelto";
 
-"type.natural.heath" = "natural-heath";
+"type.natural.heath" = "Heath";
 
 "type.natural.lake" = "Järvi";
 
 "type.natural.land" = "natural-land";
 
-"type.natural.meadow" = "natural-meadow";
+"type.natural.meadow" = "Meadow";
 
-"type.natural.orchard" = "natural-orchard";
+"type.natural.orchard" = "Orchard";
 
 "type.natural.peak" = "Huippu";
 
 "type.natural.pond" = "Lampi";
 
-"type.natural.rock" = "natural-rock";
+"type.natural.rock" = "Rock";
 
-"type.natural.salt_pond" = "natural-salt_pond";
+"type.natural.salt_pond" = "Salt pond";
 
-"type.natural.scrub" = "natural-scrub";
+"type.natural.scrub" = "Tiheiköt";
 
 "type.natural.spring" = "Lähde";
 
 "type.natural.tree" = "Puu";
 
-"type.natural.tree_row" = "natural-tree_row";
+"type.natural.tree_row" = "Tree row";
 
-"type.natural.vineyard" = "natural-vineyard";
+"type.natural.vineyard" = "Vineyard";
 
 "type.natural.volcano" = "Tulivuori";
 
 "type.natural.water" = "Vesi";
 
-"type.natural.wetland" = "natural-wetland";
+"type.natural.wetland" = "Suoperäinen seutu";
 
-"type.natural.wetland.bog" = "natural-wetland-bog";
+"type.natural.wetland.bog" = "Wetland";
 
-"type.natural.wetland.marsh" = "natural-wetland-marsh";
+"type.natural.wetland.marsh" = "Wetland";
 
 "type.natural.wood" = "Metsä";
 
@@ -3946,7 +4053,7 @@
 
 "type.place.locality" = "Paikkakunta";
 
-"type.place.neighbourhood" = "place-neighbourhood";
+"type.place.neighbourhood" = "Neighbourhood";
 
 "type.place.ocean" = "Valtameri";
 
@@ -4032,7 +4139,7 @@
 
 "type.railway.incline.tunnel" = "railway-incline-tunnel";
 
-"type.railway.level_crossing" = "Tasoristeys";
+"type.railway.level_crossing" = "Rautatien tasoristeys";
 
 "type.railway.light_rail" = "railway-light_rail";
 
@@ -4040,7 +4147,7 @@
 
 "type.railway.light_rail.tunnel" = "railway-light_rail-tunnel";
 
-"type.railway.monorail" = "railway-monorail";
+"type.railway.monorail" = "Monorail (kohorata)";
 
 "type.railway.monorail.bridge" = "railway-monorail-bridge";
 
@@ -4062,7 +4169,7 @@
 
 "type.railway.proposed" = "railway-proposed";
 
-"type.railway.rail" = "railway-rail";
+"type.railway.rail" = "Rautatie";
 
 "type.railway.rail.bridge" = "railway-rail-bridge";
 
@@ -4172,7 +4279,7 @@
 
 "type.railway.subway.yellow" = "railway-subway-yellow";
 
-"type.railway.subway_entrance" = "Metro";
+"type.railway.subway_entrance" = "Metron sisäänkäynti";
 
 "type.railway.subway_entrance.barcelona" = "Metro";
 
@@ -4446,7 +4553,7 @@
 
 "type.sport.diving" = "sport-diving";
 
-"type.sport.equestrian" = "Equestrian Sports";
+"type.sport.equestrian" = "Hevosurheilu";
 
 "type.sport.football" = "sport-football";
 
@@ -4468,7 +4575,7 @@
 
 "type.sport.swimming" = "sport-swimming";
 
-"type.sport.tennis" = "sport-tennis";
+"type.sport.tennis" = "Tenniskenttä";
 
 "type.tourism" = "tourism";
 
@@ -4580,11 +4687,11 @@
 
 "type.wheelchair" = "wheelchair";
 
-"type.wheelchair.limited" = "wheelchair-limited";
+"type.wheelchair.limited" = "Osittain varustettu vammaisille";
 
-"type.wheelchair.no" = "wheelchair-no";
+"type.wheelchair.no" = "Ei varustettu vammaisille";
 
-"type.wheelchair.yes" = "wheelchair-yes";
+"type.wheelchair.yes" = "Varustettu vammaisille";
 
 "type.piste_lift" = "piste:lift";
 
@@ -4617,6 +4724,40 @@
 "type.piste_type.nordic" = "piste:type-nordic";
 
 "type.piste_type.sled" = "piste:type-sled";
+
+"type.building_part" = "Rakennus";
+
+"type.earthquake_damage" = "earthquake:damage";
+
+"type.area_highway.cycleway" = "area:highway-cycleway";
+
+"type.area_highway.footway" = "area:highway-footway";
+
+"type.area_highway.living_street" = "area:highway-living_street";
+
+"type.area_highway.motorway" = "area:highway-motorway";
+
+"type.area_highway.path" = "area:highway-path";
+
+"type.area_highway.pedestrian" = "area:highway-pedestrian";
+
+"type.area_highway.primary" = "area:highway-primary";
+
+"type.area_highway.residential" = "area:highway-residential";
+
+"type.area_highway.secondary" = "area:highway-secondary";
+
+"type.area_highway.service" = "area:highway-service";
+
+"type.area_highway.tertiary" = "area:highway-tertiary";
+
+"type.area_highway.steps" = "area:highway-steps";
+
+"type.area_highway.track" = "area:highway-track";
+
+"type.area_highway.trunk" = "area:highway-trunk";
+
+"type.area_highway.unclassified" = "area:highway-unclassified";
 
 
 /********** Brands **********/

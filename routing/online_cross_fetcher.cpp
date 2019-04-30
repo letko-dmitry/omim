@@ -10,7 +10,7 @@
 
 #include "geometry/mercator.hpp"
 
-#include "std/bind.hpp"
+using namespace std;
 
 namespace
 {

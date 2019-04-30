@@ -7787,7 +7787,7 @@ cont {
     scale: 18
     symbol {
       name: "toilets-m"
-      priority: 16473
+      priority: 16451
     }
     caption {
       primary {
@@ -7796,14 +7796,14 @@ cont {
         offset_y: 1
         is_optional: true
       }
-      priority: 15473
+      priority: 15451
     }
   }
   element {
     scale: 19
     symbol {
       name: "toilets-m"
-      priority: 16473
+      priority: 16451
     }
     caption {
       primary {
@@ -7812,7 +7812,7 @@ cont {
         offset_y: 1
         is_optional: true
       }
-      priority: 15473
+      priority: 15451
     }
   }
 }
@@ -38519,6 +38519,7 @@ cont {
   element {
     scale: 17
     symbol {
+      name: "cave-m"
       priority: 16443
     }
     caption {
@@ -38534,6 +38535,7 @@ cont {
   element {
     scale: 18
     symbol {
+      name: "cave-m"
       priority: 16443
     }
     caption {
@@ -38549,6 +38551,7 @@ cont {
   element {
     scale: 19
     symbol {
+      name: "cave-m"
       priority: 16443
     }
     caption {

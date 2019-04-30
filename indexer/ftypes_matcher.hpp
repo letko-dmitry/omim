@@ -195,20 +195,20 @@ class WikiChecker : public BaseChecker
 {
   WikiChecker();
 public:
-   static std::set<std::pair<std::string, std::string>> const kTypesForWiki;
+  static std::set<std::pair<std::string, std::string>> const kTypesForWiki;
 
-   DECLARE_CHECKER_INSTANCE(WikiChecker);
+  DECLARE_CHECKER_INSTANCE(WikiChecker);
 
-   template <typename Ft>
-   bool NeedFeature(Ft & feature) const
-   {
-     bool need = false;
-     feature.ForEachType([&](uint32_t type) {
-       if (!need && IsMatched(type))
-         need = true;
-     });
-     return need;
-   }
+  template <typename Ft>
+  bool NeedFeature(Ft & feature) const
+  {
+    bool need = false;
+    feature.ForEachType([&](uint32_t type) {
+      if (!need && IsMatched(type))
+        need = true;
+    });
+    return need;
+  }
 };
 
 class IsPlaceChecker : public BaseChecker
@@ -243,6 +243,31 @@ public:
   DECLARE_CHECKER_INSTANCE(IsPopularityPlaceChecker);
 };
 
+class IsIslandChecker : public BaseChecker
+{
+  IsIslandChecker();
+public:
+  DECLARE_CHECKER_INSTANCE(IsIslandChecker);
+};
+
+class IsLandChecker : public BaseChecker
+{
+  IsLandChecker();
+public:
+  DECLARE_CHECKER_INSTANCE(IsLandChecker);
+
+  uint32_t GetLandType() const;
+};
+
+class IsCoastlineChecker : public BaseChecker
+{
+  IsCoastlineChecker();
+public:
+  DECLARE_CHECKER_INSTANCE(IsCoastlineChecker);
+
+  uint32_t GetCoastlineType() const;
+};
+
 class IsHotelChecker : public BaseChecker
 {
 public:
@@ -262,7 +287,7 @@ public:
 
   using UnderlyingType = std::underlying_type_t<Type>;
 
-  static_assert(base::Key(Type::Count) <= CHAR_BIT * sizeof(unsigned),
+  static_assert(base::Underlying(Type::Count) <= CHAR_BIT * sizeof(unsigned),
                 "Too many types of hotels");
 
   static char const * GetHotelTypeTag(Type type);
@@ -275,7 +300,7 @@ public:
 private:
   IsHotelChecker();
 
-  std::array<std::pair<uint32_t, Type>, base::Key(Type::Count)> m_sortedTypes;
+  std::array<std::pair<uint32_t, Type>, base::Underlying(Type::Count)> m_sortedTypes;
 };
 
 // WiFi is a type in classificator.txt,
@@ -311,7 +336,7 @@ public:
 private:
   IsEatChecker();
 
-  std::array<std::pair<uint32_t, Type>, base::Key(Type::Count)> m_sortedTypes;
+  std::array<std::pair<uint32_t, Type>, base::Underlying(Type::Count)> m_sortedTypes;
 };
 
 class IsCuisineChecker : public BaseChecker

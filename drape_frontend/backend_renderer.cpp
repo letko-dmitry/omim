@@ -13,6 +13,7 @@
 #include "drape_frontend/user_mark_shapes.hpp"
 #include "drape_frontend/visual_params.hpp"
 
+#include "drape/support_manager.hpp"
 #include "drape/texture_manager.hpp"
 
 #include "indexer/scales.hpp"
@@ -85,9 +86,9 @@ void BackendRenderer::Teardown()
 #endif
 }
 
-unique_ptr<threads::IRoutine> BackendRenderer::CreateRoutine()
+std::unique_ptr<threads::IRoutine> BackendRenderer::CreateRoutine()
 {
-  return make_unique<Routine>(*this);
+  return std::make_unique<Routine>(*this);
 }
 
 void BackendRenderer::RecacheGui(gui::TWidgetsInitInfo const & initInfo, bool needResetOldGui)
@@ -228,6 +229,7 @@ void BackendRenderer::AcceptMessage(ref_ptr<Message> message)
       {
         CHECK(m_context != nullptr, ());
         ref_ptr<dp::Batcher> batcher = m_batchersPool->GetBatcher(tileKey);
+        batcher->SetBatcherHash(tileKey.GetHashValue(BatcherBucket::Default));
 #if defined(DRAPE_MEASURER_BENCHMARK) && defined(GENERATING_STATISTIC)
         DrapeMeasurer::Instance().StartShapesGeneration();
 #endif
@@ -581,6 +583,17 @@ void BackendRenderer::AcceptMessage(ref_ptr<Message> message)
       break;
     }
 
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+  case Message::Type::NotifyGraphicsReady:
+    {
+      ref_ptr<NotifyGraphicsReadyMessage> msg = message;
+      m_commutator->PostMessage(ThreadsCommutator::RenderThread,
+                                make_unique_dp<NotifyGraphicsReadyMessage>(msg->GetCallback()),
+                                MessagePriority::Normal);
+      break;
+    }
+#endif
+
   default:
     ASSERT(false, ());
     break;
@@ -613,6 +626,7 @@ void BackendRenderer::OnContextCreate()
   m_contextFactory->WaitForInitialization(m_context.get());
   m_context->MakeCurrent();
   m_context->Init(m_apiVersion);
+  dp::SupportManager::Instance().Init(m_context);
 
   m_readManager->Start();
   InitContextDependentResources();
@@ -652,8 +666,11 @@ void BackendRenderer::Routine::Do()
 void BackendRenderer::RenderFrame()
 {
   CHECK(m_context != nullptr, ());
-  if (m_context->Validate())
-    ProcessSingleMessage();
+  if (!m_context->Validate())
+    return;
+
+  ProcessSingleMessage();
+  m_context->CollectMemory();
 }
 
 void BackendRenderer::InitContextDependentResources()

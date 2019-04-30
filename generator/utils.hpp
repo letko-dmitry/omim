@@ -16,6 +16,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 namespace generator
 {
@@ -60,4 +61,7 @@ bool ForEachOsmId2FeatureId(std::string const & path, ToDo && toDo)
 
   return true;
 }
+
+bool ParseFeatureIdToOsmIdMapping(std::string const & path,
+                                  std::unordered_map<uint32_t, base::GeoObjectId> & mapping);
 }  // namespace generator

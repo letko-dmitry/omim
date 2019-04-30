@@ -72,10 +72,8 @@ bool BuildPopularPlacesMwmSection(std::string const & srcFilename, std::string c
   LOG(LINFO, ("Build Popular Places section"));
 
   std::unordered_map<uint32_t, base::GeoObjectId> featureIdToOsmId;
-  ForEachOsmId2FeatureId(osmToFeatureFilename,
-                         [&featureIdToOsmId](base::GeoObjectId const & osmId, uint32_t fId) {
-                           featureIdToOsmId.emplace(fId, osmId);
-                         });
+  if (!ParseFeatureIdToOsmIdMapping(osmToFeatureFilename, featureIdToOsmId))
+    return false;
 
   PopularPlaces places;
   LoadPopularPlaces(srcFilename, places);

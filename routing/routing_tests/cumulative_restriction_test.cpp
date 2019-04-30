@@ -4,6 +4,7 @@
 
 #include "routing/fake_ending.hpp"
 #include "routing/geometry.hpp"
+#include "routing/restriction_loader.hpp"
 
 #include "traffic/traffic_cache.hpp"
 
@@ -12,6 +13,7 @@
 #include "geometry/point2d.hpp"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace
@@ -68,6 +70,8 @@ unique_ptr<SingleVehicleWorldGraph> BuildXYGraph()
   return BuildWorldGraph(move(loader), estimator, joints);
 }
 
+using Algorithm = AStarAlgorithm<Segment, SegmentEdge, RouteWeight>;
+
 // Route through XY graph without any restrictions.
 UNIT_TEST(XYGraph)
 {
@@ -77,35 +81,41 @@ UNIT_TEST(XYGraph)
   auto const finish = MakeFakeEnding(5, 0, m2::PointD(2, 3), *graph);
   auto starter = MakeStarter(start, finish, *graph);
   vector<m2::PointD> const expectedGeom = {{2 /* x */, 0 /* y */}, {1, 1}, {2, 2}, {2, 3}};
-  TestRouteGeometry(*starter, AStarAlgorithm<IndexGraphStarter>::Result::OK, expectedGeom);
+  TestRouteGeometry(*starter, Algorithm::Result::OK, expectedGeom);
 }
 
 // Route through XY graph with one restriciton (type only) from F1 to F3.
 UNIT_CLASS_TEST(RestrictionTest, XYGraph_RestrictionF1F3Only)
 {
   Init(BuildXYGraph());
-  RestrictionVec restrictions = {
+  RestrictionVec restrictionsOnly = {
       {Restriction::Type::Only, {1 /* feature from */, 3 /* feature to */}}};
+  RestrictionVec restrictionsNo;
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
 
   vector<m2::PointD> const expectedGeom = {{2 /* x */, 0 /* y */}, {1, 1}, {2, 2}, {2, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(1 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, 0), *m_graph),
-      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 // Route through XY graph with one restriciton (type only) from F3 to F5.
 UNIT_CLASS_TEST(RestrictionTest, XYGraph_RestrictionF3F5Only)
 {
   Init(BuildXYGraph());
-  RestrictionVec restrictions = {
+  RestrictionVec restrictionsOnly = {
       {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}};
+  RestrictionVec restrictionsNo;
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
 
   vector<m2::PointD> const expectedGeom = {{2 /* x */, 0 /* y */}, {1, 1}, {2, 2}, {2, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(1 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, 0), *m_graph),
-      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 // Cumulative case. Route through XY graph with two restricitons (type only) applying
@@ -113,15 +123,18 @@ UNIT_CLASS_TEST(RestrictionTest, XYGraph_RestrictionF3F5Only)
 UNIT_CLASS_TEST(RestrictionTest, XYGraph_PermutationsF3F5OnlyF1F3Only)
 {
   Init(BuildXYGraph());
-  RestrictionVec restrictions = {
+  RestrictionVec restrictionsOnly = {
       {Restriction::Type::Only, {1 /* feature from */, 3 /* feature to */}},
       {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}};
+  RestrictionVec restrictionsNo;
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
 
   vector<m2::PointD> const expectedGeom = {{2 /* x */, 0 /* y */}, {1, 1}, {2, 2}, {2, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(1 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, 0), *m_graph),
-      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 // Cumulative case. Route through XY graph with two restricitons (type only and type no) applying
@@ -130,14 +143,21 @@ UNIT_CLASS_TEST(RestrictionTest, XYGraph_PermutationsF3F5OnlyAndF0F2No)
 {
   Init(BuildXYGraph());
 
-  RestrictionVec restrictions = {
-      {Restriction::Type::No, {1 /* feature from */, 2 /* feature to */}},
-      {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}};
+  RestrictionVec restrictionsNo = {
+    {Restriction::Type::No, {1 /* feature from */, 2 /* feature to */}}
+  };
+
+  RestrictionVec restrictionsOnly = {
+      {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}
+  };
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
+
   vector<m2::PointD> const expectedGeom = {{2 /* x */, 0 /* y */}, {1, 1}, {2, 2}, {2, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(1 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, 0), *m_graph),
-      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 // Cumulative case. Trying to build route through XY graph with two restricitons applying
@@ -146,14 +166,19 @@ UNIT_CLASS_TEST(RestrictionTest, XYGraph_PermutationsF3F5OnlyAndF0F2No)
 UNIT_CLASS_TEST(RestrictionTest, XYGraph_RestrictionF3F5OnlyAndF1F3No)
 {
   Init(BuildXYGraph());
-  RestrictionVec restrictions = {
-      {Restriction::Type::No, {1 /* feature from */, 3 /* feature to */}},
-      {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}};
+  RestrictionVec restrictionsNo = {
+    {Restriction::Type::No, {1 /* feature from */, 3 /* feature to */}}
+  };
+  RestrictionVec restrictionsOnly = {
+      {Restriction::Type::Only, {3 /* feature from */, 5 /* feature to */}}
+  };
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
 
   TestRestrictions(
-      {} /* expectedGeom */, AStarAlgorithm<IndexGraphStarter>::Result::NoPath,
+      {} /* expectedGeom */, Algorithm::Result::NoPath,
       MakeFakeEnding(1 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, 0), *m_graph),
-      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(5, 0, m2::PointD(2, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 //                        Finish
@@ -166,9 +191,9 @@ UNIT_CLASS_TEST(RestrictionTest, XYGraph_RestrictionF3F5OnlyAndF1F3No)
 //      F2      F3      F4
 //        ↖  ↗           ↖
 // 1        *               *
-//        ↗  ↖             ^
+//        ↗  ↖              ^
 //      F0      F1          F8
-//    ↗          ↖         |
+//    ↗          ↖          |
 // 0 *              *--F7--->*
 //                  ^
 //                  F9
@@ -219,6 +244,53 @@ unique_ptr<SingleVehicleWorldGraph> BuildXXGraph()
   return BuildWorldGraph(move(loader), estimator, joints);
 }
 
+
+// 2 *              *
+//               ↗    ↘
+//             F4       F5
+//           ↗             ↘
+// 1        *                *
+//           ↖               ↓
+//             F2            F3
+//               ↖           ↓ <-- Finish
+// 0 *              *--F1--->*
+//                  ^
+//                  F0
+//                  |
+//-1                *
+//   0       1      2        3
+//                Start
+// Note. This graph contains of 9 one segment directed features.
+unique_ptr<SingleVehicleWorldGraph> BuildCubeGraph()
+{
+  unique_ptr<TestGeometryLoader> loader = make_unique<TestGeometryLoader>();
+  loader->AddRoad(0 /* featureId */, true /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{2.0, -1.0}, {2.0, 0.0}}));
+  loader->AddRoad(1 /* featureId */, true /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{2.0, 0.0}, {3.0, 0.0}}));
+  loader->AddRoad(2 /* featureId */, true /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{2.0, 0.0}, {1.0, 1.0}}));
+  loader->AddRoad(3 /* featureId */, false /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{3.0, 1.0}, {3.0, 0.0}}));
+  loader->AddRoad(4 /* featureId */, true /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{1.0, 1.0}, {2.0, 2.0}}));
+  loader->AddRoad(5 /* featureId */, true /* oneWay */, 1.0 /* speed */,
+                  RoadGeometry::Points({{2.0, 2.0}, {3.0, 1.0}}));
+
+  vector<Joint> const joints = {
+    MakeJoint({{0 /* feature id */, 0 /* point id */}}), /* joint at point (2, -1) */
+    MakeJoint({{0, 1}, {1, 0}, {2, 0}}),                 /* joint at point (2, 0) */
+    MakeJoint({{2, 1}, {4, 0}}),                         /* joint at point (1, 1) */
+    MakeJoint({{4, 1}, {5, 0}}),                         /* joint at point (2, 2) */
+    MakeJoint({{5, 1}, {3, 0}}),                         /* joint at point (3, 1) */
+    MakeJoint({{1, 1}, {3, 1}}),                         /* joint at point (3, 0) */
+  };
+
+  traffic::TrafficCache const trafficCache;
+  shared_ptr<EdgeEstimator> estimator = CreateEstimatorForCar(trafficCache);
+  return BuildWorldGraph(move(loader), estimator, joints);
+}
+
 // Route through XY graph without any restrictions.
 UNIT_CLASS_TEST(RestrictionTest, XXGraph)
 {
@@ -226,7 +298,7 @@ UNIT_CLASS_TEST(RestrictionTest, XXGraph)
   RestrictionVec restrictions = {};
   vector<m2::PointD> const expectedGeom = {{2 /* x */, -1 /* y */}, {2, 0}, {1, 1}, {2, 2}, {3, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(9 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, -1), *m_graph),
       MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictions), *this);
 }
@@ -236,15 +308,19 @@ UNIT_CLASS_TEST(RestrictionTest, XXGraph)
 UNIT_CLASS_TEST(RestrictionTest, XXGraph_PermutationsF1F3OnlyAndF3F6Only)
 {
   Init(BuildXXGraph());
-  RestrictionVec restrictions = {
+  RestrictionVec restrictionsNo;
+  RestrictionVec restrictionsOnly = {
       {Restriction::Type::Only, {1 /* feature from */, 3 /* feature to */}},
-      {Restriction::Type::Only, {3 /* feature from */, 6 /* feature to */}}};
+      {Restriction::Type::Only, {3 /* feature from */, 6 /* feature to */}}
+  };
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
 
   vector<m2::PointD> const expectedGeom = {{2 /* x */, -1 /* y */}, {2, 0}, {1, 1}, {2, 2}, {3, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(9 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, -1), *m_graph),
-      MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictionsNo), *this);
 }
 
 // Route through XX graph with one restriciton (type no) from F1 to F3.
@@ -257,7 +333,7 @@ UNIT_CLASS_TEST(RestrictionTest, XXGraph_RestrictionF1F3No)
       {2 /* x */, -1 /* y */}, {2, 0}, {3, 0}, {3, 1}, {2, 2}, {3, 3}};
 
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(9 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, -1), *m_graph),
       MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictions), *this);
 }
@@ -267,17 +343,49 @@ UNIT_CLASS_TEST(RestrictionTest, XXGraph_RestrictionF1F3No)
 UNIT_CLASS_TEST(RestrictionTest, XXGraph_PermutationsF1F3NoF7F8OnlyF8F4OnlyF4F6Only)
 {
   Init(BuildXXGraph());
-  RestrictionVec restrictions = {
-      {Restriction::Type::No, {1 /* feature from */, 3 /* feature to */}},
+  RestrictionVec restrictionsNo = {
+    {Restriction::Type::No, {1 /* feature from */, 3 /* feature to */}}
+  };
+
+  RestrictionVec restrictionsOnly = {
       {Restriction::Type::Only, {4 /* feature from */, 6 /* feature to */}},
       {Restriction::Type::Only, {7 /* feature from */, 8 /* feature to */}},
-      {Restriction::Type::Only, {8 /* feature from */, 4 /* feature to */}}};
+      {Restriction::Type::Only, {8 /* feature from */, 4 /* feature to */}}
+  };
 
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
   vector<m2::PointD> const expectedGeom = {
       {2 /* x */, -1 /* y */}, {2, 0}, {3, 0}, {3, 1}, {2, 2}, {3, 3}};
   TestRestrictions(
-      expectedGeom, AStarAlgorithm<IndexGraphStarter>::Result::OK,
+      expectedGeom, Algorithm::Result::OK,
       MakeFakeEnding(9 /* featureId */, 0 /* segmentIdx */, m2::PointD(2, -1), *m_graph),
-      MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictions), *this);
+      MakeFakeEnding(6, 0, m2::PointD(3, 3), *m_graph), move(restrictionsNo), *this);
+}
+
+UNIT_CLASS_TEST(RestrictionTest, XXGraph_CheckOnlyRestriction)
+{
+  Init(BuildCubeGraph());
+
+  m2::PointD const start(2.0, -1.0);
+  m2::PointD const finish(3.0, 0.2);
+  auto const test = [&](vector<m2::PointD> const & expectedGeom, RestrictionVec && restrictionsNo) {
+    TestRestrictions(
+      expectedGeom, Algorithm::Result::OK,
+      MakeFakeEnding(0 /* featureId */, 0 /* segmentIdx */, start, *m_graph),
+      MakeFakeEnding(3 /* featureId */, 0 /* segmentIdx */, finish, *m_graph),
+      move(restrictionsNo), *this);
+  };
+
+  RestrictionVec restrictionsOnly = {
+    {Restriction::Type::Only, {0 /* feature from */, 2 /* feature to */}},
+  };
+  RestrictionVec restrictionsNo;
+  ConvertRestrictionsOnlyToNoAndSort(m_graph->GetIndexGraphForTests(kTestNumMwmId), restrictionsOnly,
+                                     restrictionsNo);
+
+  // Check that without restrictions we can find path better.
+  test({start, {2, 0}, {1, 1}, {2, 2}, {3, 1}, finish, finish}, move(restrictionsNo));
+  test({start, {2, 0}, {3, 0}, finish, finish}, RestrictionVec());
 }
 }  // namespace

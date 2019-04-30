@@ -6,6 +6,8 @@
 #include "qt/preferences_dialog.hpp"
 #include "qt/qt_common/helpers.hpp"
 #include "qt/qt_common/scale_slider.hpp"
+#include "qt/routing_settings_dialog.hpp"
+#include "qt/screenshoter.hpp"
 #include "qt/search_panel.hpp"
 
 #include "platform/settings.hpp"
@@ -38,6 +40,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolButton>
 
@@ -60,9 +63,12 @@ namespace qt
 extern char const * kTokenKeySetting;
 extern char const * kTokenSecretSetting;
 
-MainWindow::MainWindow(Framework & framework, bool apiOpenGLES3, QString const & mapcssFilePath /*= QString()*/)
+MainWindow::MainWindow(Framework & framework, bool apiOpenGLES3,
+                       std::unique_ptr<ScreenshotParams> && screenshotParams,
+                       QString const & mapcssFilePath /*= QString()*/)
   : m_Docks{}
   , m_locationService(CreateDesktopLocationService(*this))
+  , m_screenshotMode(screenshotParams != nullptr)
 #ifdef BUILD_DESIGNER
   , m_mapcssFilePath(mapcssFilePath)
 #endif
@@ -71,7 +77,29 @@ MainWindow::MainWindow(Framework & framework, bool apiOpenGLES3, QString const &
   QDesktopWidget const * desktop(QApplication::desktop());
   setGeometry(desktop->screenGeometry(desktop->primaryScreen()));
 
-  m_pDrawWidget = new DrawWidget(framework, apiOpenGLES3, this);
+  if (m_screenshotMode)
+  {
+    screenshotParams->m_statusChangedFn = [this](std::string const & state, bool finished)
+    {
+      statusBar()->showMessage(QString::fromStdString(state));
+      if (finished)
+        QCoreApplication::quit();
+    };
+  }
+
+  m_pDrawWidget = new DrawWidget(framework, apiOpenGLES3, std::move(screenshotParams), this);
+
+  if (m_screenshotMode)
+  {
+    QSizePolicy policy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(policy);
+    QSize size(static_cast<int>(screenshotParams->m_width), static_cast<int>(screenshotParams->m_height));
+    m_pDrawWidget->resize(size);
+    size.setHeight(size.height() + statusBar()->height());
+    setMaximumSize(size);
+    setMinimumSize(size);
+  }
+
   setCentralWidget(m_pDrawWidget);
 
   QObject::connect(m_pDrawWidget, SIGNAL(BeforeEngineCreation()), this, SLOT(OnBeforeEngineCreation()));
@@ -158,6 +186,11 @@ MainWindow::MainWindow(Framework & framework, bool apiOpenGLES3, QString const &
   m_pDrawWidget->UpdateAfterSettingsChanged();
 
   m_pDrawWidget->GetFramework().UploadUGC(nullptr /* onCompleteUploading */);
+  
+  if (RoutingSettings::IsCacheEnabled())
+    RoutingSettings::LoadSettings(m_pDrawWidget->GetFramework());
+  else
+    RoutingSettings::ResetSettings();
 }
 
 #if defined(Q_WS_WIN)
@@ -242,7 +275,6 @@ void MainWindow::CreateNavigationBar()
   QToolBar * pToolBar = new QToolBar(tr("Navigation Bar"), this);
   pToolBar->setOrientation(Qt::Vertical);
   pToolBar->setIconSize(QSize(32, 32));
-
   {
     m_pDrawWidget->BindHotkeys(*this);
 
@@ -312,6 +344,12 @@ void MainWindow::CreateNavigationBar()
     auto clearAction = pToolBar->addAction(QIcon(":/navig64/clear-route.png"), tr("Clear route"),
                                            this, SLOT(OnClearRoute()));
     clearAction->setToolTip(tr("Clear route"));
+
+    auto settingsRoutingAction = pToolBar->addAction(QIcon(":/navig64/settings-routing.png"),
+                                                     tr("Routing settings"), this,
+                                                     SLOT(OnRoutingSettings()));
+    settingsRoutingAction->setToolTip(tr("Routing settings"));
+
     pToolBar->addSeparator();
 
     m_pCreateFeatureAction = pToolBar->addAction(QIcon(":/navig64/select.png"), tr("Create Feature"),
@@ -420,7 +458,6 @@ void MainWindow::CreateNavigationBar()
   }
 
   qt::common::ScaleSlider::Embed(Qt::Vertical, *pToolBar, *m_pDrawWidget);
-
 #ifndef NO_DOWNLOADER
   {
     // add mainframe actions
@@ -432,13 +469,15 @@ void MainWindow::CreateNavigationBar()
   }
 #endif // NO_DOWNLOADER
 
+  if (m_screenshotMode)
+    pToolBar->setVisible(false);
+
   addToolBar(Qt::RightToolBarArea, pToolBar);
 }
 
 void MainWindow::CreateCountryStatusControls()
 {
   QHBoxLayout * mainLayout = new QHBoxLayout();
-
   m_downloadButton = new QPushButton("Download");
   mainLayout->addWidget(m_downloadButton, 0, Qt::AlignHCenter);
   m_downloadButton->setVisible(false);
@@ -756,7 +795,7 @@ void MainWindow::OnBuildPhonePackage()
     QString const targetDir = QFileDialog::getExistingDirectory(nullptr, "Choose output directory");
     if (targetDir.isEmpty())
       return;
-    auto outDir = QDir(JoinFoldersToPath({targetDir, kStylesFolder}));
+    auto outDir = QDir(JoinPathQt({targetDir, kStylesFolder}));
     if (outDir.exists())
     {
       QMessageBox msgBox;
@@ -769,13 +808,13 @@ void MainWindow::OnBuildPhonePackage()
         throw std::runtime_error(std::string("Target directory exists: ") + outDir.absolutePath().toStdString());
     }
 
-    QString const stylesDir = JoinFoldersToPath({m_mapcssFilePath, "..", "..", ".."});
-    if (!QDir(JoinFoldersToPath({stylesDir, kClearStyleFolder})).exists())
+    QString const stylesDir = JoinPathQt({m_mapcssFilePath, "..", "..", ".."});
+    if (!QDir(JoinPathQt({stylesDir, kClearStyleFolder})).exists())
       throw std::runtime_error(std::string("Styles folder is not found in ") + stylesDir.toStdString());
 
     QString text = build_style::RunBuildingPhonePack(stylesDir, targetDir);
     text.append("\nMobile device style package is in the directory: ");
-    text.append(JoinFoldersToPath({targetDir, kStylesFolder}));
+    text.append(JoinPathQt({targetDir, kStylesFolder}));
     text.append(". Copy it to your mobile device.\n");
     InfoDialog dlg(QString("Building phone pack"), text, nullptr);
     dlg.exec();
@@ -880,6 +919,12 @@ void MainWindow::OnFollowRoute()
 void MainWindow::OnClearRoute()
 {
   m_pDrawWidget->ClearRoute();
+}
+
+void MainWindow::OnRoutingSettings()
+{
+  RoutingSettings dlg(this, m_pDrawWidget->GetFramework());
+  dlg.ShowModal();
 }
 
 void MainWindow::OnBookmarksAction()

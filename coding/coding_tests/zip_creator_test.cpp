@@ -6,9 +6,10 @@
 #include "coding/file_writer.hpp"
 #include "coding/constants.hpp"
 
-#include "std/string.hpp"
-#include "std/vector.hpp"
+#include <string>
+#include <vector>
 
+using namespace std;
 
 namespace
 {
@@ -17,7 +18,7 @@ void CreateAndTestZip(string const & filePath, string const & zipPath)
 {
   TEST(CreateZipFromPathDeflatedAndDefaultCompression(filePath, zipPath), ());
 
-  ZipFileReader::FileListT files;
+  ZipFileReader::FileList files;
   ZipFileReader::FilesList(zipPath, files);
   TEST_EQUAL(files[0].second, FileReader(filePath).Size(), ());
 

@@ -312,6 +312,8 @@ m2::RectD const & Processor::GetViewport() const
   return m_viewport;
 }
 
+void Processor::CacheWorldLocalities() { m_geocoder.CacheWorldLocalities(); }
+
 void Processor::LoadCitiesBoundaries()
 {
   if (m_citiesBoundaries.Load())
@@ -491,6 +493,8 @@ void Processor::SearchBookmarks() const
 
 void Processor::InitParams(QueryParams & params) const
 {
+  params.SetQuery(m_query);
+
   if (m_prefix.empty())
     params.InitNoPrefix(m_tokens.begin(), m_tokens.end());
   else

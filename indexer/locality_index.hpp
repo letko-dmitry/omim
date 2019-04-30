@@ -12,6 +12,7 @@
 
 #include "base/geo_object_id.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -37,6 +38,11 @@ public:
   explicit LocalityIndex(Reader const & reader)
   {
     m_intervalIndex = std::make_unique<IntervalIndex<Reader, uint64_t>>(reader);
+  }
+
+  void ForEachAtPoint(ProcessObject const & processObject, m2::PointD const & point) const
+  {
+    ForEachInRect(processObject, m2::RectD(point, point));
   }
 
   void ForEachInRect(ProcessObject const & processObject, m2::RectD const & rect) const
@@ -109,7 +115,7 @@ public:
     auto insertObject = [&] (int64_t cellNumber, uint64_t storedId) {
       auto const objectId = LocalityObject::FromStoredId(storedId).GetEncodedId();
       auto & objectWeight = objectWeights[objectId];
-      objectWeight = max(objectWeight, cellRelativeWeight(cellNumber));
+      objectWeight = std::max(objectWeight, cellRelativeWeight(cellNumber));
     };
 
     auto insertObjectWithinSizeLimit = [&](int64_t cellNumber, uint64_t storedId) {

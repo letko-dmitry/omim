@@ -164,13 +164,6 @@ double TransitWorldGraph::CalcSegmentETA(routing::Segment const & segment)
   return m_estimator->CalcSegmentETA(segment, GetRealRoadGeometry(segment.GetMwmId(), segment.GetFeatureId()));
 }
 
-bool TransitWorldGraph::LeapIsAllowed(NumMwmId /* mwmId */) const { return false; }
-
-vector<Segment> const & TransitWorldGraph::GetTransitions(NumMwmId numMwmId, bool isEnter)
-{
-  return kEmptyTransitions;
-}
-
 unique_ptr<TransitInfo> TransitWorldGraph::GetTransitInfo(Segment const & segment)
 {
   if (!TransitGraph::IsTransitSegment(segment))
@@ -187,12 +180,10 @@ unique_ptr<TransitInfo> TransitWorldGraph::GetTransitInfo(Segment const & segmen
   return {};
 }
 
-std::vector<RouteSegment::SpeedCamera> TransitWorldGraph::GetSpeedCamInfo(Segment const & segment) { return {}; }
-
 void TransitWorldGraph::GetTwinsInner(Segment const & segment, bool isOutgoing,
                                       vector<Segment> & twins)
 {
-  if (m_mode == Mode::SingleMwm || !m_crossMwmGraph ||
+  if (m_mode == WorldGraphMode::SingleMwm || !m_crossMwmGraph ||
       !m_crossMwmGraph->IsTransition(segment, isOutgoing))
   {
     return;

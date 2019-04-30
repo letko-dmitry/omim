@@ -81,8 +81,6 @@
 /* View and button titles for accessibility */
 "core_my_position" = "Moje położenie";
 
-"ok" = "OK";
-
 /* Settings/Downloader - No free space dialog message */
 "free_disk_space_for_country_x" = "Aby pobrać %@, musisz najpierw zwolnić nieco miejsca na swoim urządzeniu.";
 
@@ -1342,10 +1340,6 @@
 
 "onboarding_permissions_message" = "Aby pobierać mapy, sprawdzać miejsca i ruch drogowy w twojej okolicy i móc korzystać z nawigacji.";
 
-"onboarding_welcome_title" = "Witaj w MAPS.ME";
-
-"onboarding_welcome_first_subtitle" = "Bezpłatne, szybkie i szczegółowe mapy offline z funkcją nawigacji.";
-
 "onboarding_welcome_second_subtitle" = "Poprzez uruchomienie aplikacji wyrażasz zgodę na <a href=\"%s\">warunki użytkowania</a> i <a href=\"%s\">politykę prywatności</a>.";
 
 "dialog_incorrect_feature_position" = "Zmień lokalizację";
@@ -2195,8 +2189,6 @@
 
 "whats_new_message_ugc_travel" = "Oceniaj i recenzuj odwiedzane miejsca!";
 
-"dialog_pedestrian_route_is_long" = "Trasa piesza jest zbyt długa";
-
 "dialog_message_transit_not_found_connection" = "Zaplanuj trasę w ramach jednej sieci transportowej";
 
 "bookmarks_error_message_share_general" = "Nie można udostępnić z powodu błędu aplikacji";
@@ -2388,8 +2380,6 @@
 "guide_downloaded_title" = "Przewodnik został pomyślnie pobrany";
 
 "download_guides" = "Pobierz przewodniki";
-
-"cached_guides_placeholder_subtitle" = "Szczegółowe przewodniki offline na każdy rodzaj podróży. Wybierz najlepiej Ci odpowiadający i pobierz go bezpośrednio na mapę. Do pobrania przewodników wymagane jest połączenie internetowe.";
 
 "guides_groups_cached" = "Pobrane przewodniki";
 
@@ -2741,6 +2731,123 @@
 
 "whats_new_wiki_message" = "Do kart popularnych atrakcji dodaliśmy artykuły z serwisu Wikipedia.org, dostępnego w trybie offline";
 
+"driving_options_title" = "Ustawienia objazdu";
+
+"driving_options_subheader" = "Unikaj na każdej trasie";
+
+"avoid_tolls" = "Drogi płatne";
+
+"avoid_unpaved" = "Drogi gruntowe";
+
+"avoid_ferry" = "Przeprawy promowe";
+
+"avoid_motorways" = "Autostrady";
+
+"unable_to_calc_alert_title" = "Brak możliwości zbudowania trasy";
+
+"unable_to_calc_alert_subtitle" = "Niestety, nie udało nam się zbudować trasy, która posiada obrane opcje. Zmień ustawienia i spróbuj ponownie";
+
+"define_to_avoid_btn" = "Dostosuj ścieżkę objazdu";
+
+"change_driving_options_btn" = "Zmień ustawienia objazdu";
+
+"toll_road" = "Droga płatna";
+
+"unpaved_road" = "Droga gruntowa";
+
+"ferry_crossing" = "Przeprawa promowa";
+
+"operated_by" = "Zarządzany przez \"%s\"";
+
+"avoid_toll_roads_placepage" = "Unikać dróg płatnych";
+
+"avoid_unpaved_roads_placepage" = "Unikać dróg gruntowych";
+
+"avoid_ferry_crossing_placepage" = "Unikać przepraw promowych";
+
+"cached_guides_placeholder_subtitle" = "Gotowe przewodniki w MAPS.ME – to wybrane miejsca ze zdjęciami oraz opisami, które są wyświetlane na mapie i są dostępne w trybie offline.";
+
+"guides_catalogue_title" = "Katalog przewodników";
+
+"download_guides_button" = "Przejdź do katalogu";
+
+"type.cuisine.uzbek" = "Kuchnia uzbecka";
+
+"onboarding_welcome_title" = "Planuj i podróżuj z MAPS.ME";
+
+"onboarding_welcome_first_subtitle" = "Zapisuj ciekawe miejsca, rezerwuj hotele, buduj trasy offline";
+
+"onboarding_guide_direct_download_title" = "Przewodnik jest gotowy do pobrania";
+
+"onboarding_guide_direct_download_subtitle" = "Zostanie wyświetlony na mapie i będzie działać w trybie offline";
+
+"onboarding_guide_direct_download_button" = "Pobierz";
+
+"onboarding_bydeeplink_guide_title" = "Gotowe przewodniki w MAPS.ME";
+
+"onboarding_bydeeplink_guide_subtitle" = "Wybrane miejsca ze zdjęciami i opisami są wyświetlane na mapie i są dostępne w trybie offline.";
+
+"whats_new_auto_update_bydeeplink_title" = "Zanim przejdziesz do przewodników…";
+
+"whats_new_auto_update_bydeeplink_message" = "Zaktualizuj mapy, aby uzyskać aktualne informacje o obiektach!";
+
+"whats_new_auto_update_and_proceed_button_size" = "Zaktualizuj (%s) i kontynuuj";
+
+"dialog_pedestrian_route_is_long" = "Trasa piesza jest zbyt długą";
+
+"whatsnew_toll_unpaved_title" = "Buduj trasy z uwzględnieniem wszystkich rodzajów dróg";
+
+"whatsnew_toll_unpaved_message" = "Wybierz trasy objazdowe przez płatne, drogi gruntowe i przeprawy promowe";
+
+"whatsnew_new_catalogue_title" = "Zaktualizowane strony katalogu";
+
+"whatsnew_new_catalogue_message" = "Dodaliśmy szczegółowe informacje o przewodnikach od partnerów, aby uczynić wybór trasy był łatwym i wygodnym";
+
+"purchase_please_wait_toast" = "Proszę, nie opuszczaj ekranu, dopóki zakup nie zostanie zakończony";
+
+"trip_start" = "Jedźmy";
+
+"pick_destination" = "Meta";
+
+"follow_my_position" = "Wyśrodkuj";
+
+"search_results" = "Wyniki wyszukiwania";
+
+"then_turn" = "Dalej";
+
+"redirect_route_alert" = "Czy chcesz przebudować trasę?";
+
+"redirect_route_yes" = "Tak";
+
+"redirect_route_no" = "Nie";
+
+"trip_finished" = "Jesteś na miejscu!";
+
+"keyboard_availability_alert" = "Klawiatura nie jest dostępna podczas ruchu";
+
+"dialog_routing_change_start_carplay" = "Brak możliwości zbudowania trasy od bieżącej lokalizacji";
+
+"dialog_routing_change_end_carplay" = "Brak możliwości zbudowania trasy do punktu końcowego. Wybierz inny";
+
+"dialog_routing_check_gps_carplay" = "Brak sygnału GPS. Dostań się do terenu otwartego";
+
+"dialog_routing_unable_locate_route_carplay" = "Brak możliwości zbudowania trasy. Wybierz inne punkty trasy";
+
+"dialog_routing_download_files_carplay" = "Nie wszystkie mapy są dostępne do budowania trasy. Pobierz je w aplikacji na telefon";
+
+"dialog_routing_system_error_carplay" = "Wystąpił błąd. Uruchom aplikację ponownie";
+
+"dialog_routing_rebuild_from_current_location_carplay" = "Trasa zostanie przebudowana z Twojej bieżącej lokalizacji";
+
+"dialog_routing_rebuild_for_vehicle_carplay" = "Trasa zostanie zmieniona na samochodową";
+
+"ok" = "Ok";
+
+"vezet_taxi" = "Vezet";
+
+
+/**********  Partners  **********/
+
 "sponsored_partner1_action" = "Outlets";
 
 "sponsored_partner2_action" = "Discount";
@@ -2788,9 +2895,9 @@
 
 "type.aeroway.terminal" = "aeroway-terminal";
 
-"type.amenity" = "amenity";
+"type.amenity" = "Obiekty infrastruktury";
 
-"type.amenity.arts_centre" = "amenity-arts_centre";
+"type.amenity.arts_centre" = "Centrum sztuki";
 
 "type.amenity.atm" = "Bankomat";
 
@@ -2854,7 +2961,7 @@
 
 "type.amenity.fire_station" = "Straż pożarna";
 
-"type.amenity.food_court" = "amenity-food_court";
+"type.amenity.food_court" = "Food court";
 
 "type.amenity.fountain" = "Fontanna";
 
@@ -2970,7 +3077,7 @@
 
 "type.amenity.vending_machine.parking_tickets" = "Parkomat";
 
-"type.amenity.vending_machine.public_transport_tickets" = "amenity-vending_machine-public_transport_tickets";
+"type.amenity.vending_machine.public_transport_tickets" = "Automat biletowy do transportu publicznego";
 
 "type.amenity.veterinary" = "Weterynarz";
 
@@ -3286,7 +3393,7 @@
 
 "type.highway.bus_stop" = "Przystanek autobusowy";
 
-"type.highway.construction" = "highway-construction";
+"type.highway.construction" = "Droga w trakcie budowy";
 
 "type.highway.cycleway" = "highway-cycleway";
 
@@ -3592,7 +3699,7 @@
 
 "type.landuse" = "landuse";
 
-"type.landuse.allotments" = "landuse-allotments";
+"type.landuse.allotments" = "Allotments";
 
 "type.landuse.basin" = "Woda";
 
@@ -3606,13 +3713,13 @@
 
 "type.landuse.construction" = "landuse-construction";
 
-"type.landuse.farm" = "landuse-farm";
+"type.landuse.farm" = "Farm";
 
-"type.landuse.farmland" = "landuse-farmland";
+"type.landuse.farmland" = "Grunt rolny";
 
-"type.landuse.farmyard" = "landuse-farmyard";
+"type.landuse.farmyard" = "Farmyard";
 
-"type.landuse.field" = "landuse-field";
+"type.landuse.field" = "Field";
 
 "type.landuse.forest" = "Las";
 
@@ -3622,27 +3729,27 @@
 
 "type.landuse.forest.mixed" = "Las";
 
-"type.landuse.garages" = "landuse-garages";
+"type.landuse.garages" = "Garages";
 
-"type.landuse.grass" = "landuse-grass";
+"type.landuse.grass" = "Trawnik";
 
 "type.landuse.greenfield" = "landuse-greenfield";
 
 "type.landuse.greenhouse_horticulture" = "landuse-greenhouse_horticulture";
 
-"type.landuse.industrial" = "landuse-industrial";
+"type.landuse.industrial" = "Industrial land";
 
-"type.landuse.landfill" = "landuse-landfill";
+"type.landuse.landfill" = "Składowisko odpadów";
 
-"type.landuse.meadow" = "landuse-meadow";
+"type.landuse.meadow" = "Meadow";
 
-"type.landuse.military" = "landuse-military";
+"type.landuse.military" = "Military area";
 
-"type.landuse.orchard" = "landuse-orchard";
+"type.landuse.orchard" = "Orchard";
 
-"type.landuse.quarry" = "landuse-quarry";
+"type.landuse.quarry" = "Quarry";
 
-"type.landuse.railway" = "landuse-railway";
+"type.landuse.railway" = "Obiekty kolejowe";
 
 "type.landuse.recreation_ground" = "landuse-recreation_ground";
 
@@ -3660,13 +3767,13 @@
 
 "type.landuse.village_green" = "landuse-village_green";
 
-"type.landuse.vineyard" = "landuse-vineyard";
+"type.landuse.vineyard" = "Vineyard";
 
 "type.leisure" = "leisure";
 
 "type.leisure.common" = "leisure-common";
 
-"type.leisure.dog_park" = "Dog area";
+"type.leisure.dog_park" = "Miejsce na spacer z psem";
 
 "type.leisure.dog_park.tennis" = "Dog area";
 
@@ -3678,11 +3785,11 @@
 
 "type.leisure.golf_course" = "Kurs golfowy";
 
-"type.leisure.ice_rink" = "leisure-ice_rink";
+"type.leisure.ice_rink" = "Ice rink";
 
-"type.leisure.landscape_reserve" = "leisure-landscape_reserve";
+"type.leisure.landscape_reserve" = "Landscape reserve";
 
-"type.leisure.marina" = "leisure-marina";
+"type.leisure.marina" = "Marina";
 
 "type.leisure.nature_reserve" = "Rezerwat przyrody";
 
@@ -3706,7 +3813,7 @@
 
 "type.leisure.playing_fields.tennis" = "leisure-playing_fields-tennis";
 
-"type.leisure.recreation_ground" = "leisure-recreation_ground";
+"type.leisure.recreation_ground" = "Recreation ground";
 
 "type.leisure.sauna" = "Sauna";
 
@@ -3786,7 +3893,7 @@
 
 "type.natural" = "natural";
 
-"type.natural.bare_rock" = "natural-bare_rock";
+"type.natural.bare_rock" = "Bare rock";
 
 "type.natural.bay" = "Zatoka";
 
@@ -3796,53 +3903,53 @@
 
 "type.natural.cave_entrance" = "Wejście do jaskini";
 
-"type.natural.cliff" = "natural-cliff";
+"type.natural.cliff" = "Cliff";
 
-"type.natural.coastline" = "natural-coastline";
+"type.natural.coastline" = "Coastline";
 
 "type.natural.geyser" = "Gejzer";
 
 "type.natural.glacier" = "Lodowiec";
 
-"type.natural.grassland" = "natural-grassland";
+"type.natural.grassland" = "Pole";
 
-"type.natural.heath" = "natural-heath";
+"type.natural.heath" = "Heath";
 
 "type.natural.lake" = "Jezioro";
 
 "type.natural.land" = "natural-land";
 
-"type.natural.meadow" = "natural-meadow";
+"type.natural.meadow" = "Meadow";
 
-"type.natural.orchard" = "natural-orchard";
+"type.natural.orchard" = "Orchard";
 
 "type.natural.peak" = "Góra";
 
 "type.natural.pond" = "Źródło";
 
-"type.natural.rock" = "natural-rock";
+"type.natural.rock" = "Rock";
 
-"type.natural.salt_pond" = "natural-salt_pond";
+"type.natural.salt_pond" = "Salt pond";
 
-"type.natural.scrub" = "natural-scrub";
+"type.natural.scrub" = "Gąszcze";
 
 "type.natural.spring" = "Źródło";
 
 "type.natural.tree" = "Drzewo";
 
-"type.natural.tree_row" = "natural-tree_row";
+"type.natural.tree_row" = "Tree row";
 
-"type.natural.vineyard" = "natural-vineyard";
+"type.natural.vineyard" = "Vineyard";
 
 "type.natural.volcano" = "Wulkan";
 
 "type.natural.water" = "Woda";
 
-"type.natural.wetland" = "natural-wetland";
+"type.natural.wetland" = "Bagno, mokradło";
 
-"type.natural.wetland.bog" = "natural-wetland-bog";
+"type.natural.wetland.bog" = "Wetland";
 
-"type.natural.wetland.marsh" = "natural-wetland-marsh";
+"type.natural.wetland.marsh" = "Wetland";
 
 "type.natural.wood" = "Las";
 
@@ -3946,7 +4053,7 @@
 
 "type.place.locality" = "Lokalne";
 
-"type.place.neighbourhood" = "place-neighbourhood";
+"type.place.neighbourhood" = "Neighbourhood";
 
 "type.place.ocean" = "Ocean";
 
@@ -4040,7 +4147,7 @@
 
 "type.railway.light_rail.tunnel" = "railway-light_rail-tunnel";
 
-"type.railway.monorail" = "railway-monorail";
+"type.railway.monorail" = "Kolej jednoszynowa";
 
 "type.railway.monorail.bridge" = "railway-monorail-bridge";
 
@@ -4062,7 +4169,7 @@
 
 "type.railway.proposed" = "railway-proposed";
 
-"type.railway.rail" = "railway-rail";
+"type.railway.rail" = "Kolej";
 
 "type.railway.rail.bridge" = "railway-rail-bridge";
 
@@ -4172,7 +4279,7 @@
 
 "type.railway.subway.yellow" = "railway-subway-yellow";
 
-"type.railway.subway_entrance" = "Metro";
+"type.railway.subway_entrance" = "Wejście do metra";
 
 "type.railway.subway_entrance.barcelona" = "Metro";
 
@@ -4430,13 +4537,13 @@
 
 "type.sport.archery" = "sport-archery";
 
-"type.sport.athletics" = "Athletics";
+"type.sport.athletics" = "Lekka atletyka";
 
 "type.sport.australian_football" = "sport-australian_football";
 
 "type.sport.baseball" = "sport-baseball";
 
-"type.sport.basketball" = "Basketball";
+"type.sport.basketball" = "Koszykówka";
 
 "type.sport.bowls" = "sport-bowls";
 
@@ -4446,7 +4553,7 @@
 
 "type.sport.diving" = "sport-diving";
 
-"type.sport.equestrian" = "Equestrian Sports";
+"type.sport.equestrian" = "Jeździectwo";
 
 "type.sport.football" = "sport-football";
 
@@ -4468,7 +4575,7 @@
 
 "type.sport.swimming" = "sport-swimming";
 
-"type.sport.tennis" = "sport-tennis";
+"type.sport.tennis" = "Kort tenisowy";
 
 "type.tourism" = "tourism";
 
@@ -4580,11 +4687,11 @@
 
 "type.wheelchair" = "wheelchair";
 
-"type.wheelchair.limited" = "wheelchair-limited";
+"type.wheelchair.limited" = "Częściowo wyposażono dla osób niepełnosprawnych";
 
-"type.wheelchair.no" = "wheelchair-no";
+"type.wheelchair.no" = "Nie wyposażono dla osób niepełnosprawnych";
 
-"type.wheelchair.yes" = "wheelchair-yes";
+"type.wheelchair.yes" = "Wyposażono dla osób niepełnosprawnych";
 
 "type.piste_lift" = "piste:lift";
 
@@ -4617,6 +4724,40 @@
 "type.piste_type.nordic" = "piste:type-nordic";
 
 "type.piste_type.sled" = "piste:type-sled";
+
+"type.building_part" = "Budynek";
+
+"type.earthquake_damage" = "earthquake:damage";
+
+"type.area_highway.cycleway" = "area:highway-cycleway";
+
+"type.area_highway.footway" = "area:highway-footway";
+
+"type.area_highway.living_street" = "area:highway-living_street";
+
+"type.area_highway.motorway" = "area:highway-motorway";
+
+"type.area_highway.path" = "area:highway-path";
+
+"type.area_highway.pedestrian" = "area:highway-pedestrian";
+
+"type.area_highway.primary" = "area:highway-primary";
+
+"type.area_highway.residential" = "area:highway-residential";
+
+"type.area_highway.secondary" = "area:highway-secondary";
+
+"type.area_highway.service" = "area:highway-service";
+
+"type.area_highway.tertiary" = "area:highway-tertiary";
+
+"type.area_highway.steps" = "area:highway-steps";
+
+"type.area_highway.track" = "area:highway-track";
+
+"type.area_highway.trunk" = "area:highway-trunk";
+
+"type.area_highway.unclassified" = "area:highway-unclassified";
 
 
 /********** Brands **********/

@@ -3,7 +3,7 @@
 #include "search/house_to_street_table.hpp"
 #include "search/lazy_centers_table.hpp"
 
-#include "editor/osm_editor.hpp"
+#include "editor/editable_feature_source.hpp"
 
 #include "indexer/feature_covering.hpp"
 #include "indexer/feature_source.hpp"
@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 
 class MwmValue;
 
@@ -51,9 +52,15 @@ public:
   void ForEachIndex(m2::RectD const & rect, Fn && fn) const
   {
     uint32_t const scale = m_value.GetHeader().GetLastScale();
+    ForEachIndex(rect, scale, std::forward<Fn>(fn));
+  }
+
+  template <typename Fn>
+  void ForEachIndex(m2::RectD const & rect, uint32_t scale, Fn && fn) const
+  {
     covering::Intervals intervals;
-    CoverRect(rect, scale, intervals);
-    ForEachIndex(intervals, scale, forward<Fn>(fn));
+    CoverRect(rect, m_value.GetHeader().GetLastScale(), intervals);
+    ForEachIndex(intervals, scale, std::forward<Fn>(fn));
   }
 
   template <typename Fn>
@@ -64,14 +71,14 @@ public:
     CoverRect(rect, scale, intervals);
 
     ForEachIndexImpl(intervals, scale, [&](uint32_t index) {
-      FeatureType ft;
-      if (GetFeature(index, ft))
-        fn(ft);
+      auto ft = GetFeature(index);
+      if (ft)
+        fn(*ft);
     });
   }
 
   // Returns false if feature was deleted by user.
-  WARN_UNUSED_RESULT bool GetFeature(uint32_t index, FeatureType & ft) const;
+  std::unique_ptr<FeatureType> GetFeature(uint32_t index) const;
 
   WARN_UNUSED_RESULT inline bool GetCenter(uint32_t index, m2::PointD & center)
   {
@@ -84,7 +91,7 @@ public:
 private:
   FeatureStatus GetEditedStatus(uint32_t index) const
   {
-    return osm::Editor::Instance().GetFeatureStatus(GetId(), index);
+    return m_editableSource.GetFeatureStatus(index);
   }
 
   template <class Fn>
@@ -103,6 +110,7 @@ private:
   FeaturesVector m_vector;
   ScaleIndex<ModelReaderPtr> m_index;
   LazyCentersTable m_centers;
+  EditableFeatureSource m_editableSource;
 
   DISALLOW_COPY_AND_MOVE(MwmContext);
 };

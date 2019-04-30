@@ -134,7 +134,7 @@ DrapeEngine::~DrapeEngine()
   m_glyphGenerator.reset();
 }
 
-void DrapeEngine::Update(int w, int h)
+void DrapeEngine::RecoverSurface(int w, int h, bool recreateContextDependentResources)
 {
   if (m_choosePositionMode)
   {
@@ -142,13 +142,15 @@ void DrapeEngine::Update(int w, int h)
                                     make_unique_dp<ShowChoosePositionMarkMessage>(),
                                     MessagePriority::Normal);
   }
-  RecacheGui(false);
 
-  RecacheMapShapes();
-
-  m_threadCommutator->PostMessage(ThreadsCommutator::RenderThread,
-                                  make_unique_dp<RecoverGLResourcesMessage>(),
-                                  MessagePriority::Normal);
+  if (recreateContextDependentResources)
+  {
+    RecacheGui(false);
+    RecacheMapShapes();
+    m_threadCommutator->PostMessage(ThreadsCommutator::RenderThread,
+                                    make_unique_dp<RecoverContextDependentResourcesMessage>(),
+                                    MessagePriority::Normal);
+  }
 
   ResizeImpl(w, h);
 }
@@ -186,20 +188,26 @@ void DrapeEngine::Scale(double factor, m2::PointD const & pxPoint, bool isAnim)
   AddUserEvent(make_unique_dp<ScaleEvent>(factor, pxPoint, isAnim));
 }
 
+void DrapeEngine::Move(double factorX, double factorY, bool isAnim)
+{
+  AddUserEvent(make_unique_dp<MoveEvent>(factorX, factorY, isAnim));
+}
+
 void DrapeEngine::SetModelViewCenter(m2::PointD const & centerPt, int zoom, bool isAnim,
                                      bool trackVisibleViewport)
 {
   PostUserEvent(make_unique_dp<SetCenterEvent>(centerPt, zoom, isAnim, trackVisibleViewport));
 }
 
-void DrapeEngine::SetModelViewRect(m2::RectD const & rect, bool applyRotation, int zoom, bool isAnim)
+void DrapeEngine::SetModelViewRect(m2::RectD const & rect, bool applyRotation, int zoom, bool isAnim,
+                                   bool useVisibleViewport)
 {
-  PostUserEvent(make_unique_dp<SetRectEvent>(rect, applyRotation, zoom, isAnim));
+  PostUserEvent(make_unique_dp<SetRectEvent>(rect, applyRotation, zoom, isAnim, useVisibleViewport));
 }
 
-void DrapeEngine::SetModelViewAnyRect(m2::AnyRectD const & rect, bool isAnim)
+void DrapeEngine::SetModelViewAnyRect(m2::AnyRectD const & rect, bool isAnim, bool useVisibleViewport)
 {
-  PostUserEvent(make_unique_dp<SetAnyRectEvent>(rect, isAnim));
+  PostUserEvent(make_unique_dp<SetAnyRectEvent>(rect, isAnim, true /* fitInViewport */, useVisibleViewport));
 }
 
 void DrapeEngine::ClearUserMarksGroup(kml::MarkGroupId groupId)
@@ -352,10 +360,10 @@ void DrapeEngine::SetRenderingEnabled(ref_ptr<dp::GraphicsContextFactory> contex
   LOG(LDEBUG, ("Rendering enabled"));
 }
 
-void DrapeEngine::SetRenderingDisabled(bool const destroyContext)
+void DrapeEngine::SetRenderingDisabled(bool const destroySurface)
 {
-  m_frontend->SetRenderingDisabled(destroyContext);
-  m_backend->SetRenderingDisabled(destroyContext);
+  m_frontend->SetRenderingDisabled(destroySurface);
+  m_backend->SetRenderingDisabled(destroySurface);
 
   LOG(LDEBUG, ("Rendering disabled"));
 }
@@ -490,6 +498,15 @@ void DrapeEngine::SetModelViewListener(TModelViewListenerFn && fn)
 {
   m_modelViewChanged = std::move(fn);
 }
+
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+void DrapeEngine::NotifyGraphicsReady(TGraphicsReadyFn const & fn)
+{
+  m_threadCommutator->PostMessage(ThreadsCommutator::ResourceUploadThread,
+                                  make_unique_dp<NotifyGraphicsReadyMessage>(fn),
+                                  MessagePriority::Normal);
+}
+#endif
 
 void DrapeEngine::SetTapEventInfoListener(TTapEventInfoFn && fn)
 {
@@ -855,7 +872,7 @@ drape_ptr<UserMarkRenderParams> DrapeEngine::GenerateMarkRenderInfo(UserPointMar
   renderInfo->m_symbolSizes = mark->GetSymbolSizes();
   renderInfo->m_symbolOffsets = mark->GetSymbolOffsets();
   renderInfo->m_color = mark->GetColorConstant();
-  renderInfo->m_hasSymbolShapes = mark->HasSymbolShapes();
+  renderInfo->m_symbolIsPOI = mark->SymbolIsPOI();
   renderInfo->m_hasTitlePriority = mark->HasTitlePriority();
   renderInfo->m_priority = mark->GetPriority();
   renderInfo->m_displacement = mark->GetDisplacement();

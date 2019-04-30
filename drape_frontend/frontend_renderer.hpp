@@ -36,8 +36,11 @@
 
 #include <array>
 #include <functional>
+#include <memory>
 #include <unordered_set>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 namespace dp
 {
@@ -73,6 +76,7 @@ class FrontendRenderer : public BaseRenderer,
 {
 public:
   using TModelViewChanged = std::function<void(ScreenBase const & screen)>;
+  using TGraphicsReadyFn = std::function<void()>;
   using TTapEventInfoFn = std::function<void(TapInfo const &)>;
   using TUserPositionChangedFn = std::function<void(m2::PointD const & pt, bool hasPosition)>;
 
@@ -137,7 +141,7 @@ public:
 
 protected:
   void AcceptMessage(ref_ptr<Message> message) override;
-  unique_ptr<threads::IRoutine> CreateRoutine() override;
+  std::unique_ptr<threads::IRoutine> CreateRoutine() override;
   void OnContextCreate() override;
   void OnContextDestroy() override;
 
@@ -187,6 +191,10 @@ private:
 
   void EmitModelViewChanged(ScreenBase const & modelView) const;
 
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+  void EmitGraphicsReady();
+#endif
+
   TTilesCollection ResolveTileKeys(ScreenBase const & screen);
   void ResolveZoomLevel(ScreenBase const & screen);
   void UpdateDisplacementEnabled();
@@ -209,9 +217,9 @@ private:
   void CorrectGlobalScalePoint(m2::PointD & pt) const override;
   void OnScaleEnded() override;
   void OnAnimatedScaleEnded() override;
-  void OnTouchMapAction(TouchEvent::ETouchType touchType) override;
+  void OnTouchMapAction(TouchEvent::ETouchType touchType, bool isMapTouch) override;
   bool OnNewVisibleViewport(m2::RectD const & oldViewport, m2::RectD const & newViewport,
-                            m2::PointD & gOffset) override;
+                            bool needOffset, m2::PointD & gOffset) override;
 
   class Routine : public threads::IRoutine
   {
@@ -224,7 +232,7 @@ private:
   };
 
   void ReleaseResources();
-  void UpdateGLResources();
+  void UpdateContextDependentResources();
 
   void BeginUpdateOverlayTree(ScreenBase const & modelView);
   void UpdateOverlayTree(ScreenBase const & modelView, drape_ptr<RenderGroup> & renderGroup);
@@ -253,7 +261,8 @@ private:
 
   void ProcessSelection(ref_ptr<SelectObjectMessage> msg);
 
-  void OnCacheRouteArrows(int routeIndex, std::vector<ArrowBorders> const & borders);
+  void OnPrepareRouteArrows(dp::DrapeID subrouteIndex, std::vector<ArrowBorders> && borders);
+  void OnCacheRouteArrows(dp::DrapeID subrouteIndex, std::vector<ArrowBorders> const & borders);
 
   void CollectShowOverlaysEvents();
 
@@ -268,7 +277,23 @@ private:
   drape_ptr<gui::LayerRenderer> m_guiRenderer;
   gui::TWidgetsLayoutInfo m_lastWidgetsLayout;
   drape_ptr<MyPositionController> m_myPositionController;
+
   drape_ptr<SelectionShape> m_selectionShape;
+  struct SelectionTrackInfo
+  {
+    SelectionTrackInfo() = default;
+
+    SelectionTrackInfo(m2::AnyRectD const & startRect, m2::PointD const & startPos)
+      : m_startRect(startRect)
+      , m_startPos(startPos)
+    {}
+
+    m2::AnyRectD m_startRect;
+    m2::PointD m_startPos;
+    m2::PointI m_snapSides = m2::PointI::Zero();
+  };
+  boost::optional<SelectionTrackInfo> m_selectionTrackInfo;
+
   drape_ptr<RouteRenderer> m_routeRenderer;
   drape_ptr<TrafficRenderer> m_trafficRenderer;
   drape_ptr<TransitSchemeRenderer> m_transitSchemeRenderer;
@@ -288,6 +313,7 @@ private:
   bool m_blockTapEvents;
 
   bool m_choosePositionMode;
+  bool m_screenshotMode;
 
   dp::Viewport m_viewport;
   UserEventStream m_userEventStream;
@@ -319,7 +345,7 @@ private:
     bool m_enableAutoZoom;
   };
 
-  unique_ptr<FollowRouteData> m_pendingFollowRoute;
+  std::unique_ptr<FollowRouteData> m_pendingFollowRoute;
 
   std::vector<m2::TriangleD> m_dragBoundArea;
 
@@ -348,6 +374,19 @@ private:
   bool m_firstTilesReady = false;
   bool m_firstLaunchAnimationTriggered = false;
   bool m_firstLaunchAnimationInterrupted = false;
+
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+  TGraphicsReadyFn m_graphicsReadyFn;
+
+  enum class GraphicsStage
+  {
+    Unknown,
+    WaitReady,
+    WaitRendering,
+    Rendered
+  };
+  GraphicsStage m_graphicsStage = GraphicsStage::Unknown;
+#endif
 
   bool m_finishTexturesInitialization = false;
   drape_ptr<ScreenQuadRenderer> m_transitBackground;

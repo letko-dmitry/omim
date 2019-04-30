@@ -130,7 +130,7 @@
 
     auto rect = tapInfo.GetDefaultSearchRect(viewport);
     auto distance = numeric_limits<double>().max();
-    auto mark = manager.FindMarkInRect(UserMark::Type::STATIC, rect, distance);
+    auto mark = manager.FindMarkInRect(UserMark::Type::STATIC, rect, true, distance);
 
     if (mark == nil) {
         [self deselectAnnotationAutomatically];

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "generator/feature_maker_base.hpp"
 #include "generator/feature_merger.hpp"
 #include "generator/generate_info.hpp"
 #include "generator/popular_places_section_builder.hpp"
@@ -44,11 +45,10 @@ class WaterBoundaryChecker
   size_t m_selectedPolygons = 0;
 
 public:
-  WaterBoundaryChecker(feature::GenerateInfo const & info)
+  WaterBoundaryChecker(std::string const & rawGeometryFileName)
   {
     m_boundaryType = classif().GetTypeByPath({"boundary", "administrative"});
-    LoadWaterGeometry(
-        info.GetIntermediateFileName(WORLD_COASTS_FILE_NAME, RAW_GEOM_FILE_EXTENSION));
+    LoadWaterGeometry(rawGeometryFileName);
   }
 
   ~WaterBoundaryChecker()
@@ -205,10 +205,10 @@ class WorldMapGenerator
     std::map<uint32_t, size_t> m_mapTypes;
 
   public:
-    explicit EmitterImpl(feature::GenerateInfo const & info)
-      : m_output(info.GetTmpFileName(WORLD_FILE_NAME))
+    explicit EmitterImpl(std::string const & worldFilename)
+      : m_output(worldFilename)
     {
-      LOG_SHORT(LINFO, ("Output World file:", info.GetTmpFileName(WORLD_FILE_NAME)));
+      LOG_SHORT(LINFO, ("Output World file:", worldFilename));
     }
 
     ~EmitterImpl() override
@@ -253,10 +253,11 @@ class WorldMapGenerator
   generator::PopularPlaces m_popularPlaces;
 
 public:
-  explicit WorldMapGenerator(feature::GenerateInfo const & info)
-    : m_worldBucket(info)
+  explicit WorldMapGenerator(std::string const & worldFilename, std::string const & rawGeometryFileName,
+                             std::string const & popularPlacesFilename)
+    : m_worldBucket(worldFilename)
     , m_merger(kPointCoordBits - (scales::GetUpperScale() - scales::GetUpperWorldScale()) / 2)
-    , m_boundaryChecker(info)
+    , m_boundaryChecker(rawGeometryFileName)
   {
     // Do not strip last types for given tags,
     // for example, do not cut 'admin_level' in  'boundary-administrative-XXX'.
@@ -270,13 +271,13 @@ public:
     char const * arr2[] = {"boundary", "administrative", "4", "state"};
     m_typesCorrector.SetDontNormalizeType(arr2);
 
-    if (!info.m_popularPlacesFilename.empty())
-      generator::LoadPopularPlaces(info.m_popularPlacesFilename, m_popularPlaces);
+    if (!popularPlacesFilename.empty())
+      generator::LoadPopularPlaces(popularPlacesFilename, m_popularPlaces);
     else
       LOG(LWARNING, ("popular_places_data option not set. Popular atractions will not be added to World.mwm"));
   }
 
-  void operator()(FeatureBuilder1 fb)
+  void Process(FeatureBuilder1 & fb)
   {
     auto const isPopularAttraction = IsPopularAttraction(fb);
     auto const isInternationalAirport =
@@ -296,11 +297,11 @@ public:
       if (PushFeature(fb) || !forcePushToWorld)
         return;
 
-      // We push GEOM_POINT with all the same tags, names and center instead of GEOM_WAY/GEOM_AREA
+      // We push Point with all the same tags, names and center instead of GEOM_WAY/Area
       // because we do not need geometry for invisible features (just search index and placepage
       // data) and want to avoid size checks applied to areas.
-      if (originalFeature.GetGeomType() != feature::GEOM_POINT)
-        originalFeature.SetCenter(originalFeature.GetGeometryCenter());
+      if (originalFeature.GetGeomType() != feature::GeomType::Point)
+        generator::TransformAreaToPoint(originalFeature);
 
       m_worldBucket.PushSure(originalFeature);
       return;
@@ -316,14 +317,14 @@ public:
   {
     switch (fb.GetGeomType())
     {
-    case feature::GEOM_LINE:
+    case feature::GeomType::Line:
     {
       MergedFeatureBuilder1 * p = m_typesCorrector(fb);
       if (p)
         m_merger(p);
       return false;
     }
-    case feature::GEOM_AREA:
+    case feature::GeomType::Area:
     {
       // This constant is set according to size statistics.
       // Added approx 4Mb of data to the World.mwm
@@ -352,11 +353,11 @@ private:
     if (fb.GetName().empty())
       return false;
 
-    auto const attractionTypes =
+    auto static const attractionTypes =
         search::GetCategoryTypes("attractions", "en", GetDefaultCategories());
     ASSERT(is_sorted(attractionTypes.begin(), attractionTypes.end()), ());
     auto const & featureTypes = fb.GetTypes();
-    if (!std::any_of(featureTypes.begin(), featureTypes.end(), [&attractionTypes](uint32_t t) {
+    if (!std::any_of(featureTypes.begin(), featureTypes.end(), [](uint32_t t) {
           return binary_search(attractionTypes.begin(), attractionTypes.end(), t);
         }))
     {
@@ -401,7 +402,7 @@ public:
   CountryMapGenerator(feature::GenerateInfo const & info) :
     SimpleCountryMapGenerator<FeatureOut>(info) {}
 
-  void operator()(FeatureBuilder1 fb)
+  void Process(FeatureBuilder1 fb)
   {
     if (feature::PreprocessForCountryMap(fb))
       SimpleCountryMapGenerator<FeatureOut>::operator()(fb);

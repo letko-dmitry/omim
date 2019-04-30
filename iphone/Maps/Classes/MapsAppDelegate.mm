@@ -271,10 +271,15 @@ using namespace osm_auth_ios;
 
       if (request.m_isSearchOnMap)
       {
-        ASSERT([self isDrapeEngineCreated], ());
-        [MapViewController setViewport:request.m_centerLat
-                                   lon:request.m_centerLon
-                             zoomLevel:kSearchInViewportZoom];
+        // Set viewport only when cll parameter was provided in url.
+        if (request.m_centerLat != 0.0 || request.m_centerLon != 0.0)
+        {
+          ASSERT([self isDrapeEngineCreated], ());
+          [MapViewController setViewport:request.m_centerLat
+                                     lon:request.m_centerLon
+                               zoomLevel:kSearchInViewportZoom];
+        }
+
         [manager searchTextOnMap:query forInputLocale:locale];
       }
       else
@@ -526,7 +531,7 @@ using namespace osm_auth_ios;
   if ([AppInfo sharedInfo].openGLDriver == MWMOpenGLDriverMetalPre103)
   {
     f.SetRenderingDisabled(true);
-    f.OnDestroyGLContext();
+    f.OnDestroySurface();
   }
   else
   {
@@ -575,7 +580,7 @@ using namespace osm_auth_ios;
   if ([AppInfo sharedInfo].openGLDriver == MWMOpenGLDriverMetalPre103)
   {
     m2::PointU const size = ((EAGLView *)self.mapViewController.view).pixelSize;
-    f.OnRecoverGLContext(static_cast<int>(size.x), static_cast<int>(size.y));
+    f.OnRecoverSurface(static_cast<int>(size.x), static_cast<int>(size.y), true /* recreateContextDependentResources */);
   }
   [MWMLocationManager applicationDidBecomeActive];
   [MWMSearch addCategoriesToSpotlight];

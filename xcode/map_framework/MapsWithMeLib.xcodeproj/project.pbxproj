@@ -93,6 +93,7 @@
 		DCAD501C227874D2008638DF /* taxi_places in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA852256573D002B64E8 /* taxi_places */; };
 		DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */; };
 		DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */; };
+		DCAD502222787F0C008638DF /* libvulkan_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DCAD502122787F0C008638DF /* libvulkan_wrapper.a */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
 		DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA432256543F002B64E8 /* MetalContextFactory.h */; };
@@ -291,6 +292,7 @@
 		DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewDelegate.h; sourceTree = "<group>"; };
 		DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewRegion.h; sourceTree = "<group>"; };
 		DC8AC8E62264F96200D2421A /* MWMMapViewRegion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapViewRegion.mm; sourceTree = "<group>"; };
+		DCAD502122787F0C008638DF /* libvulkan_wrapper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libvulkan_wrapper.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCCFEA422256543F002B64E8 /* iosOGLContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iosOGLContext.mm; sourceTree = "<group>"; };
 		DCCFEA432256543F002B64E8 /* MetalContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalContextFactory.h; sourceTree = "<group>"; };
 		DCCFEA452256543F002B64E8 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 				7B6E9DBF21899E5D00FB38FB /* SystemConfiguration.framework in Frameworks */,
 				7B6E9DBD21899E4300FB38FB /* OpenGLES.framework in Frameworks */,
 				DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */,
+				DCAD502222787F0C008638DF /* libvulkan_wrapper.a in Frameworks */,
 				7B5CC72F223FA6400030C3F1 /* libdescriptions.a in Frameworks */,
 				7B6E9D9921899AC600FB38FB /* libpartners_api.a in Frameworks */,
 				7B6E9D9721899AB300FB38FB /* libshaders.a in Frameworks */,
@@ -460,6 +463,7 @@
 		7B6E9CD9218994A200FB38FB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DCAD502122787F0C008638DF /* libvulkan_wrapper.a */,
 				DC1DE1092264958D00D6AF4B /* libc++.1.tbd */,
 				DC1DE10A2264958D00D6AF4B /* libc++abi.tbd */,
 				DC253CB6225E497E00F3301E /* CoreLocation.framework */,

@@ -32,6 +32,7 @@
 #include <functional>
 #include <map>
 #include <mutex>
+#include <utility>
 #include <vector>
 
 namespace dp
@@ -58,7 +59,7 @@ public:
            double vs,
            double fontsScaleFactor,
            gui::TWidgetsInitInfo && info,
-           pair<location::EMyPositionMode, bool> const & initialMyPositionMode,
+           std::pair<location::EMyPositionMode, bool> const & initialMyPositionMode,
            location::TMyPositionModeChanged && myPositionModeChanged,
            bool allow3dBuildings,
            bool trafficEnabled,
@@ -100,7 +101,7 @@ public:
     double m_vs;
     double m_fontsScaleFactor;
     gui::TWidgetsInitInfo m_info;
-    pair<location::EMyPositionMode, bool> m_initialMyPositionMode;
+    std::pair<location::EMyPositionMode, bool> m_initialMyPositionMode;
     location::TMyPositionModeChanged m_myPositionModeChanged;
     bool m_allow3dBuildings;
     bool m_trafficEnabled;
@@ -117,7 +118,7 @@ public:
   DrapeEngine(Params && params);
   ~DrapeEngine();
 
-  void Update(int w, int h);
+  void RecoverSurface(int w, int h, bool recreateContextDependentResources);
 
   void Resize(int w, int h);
   void Invalidate();
@@ -126,15 +127,22 @@ public:
 
   void AddTouchEvent(TouchEvent const & event);
   void Scale(double factor, m2::PointD const & pxPoint, bool isAnim);
+  void Move(double factorX, double factorY, bool isAnim);
 
   // If zoom == -1 then current zoom will not be changed.
   void SetModelViewCenter(m2::PointD const & centerPt, int zoom, bool isAnim,
                           bool trackVisibleViewport);
-  void SetModelViewRect(m2::RectD const & rect, bool applyRotation, int zoom, bool isAnim);
-  void SetModelViewAnyRect(m2::AnyRectD const & rect, bool isAnim);
+  void SetModelViewRect(m2::RectD const & rect, bool applyRotation, int zoom, bool isAnim,
+                        bool useVisibleViewport);
+  void SetModelViewAnyRect(m2::AnyRectD const & rect, bool isAnim, bool useVisibleViewport);
 
   using TModelViewListenerFn = FrontendRenderer::TModelViewChanged;
   void SetModelViewListener(TModelViewListenerFn && fn);
+
+#if defined(OMIM_OS_MAC) || defined(OMIM_OS_LINUX)
+  using TGraphicsReadyFn = FrontendRenderer::TGraphicsReadyFn;
+  void NotifyGraphicsReady(TGraphicsReadyFn const & fn);
+#endif
 
   void ClearUserMarksGroup(kml::MarkGroupId groupId);
   void ChangeVisibilityUserMarksGroup(kml::MarkGroupId groupId, bool isVisible);
@@ -142,7 +150,7 @@ public:
   void InvalidateUserMarks();
 
   void SetRenderingEnabled(ref_ptr<dp::GraphicsContextFactory> contextFactory = nullptr);
-  void SetRenderingDisabled(bool const destroyContext);
+  void SetRenderingDisabled(bool const destroySurface);
   void InvalidateRect(m2::RectD const & rect);
   void UpdateMapStyle();
 
@@ -232,7 +240,6 @@ private:
   void AddUserEvent(drape_ptr<UserEvent> && e);
   void PostUserEvent(drape_ptr<UserEvent> && e);
   void ModelViewChanged(ScreenBase const & screen);
-
   void MyPositionModeChanged(location::EMyPositionMode mode, bool routingActive);
   void TapEvent(TapInfo const & tapInfo);
   void UserPositionChanged(m2::PointD const & position, bool hasPosition);

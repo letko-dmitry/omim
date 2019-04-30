@@ -4,6 +4,8 @@
 #include "generator/opentable_dataset.hpp"
 #include "generator/osm_source.hpp"
 #include "generator/sponsored_scoring.hpp"
+#include "generator/translator_collection.hpp"
+#include "generator/translator_factory.hpp"
 
 #include "indexer/classificator_loader.hpp"
 
@@ -70,10 +72,10 @@ string PrintBuilder(FeatureBuilder1 const & fb)
   auto const center = MercatorBounds::ToLatLon(fb.GetKeyPoint());
   s << "lat: " << center.lat << " lon: " << center.lon << '\t';
 
-  if (fb.GetGeomType() == feature::GEOM_POINT)
-    s << "GeomType: GEOM_POINT";
-  else if (fb.GetGeomType() == feature::GEOM_AREA)
-    s << "GeomType: GEOM_AREA";
+  if (fb.GetGeomType() == feature::GeomType::Point)
+    s << "GeomType: Point";
+  else if (fb.GetGeomType() == feature::GeomType::Area)
+    s << "GeomType: Area";
   else
     CHECK(false, ());
 
@@ -325,8 +327,12 @@ void RunImpl(feature::GenerateInfo & info)
 
   map<base::GeoObjectId, FeatureBuilder1> features;
   LOG_SHORT(LINFO, ("OSM data:", FLAGS_osm));
+
+  CacheLoader cacheLoader(info);
+  TranslatorCollection translators;
   auto emitter = make_shared<EmitterBooking<Dataset>>(dataset, features);
-  GenerateFeatures(info, emitter);
+  translators.Append(CreateTranslator(TranslatorType::Country, emitter, cacheLoader.GetCache(), info));
+  GenerateRaw(info, translators);
 
   if (FLAGS_generate)
   {

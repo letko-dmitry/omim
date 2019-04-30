@@ -81,8 +81,6 @@
 /* View and button titles for accessibility */
 "core_my_position" = "Konumum";
 
-"ok" = "Tamam";
-
 /* Settings/Downloader - No free space dialog message */
 "free_disk_space_for_country_x" = "%@ indirmek için lütfen ilk önce cihazınızda biraz alan boşaltın";
 
@@ -1342,10 +1340,6 @@
 
 "onboarding_permissions_message" = "Böylece haritaları indirebilir, size yakın olan yerleri ve trafik bilgilerini görebilir ve navigasyonu kullanabilirsiniz.";
 
-"onboarding_welcome_title" = "MAPS.ME'ye Hoş Geldiniz";
-
-"onboarding_welcome_first_subtitle" = "Gideceğiniz yeri adım adım gösteren navigasyon ile birlikte ücretsiz, hızlı, detaylı ve tamamen çevrimdışı haritalar.";
-
 "onboarding_welcome_second_subtitle" = "Uygulamayı başlatarak <a href=\"%s\">Kullanım Koşullarını</a> ve <a href=\"%s\">Gizlilik Politikasını</a> kabul etmiş sayılırsınız.";
 
 "dialog_incorrect_feature_position" = "Konumu değiştir";
@@ -2195,8 +2189,6 @@
 
 "whats_new_message_ugc_travel" = "Son ziyaret ettiğiniz yerleri değerlendirin ve görüşlerinizi paylaşın!";
 
-"dialog_pedestrian_route_is_long" = "Yaya rotası çok uzun";
-
 "dialog_message_transit_not_found_connection" = "Tek transit bir ağda bir rota planla";
 
 "bookmarks_error_message_share_general" = "Bir uygulama hatasından dolayı paylaşılamıyor";
@@ -2388,8 +2380,6 @@
 "guide_downloaded_title" = "El kitabı başarılı bir şekilde indirildi";
 
 "download_guides" = "El kitaplarını indir";
-
-"cached_guides_placeholder_subtitle" = "Her çeşit yolculuk için ayrıntılı çevrimdışı el kitapları. Sana en uygun olanı seç ve doğrudan haritaya indir. El kitaplarını indirmek için internet bağlantısına ihtiyacın olacak.";
 
 "guides_groups_cached" = "İndirilen el kitapları";
 
@@ -2741,6 +2731,123 @@
 
 "whats_new_wiki_message" = "En popüler turistik mekanların sayfalarına Wikipedia.org makaleleri ekledik. Çevrimdışı kullanılabilirler";
 
+"driving_options_title" = "Sürüş seçenekleri";
+
+"driving_options_subheader" = "Her rotada kaçının";
+
+"avoid_tolls" = "Paralı yollar";
+
+"avoid_unpaved" = "Asfaltsız yollar";
+
+"avoid_ferry" = "Feribot geçişleri";
+
+"avoid_motorways" = "Otoyollar";
+
+"unable_to_calc_alert_title" = "Rota hesaplanamıyor";
+
+"unable_to_calc_alert_subtitle" = "Maalesef, muhtemelen belirlediğiniz seçeneklerden dolayı bir rota bulamadık. Lütfen seçenekleri değiştirin ve tekrar deneyin";
+
+"define_to_avoid_btn" = "Kaçınılması gereken yolları tanımlayın";
+
+"change_driving_options_btn" = "Sürüş seçeneklerini değiştir";
+
+"toll_road" = "Paralı yol";
+
+"unpaved_road" = "Asfaltsız yol";
+
+"ferry_crossing" = "Feribot geçişi";
+
+"operated_by" = "\"%s\" tarafından işletiliyor";
+
+"avoid_toll_roads_placepage" = "Paralı yollardan kaçın";
+
+"avoid_unpaved_roads_placepage" = "Asfaltsız yollardan kaçın";
+
+"avoid_ferry_crossing_placepage" = "Feribot geçişlerinden kaçın";
+
+"cached_guides_placeholder_subtitle" = "MAPS.ME, harita üzerinde görüntülenen ve çevrimdışı kullanılabilen, fotoğraf ve açıklamaların bulunduğu seçili yerler için hazır rehberler sunar.";
+
+"guides_catalogue_title" = "Rehber kataloğu";
+
+"download_guides_button" = "Kataloğa";
+
+"type.cuisine.uzbek" = "Özbek mutfağı";
+
+"onboarding_welcome_title" = "MAPS.ME ile planlayın ve seyahat edin";
+
+"onboarding_welcome_first_subtitle" = "İlginç yerleri işaretleyin, otel rezervasyonu yapın, çevrimdışıyken rota hesaplayın";
+
+"onboarding_guide_direct_download_title" = "Rehber indirmeye hazır";
+
+"onboarding_guide_direct_download_subtitle" = "Haritada görüntülenecek ve çevrimdışı kullanılabilecek";
+
+"onboarding_guide_direct_download_button" = "İndir";
+
+"onboarding_bydeeplink_guide_title" = "MAPS.ME’de kullanıma hazır rehberler";
+
+"onboarding_bydeeplink_guide_subtitle" = "Ziyaret edilecek en iyi yerler fotoğraf ve açıklamalarla birlikte haritada görüntülenir. Çevrimdışı kullanın.";
+
+"whats_new_auto_update_bydeeplink_title" = "Rehberlere geçmeden önce…";
+
+"whats_new_auto_update_bydeeplink_message" = "Nesneler hakkındaki bilgileri güncel tutmak için haritaları güncelleyin!";
+
+"whats_new_auto_update_and_proceed_button_size" = "(%s) güncelle ve devam et";
+
+"dialog_pedestrian_route_is_long" = "Yaya yolu çok uzun";
+
+"whatsnew_toll_unpaved_title" = "Her türlü yolu göz önünde bulundurarak otomobil rotalarını düzenleyin";
+
+"whatsnew_toll_unpaved_message" = "Paralı yollar, toprak yollar ve feribot seferlerine göre gideceğiniz dolambaçlı yolları seçin";
+
+"whatsnew_new_catalogue_title" = "Katalog sayfaları güncellendi";
+
+"whatsnew_new_catalogue_message" = "Rota seçimini kolay ve rahat hale getirmek için ortak rehnerleri hakkında ayrıntılı bilgiler ekledik";
+
+"purchase_please_wait_toast" = "Lütfen satın alma işlemi tamamlanmadan önce bu ekrandan çıkmayın";
+
+"trip_start" = "Hadi gidelim";
+
+"pick_destination" = "Hedef";
+
+"follow_my_position" = "Tekrar ortala";
+
+"search_results" = "Arama sonuçları";
+
+"then_turn" = "Sonra";
+
+"redirect_route_alert" = "Yeniden bir rota oluşturmak ister misiniz?";
+
+"redirect_route_yes" = "Evet";
+
+"redirect_route_no" = "Hayır";
+
+"trip_finished" = "Vardınız!";
+
+"keyboard_availability_alert" = "Klavye, sürüş sırasında kullanılamaz";
+
+"dialog_routing_change_start_carplay" = "Mevcut konumunuzdan rota oluşturulamıyor";
+
+"dialog_routing_change_end_carplay" = "Hedefinize rota oluşturulamıyor. Lütfen başka bir nokta seçin";
+
+"dialog_routing_check_gps_carplay" = "GPS sinyali yok. Lütfen açık bir alana geçin";
+
+"dialog_routing_unable_locate_route_carplay" = "Rota oluşturulamıyor. Lütfen başka bir rota noktası belirtin";
+
+"dialog_routing_download_files_carplay" = "Rota oluşturmak için gereken tüm haritalar mevcut değil. Lütfen bunları cep telefonunuza indirin";
+
+"dialog_routing_system_error_carplay" = "Hata oluştu. Lütfen uygulamayı yeniden başlatın";
+
+"dialog_routing_rebuild_from_current_location_carplay" = "Rota, mevcut konumunuzdan yeniden oluşturulacak";
+
+"dialog_routing_rebuild_for_vehicle_carplay" = "Rota, bir arabalı seyahat rotasına dönüştürülecek";
+
+"ok" = "Tamam";
+
+"vezet_taxi" = "Vezet";
+
+
+/**********  Partners  **********/
+
 "sponsored_partner1_action" = "Outlets";
 
 "sponsored_partner2_action" = "Discount";
@@ -2788,9 +2895,9 @@
 
 "type.aeroway.terminal" = "aeroway-terminal";
 
-"type.amenity" = "amenity";
+"type.amenity" = "Tesis";
 
-"type.amenity.arts_centre" = "amenity-arts_centre";
+"type.amenity.arts_centre" = "Sanat merkezi";
 
 "type.amenity.atm" = "Bankamatik";
 
@@ -2854,7 +2961,7 @@
 
 "type.amenity.fire_station" = "Itfaiye";
 
-"type.amenity.food_court" = "amenity-food_court";
+"type.amenity.food_court" = "Food court";
 
 "type.amenity.fountain" = "Çeşme";
 
@@ -2970,7 +3077,7 @@
 
 "type.amenity.vending_machine.parking_tickets" = "Horodateur";
 
-"type.amenity.vending_machine.public_transport_tickets" = "amenity-vending_machine-public_transport_tickets";
+"type.amenity.vending_machine.public_transport_tickets" = "Toplu taşıma biletleri için otomatlar";
 
 "type.amenity.veterinary" = "Veteriner";
 
@@ -3286,7 +3393,7 @@
 
 "type.highway.bus_stop" = "Otobüs durağı";
 
-"type.highway.construction" = "highway-construction";
+"type.highway.construction" = "Yol yapım aşamasında";
 
 "type.highway.cycleway" = "highway-cycleway";
 
@@ -3592,7 +3699,7 @@
 
 "type.landuse" = "landuse";
 
-"type.landuse.allotments" = "landuse-allotments";
+"type.landuse.allotments" = "Allotments";
 
 "type.landuse.basin" = "Su";
 
@@ -3606,13 +3713,13 @@
 
 "type.landuse.construction" = "landuse-construction";
 
-"type.landuse.farm" = "landuse-farm";
+"type.landuse.farm" = "Farm";
 
-"type.landuse.farmland" = "landuse-farmland";
+"type.landuse.farmland" = "Tarım arazileri";
 
-"type.landuse.farmyard" = "landuse-farmyard";
+"type.landuse.farmyard" = "Farmyard";
 
-"type.landuse.field" = "landuse-field";
+"type.landuse.field" = "Field";
 
 "type.landuse.forest" = "Orman";
 
@@ -3622,27 +3729,27 @@
 
 "type.landuse.forest.mixed" = "Orman";
 
-"type.landuse.garages" = "landuse-garages";
+"type.landuse.garages" = "Garages";
 
-"type.landuse.grass" = "landuse-grass";
+"type.landuse.grass" = "Çim";
 
 "type.landuse.greenfield" = "landuse-greenfield";
 
 "type.landuse.greenhouse_horticulture" = "landuse-greenhouse_horticulture";
 
-"type.landuse.industrial" = "landuse-industrial";
+"type.landuse.industrial" = "Industrial land";
 
-"type.landuse.landfill" = "landuse-landfill";
+"type.landuse.landfill" = "Çöp sahası";
 
-"type.landuse.meadow" = "landuse-meadow";
+"type.landuse.meadow" = "Meadow";
 
-"type.landuse.military" = "landuse-military";
+"type.landuse.military" = "Military area";
 
-"type.landuse.orchard" = "landuse-orchard";
+"type.landuse.orchard" = "Orchard";
 
-"type.landuse.quarry" = "landuse-quarry";
+"type.landuse.quarry" = "Quarry";
 
-"type.landuse.railway" = "landuse-railway";
+"type.landuse.railway" = "Demiryolu binası";
 
 "type.landuse.recreation_ground" = "landuse-recreation_ground";
 
@@ -3660,13 +3767,13 @@
 
 "type.landuse.village_green" = "landuse-village_green";
 
-"type.landuse.vineyard" = "landuse-vineyard";
+"type.landuse.vineyard" = "Vineyard";
 
 "type.leisure" = "leisure";
 
 "type.leisure.common" = "leisure-common";
 
-"type.leisure.dog_park" = "Dog area";
+"type.leisure.dog_park" = "Köpek alanı";
 
 "type.leisure.dog_park.tennis" = "Dog area";
 
@@ -3678,11 +3785,11 @@
 
 "type.leisure.golf_course" = "Golf sahası";
 
-"type.leisure.ice_rink" = "leisure-ice_rink";
+"type.leisure.ice_rink" = "Ice rink";
 
-"type.leisure.landscape_reserve" = "leisure-landscape_reserve";
+"type.leisure.landscape_reserve" = "Landscape reserve";
 
-"type.leisure.marina" = "leisure-marina";
+"type.leisure.marina" = "Marina";
 
 "type.leisure.nature_reserve" = "Doğal koruma alanı";
 
@@ -3706,7 +3813,7 @@
 
 "type.leisure.playing_fields.tennis" = "leisure-playing_fields-tennis";
 
-"type.leisure.recreation_ground" = "leisure-recreation_ground";
+"type.leisure.recreation_ground" = "Recreation ground";
 
 "type.leisure.sauna" = "Sauna";
 
@@ -3786,7 +3893,7 @@
 
 "type.natural" = "natural";
 
-"type.natural.bare_rock" = "natural-bare_rock";
+"type.natural.bare_rock" = "Bare rock";
 
 "type.natural.bay" = "Koy";
 
@@ -3796,53 +3903,53 @@
 
 "type.natural.cave_entrance" = "Entrée de la cave";
 
-"type.natural.cliff" = "natural-cliff";
+"type.natural.cliff" = "Cliff";
 
-"type.natural.coastline" = "natural-coastline";
+"type.natural.coastline" = "Coastline";
 
 "type.natural.geyser" = "Gayzer";
 
 "type.natural.glacier" = "Buzul";
 
-"type.natural.grassland" = "natural-grassland";
+"type.natural.grassland" = "Yeşillik";
 
-"type.natural.heath" = "natural-heath";
+"type.natural.heath" = "Heath";
 
 "type.natural.lake" = "Göl";
 
 "type.natural.land" = "natural-land";
 
-"type.natural.meadow" = "natural-meadow";
+"type.natural.meadow" = "Meadow";
 
-"type.natural.orchard" = "natural-orchard";
+"type.natural.orchard" = "Orchard";
 
 "type.natural.peak" = "Zirve";
 
 "type.natural.pond" = "Gölet";
 
-"type.natural.rock" = "natural-rock";
+"type.natural.rock" = "Rock";
 
-"type.natural.salt_pond" = "natural-salt_pond";
+"type.natural.salt_pond" = "Salt pond";
 
-"type.natural.scrub" = "natural-scrub";
+"type.natural.scrub" = "Çalılık";
 
 "type.natural.spring" = "Pınar";
 
 "type.natural.tree" = "Arbre";
 
-"type.natural.tree_row" = "natural-tree_row";
+"type.natural.tree_row" = "Tree row";
 
-"type.natural.vineyard" = "natural-vineyard";
+"type.natural.vineyard" = "Vineyard";
 
 "type.natural.volcano" = "Volcan";
 
 "type.natural.water" = "Su";
 
-"type.natural.wetland" = "natural-wetland";
+"type.natural.wetland" = "Sulak alan";
 
-"type.natural.wetland.bog" = "natural-wetland-bog";
+"type.natural.wetland.bog" = "Wetland";
 
-"type.natural.wetland.marsh" = "natural-wetland-marsh";
+"type.natural.wetland.marsh" = "Wetland";
 
 "type.natural.wood" = "Orman";
 
@@ -3946,7 +4053,7 @@
 
 "type.place.locality" = "Semt";
 
-"type.place.neighbourhood" = "place-neighbourhood";
+"type.place.neighbourhood" = "Neighbourhood";
 
 "type.place.ocean" = "Okyanus";
 
@@ -4032,7 +4139,7 @@
 
 "type.railway.incline.tunnel" = "railway-incline-tunnel";
 
-"type.railway.level_crossing" = "Level Crossing";
+"type.railway.level_crossing" = "Hemzemin Geçit";
 
 "type.railway.light_rail" = "railway-light_rail";
 
@@ -4040,7 +4147,7 @@
 
 "type.railway.light_rail.tunnel" = "railway-light_rail-tunnel";
 
-"type.railway.monorail" = "railway-monorail";
+"type.railway.monorail" = "Monoray";
 
 "type.railway.monorail.bridge" = "railway-monorail-bridge";
 
@@ -4062,7 +4169,7 @@
 
 "type.railway.proposed" = "railway-proposed";
 
-"type.railway.rail" = "railway-rail";
+"type.railway.rail" = "Demiryolu";
 
 "type.railway.rail.bridge" = "railway-rail-bridge";
 
@@ -4172,7 +4279,7 @@
 
 "type.railway.subway.yellow" = "railway-subway-yellow";
 
-"type.railway.subway_entrance" = "Metro";
+"type.railway.subway_entrance" = "Metro girişi";
 
 "type.railway.subway_entrance.barcelona" = "Metro";
 
@@ -4430,13 +4537,13 @@
 
 "type.sport.archery" = "sport-archery";
 
-"type.sport.athletics" = "Athletics";
+"type.sport.athletics" = "Atletizm";
 
 "type.sport.australian_football" = "sport-australian_football";
 
 "type.sport.baseball" = "sport-baseball";
 
-"type.sport.basketball" = "Basketball";
+"type.sport.basketball" = "Basketbol";
 
 "type.sport.bowls" = "sport-bowls";
 
@@ -4446,7 +4553,7 @@
 
 "type.sport.diving" = "sport-diving";
 
-"type.sport.equestrian" = "Equestrian Sports";
+"type.sport.equestrian" = "Binicilik Sporları";
 
 "type.sport.football" = "sport-football";
 
@@ -4468,7 +4575,7 @@
 
 "type.sport.swimming" = "sport-swimming";
 
-"type.sport.tennis" = "sport-tennis";
+"type.sport.tennis" = "Tenis kortu";
 
 "type.tourism" = "tourism";
 
@@ -4580,11 +4687,11 @@
 
 "type.wheelchair" = "wheelchair";
 
-"type.wheelchair.limited" = "wheelchair-limited";
+"type.wheelchair.limited" = "Kısıtlı tekerlekli sandalye erişimi";
 
-"type.wheelchair.no" = "wheelchair-no";
+"type.wheelchair.no" = "Tekerlekli sandalye erişimi yok";
 
-"type.wheelchair.yes" = "wheelchair-yes";
+"type.wheelchair.yes" = "Tam tekerlekli sandalye erişimi";
 
 "type.piste_lift" = "piste:lift";
 
@@ -4617,6 +4724,40 @@
 "type.piste_type.nordic" = "piste:type-nordic";
 
 "type.piste_type.sled" = "piste:type-sled";
+
+"type.building_part" = "Bina";
+
+"type.earthquake_damage" = "earthquake:damage";
+
+"type.area_highway.cycleway" = "area:highway-cycleway";
+
+"type.area_highway.footway" = "area:highway-footway";
+
+"type.area_highway.living_street" = "area:highway-living_street";
+
+"type.area_highway.motorway" = "area:highway-motorway";
+
+"type.area_highway.path" = "area:highway-path";
+
+"type.area_highway.pedestrian" = "area:highway-pedestrian";
+
+"type.area_highway.primary" = "area:highway-primary";
+
+"type.area_highway.residential" = "area:highway-residential";
+
+"type.area_highway.secondary" = "area:highway-secondary";
+
+"type.area_highway.service" = "area:highway-service";
+
+"type.area_highway.tertiary" = "area:highway-tertiary";
+
+"type.area_highway.steps" = "area:highway-steps";
+
+"type.area_highway.track" = "area:highway-track";
+
+"type.area_highway.trunk" = "area:highway-trunk";
+
+"type.area_highway.unclassified" = "area:highway-unclassified";
 
 
 /********** Brands **********/

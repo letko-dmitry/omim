@@ -113,7 +113,7 @@ double const HN_MAX_CONNECTION_DIST_M = 300.0;
 class StreetCreator
 {
 public:
-  StreetCreator(Street * st) : m_street(st) {}
+  explicit StreetCreator(Street * st) : m_street(st) {}
   void operator () (m2::PointD const & pt) const
   {
     m_street->m_points.push_back(pt);
@@ -149,7 +149,8 @@ pair<double, double> GetConnectionAngleAndDistance(bool & isBeg, Street const * 
 class HasSecond
 {
 public:
-  HasSecond(set<Street *> const & streets) : m_streets(streets) {}
+  explicit HasSecond(set<Street *> const & streets) : m_streets(streets) {}
+
   template <typename T>
   bool operator()(T const & t) const
   {
@@ -163,7 +164,8 @@ private:
 class HasStreet
 {
 public:
-  HasStreet(set<Street *> const & streets) : m_streets(streets) {}
+  explicit HasStreet(set<Street *> const & streets) : m_streets(streets) {}
+
   bool operator()(MergedStreet const & st) const
   {
     for (size_t i = 0; i < st.m_cont.size(); ++i)
@@ -189,7 +191,7 @@ struct ScoredHouse
 class ResultAccumulator
 {
 public:
-  ResultAccumulator(string const & houseNumber) : m_number(houseNumber) {}
+  explicit ResultAccumulator(string const & houseNumber) : m_number(houseNumber) {}
 
   string const & GetFullNumber() const { return m_number.GetNumber(); }
   bool UseOdd() const { return m_useOdd; }
@@ -340,7 +342,7 @@ struct HouseChain
     maxHouseNumber = numeric_limits<int>::max();
   }
 
-  HouseChain(HouseProjection const * h)
+  explicit HouseChain(HouseProjection const * h)
   {
     minHouseNumber = maxHouseNumber = h->m_house->GetIntNumber();
     Add(h);
@@ -887,18 +889,18 @@ int HouseDetector::LoadStreets(vector<FeatureID> const & ids)
     if (m_id2st.find(ids[i]) != m_id2st.end())
       continue;
 
-    FeatureType f;
-    if (!m_loader.Load(ids[i], f))
+    auto f = m_loader.Load(ids[i]);
+    if (!f)
     {
       LOG(LWARNING, ("Can't read feature from:", ids[i].m_mwmId));
       continue;
     }
 
-    if (f.GetFeatureType() == feature::GEOM_LINE)
+    if (f->GetGeomType() == feature::GeomType::Line)
     {
       // Use default name as a primary compare key for merging.
       string name;
-      if (!f.GetName(StringUtf8Multilang::kDefaultCode, name))
+      if (!f->GetName(StringUtf8Multilang::kDefaultCode, name))
         continue;
       ASSERT(!name.empty(), ());
 
@@ -906,7 +908,7 @@ int HouseDetector::LoadStreets(vector<FeatureID> const & ids)
 
       Street * st = new Street();
       st->SetName(name);
-      f.ForEachPoint(StreetCreator(st), FeatureType::BEST_GEOMETRY);
+      f->ForEachPoint(StreetCreator(st), FeatureType::BEST_GEOMETRY);
 
       if (m_end2st.empty())
       {

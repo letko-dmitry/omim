@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 
 class FeatureType;
@@ -31,7 +32,8 @@ class ReverseGeocoder;
 class PreRankerResult
 {
 public:
-  PreRankerResult(FeatureID const & id, PreRankingInfo const & info);
+  PreRankerResult(FeatureID const & id, PreRankingInfo const & info,
+                  std::vector<ResultTracer::Branch> const & provenance);
 
   static bool LessRankAndPopularity(PreRankerResult const & r1, PreRankerResult const & r2);
   static bool LessDistance(PreRankerResult const & r1, PreRankerResult const & r2);
@@ -49,14 +51,19 @@ public:
   double GetDistance() const { return m_info.m_distanceToPivot; }
   uint8_t GetRank() const { return m_info.m_rank; }
   uint8_t GetPopularity() const { return m_info.m_popularity; }
+  std::pair<uint8_t, float> GetRating() const { return m_info.m_rating; }
   PreRankingInfo & GetInfo() { return m_info; }
   PreRankingInfo const & GetInfo() const { return m_info; }
+  std::vector<ResultTracer::Branch> const & GetProvenance() const { return m_provenance; }
 
 private:
   friend class RankerResult;
 
   FeatureID m_id;
   PreRankingInfo m_info;
+
+  // The call path in the Geocoder that leads to this result.
+  std::vector<ResultTracer::Branch> m_provenance;
 };
 
 // Second result class. Objects are created during reading of features.
@@ -94,7 +101,7 @@ public:
   Type const & GetResultType() const { return m_resultType; }
   m2::PointD GetCenter() const { return m_region.m_point; }
   double GetDistance() const { return m_distance; }
-  feature::EGeomType GetGeomType() const { return m_geomType; }
+  feature::GeomType GetGeomType() const { return m_geomType; }
   Result::Metadata GetMetadata() const { return m_metadata; }
 
   double GetDistanceToPivot() const { return m_info.m_distanceToPivot; }
@@ -106,6 +113,8 @@ public:
   bool IsEqualCommon(RankerResult const & r) const;
 
   uint32_t GetBestType(std::vector<uint32_t> const & preferredTypes = {}) const;
+
+  std::vector<ResultTracer::Branch> const & GetProvenance() const { return m_provenance; }
 
 private:
   friend class RankerResultMaker;
@@ -132,8 +141,11 @@ private:
   double m_distance;
   Type m_resultType;
   RankingInfo m_info;
-  feature::EGeomType m_geomType;
+  feature::GeomType m_geomType;
   Result::Metadata m_metadata;
+
+  // The call path in the Geocoder that leads to this result.
+  std::vector<ResultTracer::Branch> m_provenance;
 };
 
 void ProcessMetadata(FeatureType & ft, Result::Metadata & meta);

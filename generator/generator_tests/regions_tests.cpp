@@ -1,5 +1,6 @@
 #include "testing/testing.hpp"
 
+#include "generator/feature_builder.hpp"
 #include "generator/generator_tests/common.hpp"
 #include "generator/osm_element.hpp"
 #include "generator/regions/collector_region_info.hpp"
@@ -29,11 +30,14 @@ namespace
 {
 using Tags = std::vector<std::pair<std::string, std::string>>;
 
-OsmElement MakeOsmElement(uint64_t id, std::string const & adminLevel,
+FeatureBuilder1 const kEmptyFeature;
+
+OsmElement CreateOsmRelation(uint64_t id, std::string const & adminLevel,
                           std::string const & place = "")
 {
   OsmElement el;
   el.id = id;
+  el.type = OsmElement::EntityType::Relation;
   el.AddTag("place", place);
   el.AddTag("admin_level", adminLevel);
 
@@ -44,14 +48,14 @@ std::string MakeCollectorData()
 {
   auto const filename = GetFileName();
   CollectorRegionInfo collector(filename);
-  collector.Collect(MakeOsmRelation(1 /* id */), MakeOsmElement(1 /* id */, "2" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(2 /* id */), MakeOsmElement(2 /* id */, "2" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(3 /* id */), MakeOsmElement(3 /* id */, "4" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(4 /* id */), MakeOsmElement(4 /* id */, "4" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(5 /* id */), MakeOsmElement(5 /* id */, "4" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(6 /* id */), MakeOsmElement(6 /* id */, "6" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(7 /* id */), MakeOsmElement(7 /* id */, "6" /* adminLevel */));
-  collector.Collect(MakeOsmRelation(8 /* id */), MakeOsmElement(8 /* id */, "4" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(1 /* id */, "2" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(2 /* id */, "2" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(3 /* id */, "4" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(4 /* id */, "4" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(5 /* id */, "4" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(6 /* id */, "6" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(7 /* id */, "6" /* adminLevel */));
+  collector.CollectFeature(kEmptyFeature, CreateOsmRelation(8 /* id */, "4" /* adminLevel */));
   collector.Save();
   return filename;
 }
@@ -146,13 +150,13 @@ RegionsBuilder::Regions MakeTestDataSet1(RegionInfo & collector)
   return regions;
 }
 
-class Helper : public ToStringPolicyInterface
+class StringJoinPolicy : public ToStringPolicyInterface
 {
 public:
-  std::string ToString(Node::PtrList const & nodePtrList) const override
+  std::string ToString(NodePath const & nodePath) const override
   {
     std::stringstream stream;
-    for (auto const & n : nodePtrList)
+    for (auto const & n : nodePath)
       stream << n->GetData().GetName();
 
     return stream.str();
@@ -196,20 +200,21 @@ UNIT_TEST(RegionsBuilderTest_GetCountryTrees)
   auto const filename = MakeCollectorData();
   RegionInfo collector(filename);
   std::vector<std::string> bankOfNames;
-  RegionsBuilder builder(MakeTestDataSet1(collector), std::make_unique<Helper>());
+  RegionsBuilder builder(MakeTestDataSet1(collector));
   builder.ForEachNormalizedCountry([&](std::string const & name, Node::Ptr const & tree) {
-    auto const idStringList = builder.ToIdStringList(tree);
-    for (auto const & idString : idStringList)
-      bankOfNames.push_back(idString.second);
+    ForEachLevelPath(tree, [&](NodePath const & path) {
+      StringJoinPolicy stringifier;
+      bankOfNames.push_back(stringifier.ToString(path));
+    });
   });
 
   TEST(ExistsName(bankOfNames, "Country_2"), ());
-  TEST(ExistsName(bankOfNames, "Country_2_Region_8Country_2"), ());
+  TEST(ExistsName(bankOfNames, "Country_2Country_2_Region_8"), ());
 
   TEST(ExistsName(bankOfNames, "Country_1"), ());
-  TEST(ExistsName(bankOfNames, "Country_1_Region_3Country_1"), ());
-  TEST(ExistsName(bankOfNames, "Country_1_Region_4Country_1"), ());
-  TEST(ExistsName(bankOfNames, "Country_1_Region_5Country_1"), ());
-  TEST(ExistsName(bankOfNames, "Country_1_Region_5_Subregion_6Country_1_Region_5Country_1"), ());
-  TEST(ExistsName(bankOfNames, "Country_1_Region_5_Subregion_7Country_1_Region_5Country_1"), ());
+  TEST(ExistsName(bankOfNames, "Country_1Country_1_Region_3"), ());
+  TEST(ExistsName(bankOfNames, "Country_1Country_1_Region_4"), ());
+  TEST(ExistsName(bankOfNames, "Country_1Country_1_Region_5"), ());
+  TEST(ExistsName(bankOfNames, "Country_1Country_1_Region_5Country_1_Region_5_Subregion_6"), ());
+  TEST(ExistsName(bankOfNames, "Country_1Country_1_Region_5Country_1_Region_5_Subregion_7"), ());
 }

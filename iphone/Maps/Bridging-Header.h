@@ -59,6 +59,7 @@
 #import "MWMRoutePreviewTaxiCellType.h"
 #import "MWMRouter.h"
 #import "MWMRouterTransitStepInfo.h"
+#import "MWMRoutingOptions.h"
 #import "MWMSearchItemType.h"
 #import "MWMSearchNoResults.h"
 #import "MWMSearchFrameworkHelper.h"

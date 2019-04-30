@@ -131,6 +131,7 @@ public:
   bool IsRouteFinished() const { return m_routingSession.IsFinished(); }
   bool IsOnRoute() const { return m_routingSession.IsOnRoute(); }
   bool IsRoutingFollowing() const { return m_routingSession.IsFollowing(); }
+  bool IsRouteValid() const { return m_routingSession.IsRouteValid(); }
   void BuildRoute(uint32_t timeoutSec);
   void SetUserCurrentPosition(m2::PointD const & position);
   void ResetRoutingSession() { m_routingSession.Reset(); }
@@ -288,8 +289,32 @@ public:
   void UpdatePreviewMode();
   void CancelPreviewMode();
 
+  routing::RouterType GetCurrentRouterType() const { return m_currentRouterType; }
+
 private:
-  void InsertRoute(routing::Route const & route);
+  /// \returns true if the route has warnings.
+  bool InsertRoute(routing::Route const & route);
+
+  struct RoadInfo
+  {
+    RoadInfo() = default;
+
+    explicit RoadInfo(m2::PointD const & pt, FeatureID const & featureId)
+      : m_startPoint(pt)
+      , m_featureId(featureId)
+    {}
+
+    m2::PointD m_startPoint;
+    FeatureID m_featureId;
+    double m_distance = 0.0;
+  };
+  using RoadWarningsCollection = std::map<routing::RoutingOptions::Road, std::vector<RoadInfo>>;
+
+  using GetMwmIdFn = std::function<MwmSet::MwmId (routing::NumMwmId numMwmId)>;
+  void CollectRoadWarnings(std::vector<routing::RouteSegment> const & segments, m2::PointD const & startPt,
+                           double baseDistance, GetMwmIdFn const & getMwmIdFn, RoadWarningsCollection & roadWarnings);
+  void CreateRoadWarningMarks(RoadWarningsCollection && roadWarnings);
+
   bool IsTrackingReporterEnabled() const;
   void MatchLocationToRoute(location::GpsInfo & info,
                             location::RouteMatchingInfo & routeMatchingInfo) const;

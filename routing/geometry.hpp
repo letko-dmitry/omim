@@ -4,6 +4,7 @@
 #include "routing/maxspeeds.hpp"
 #include "routing/road_graph.hpp"
 #include "routing/road_point.hpp"
+#include "routing/routing_options.hpp"
 
 #include "routing_common/maxspeed_conversion.hpp"
 #include "routing_common/vehicle_model.hpp"
@@ -35,7 +36,7 @@ public:
             feature::TAltitudes const * altitudes, bool inCity, Maxspeed const & maxspeed);
 
   bool IsOneWay() const { return m_isOneWay; }
-  VehicleModelInterface::SpeedKMpH const & GetSpeed(bool forward) const;
+  SpeedKMpH const & GetSpeed(bool forward) const;
   bool IsPassThroughAllowed() const { return m_isPassThroughAllowed; }
 
   Junction const & GetJunction(uint32_t junctionId) const
@@ -65,13 +66,21 @@ public:
     m_isPassThroughAllowed = passThroughAllowed;
   }
 
+  bool SuitableForOptions(RoutingOptions avoidRoutingOptions) const
+  {
+    return (avoidRoutingOptions.GetOptions() & m_routingOptions.GetOptions()) == 0;
+  }
+
+  RoutingOptions GetRoutingOptions() const { return m_routingOptions; }
+
 private:
   buffer_vector<Junction, 32> m_junctions;
-  VehicleModelInterface::SpeedKMpH m_forwardSpeed;
-  VehicleModelInterface::SpeedKMpH m_backwardSpeed;
+  SpeedKMpH m_forwardSpeed;
+  SpeedKMpH m_backwardSpeed;
   bool m_isOneWay = false;
   bool m_valid = false;
   bool m_isPassThroughAllowed = false;
+  RoutingOptions m_routingOptions;
 };
 
 struct AttrLoader

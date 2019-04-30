@@ -179,6 +179,7 @@ public:
 
   std::string GetCategoryName(kml::MarkGroupId categoryId) const;
   std::string GetCategoryFileName(kml::MarkGroupId categoryId) const;
+  m2::RectD GetCategoryRect(kml::MarkGroupId categoryId) const;
   kml::CategoryData const & GetCategoryData(kml::MarkGroupId categoryId) const;
 
   kml::MarkGroupId GetCategoryId(std::string const & name) const;
@@ -192,9 +193,12 @@ public:
   void SetLastEditedBmColor(kml::PredefinedColor color);
 
   using TTouchRectHolder = function<m2::AnyRectD(UserMark::Type)>;
-  UserMark const * FindNearestUserMark(TTouchRectHolder const & holder) const;
+  using TFindOnlyVisibleChecker = function<bool(UserMark::Type)>;
+  UserMark const * FindNearestUserMark(TTouchRectHolder const & holder,
+                                       TFindOnlyVisibleChecker const & findOnlyVisible) const;
   UserMark const * FindNearestUserMark(m2::AnyRectD const & rect) const;
-  UserMark const * FindMarkInRect(kml::MarkGroupId groupId, m2::AnyRectD const & rect, double & d) const;
+  UserMark const * FindMarkInRect(kml::MarkGroupId groupId, m2::AnyRectD const & rect, bool findOnlyVisible,
+                                  double & d) const;
 
   /// Scans and loads all kml files with bookmarks.
   void LoadBookmarks();

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -17,13 +18,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapswithme.maps.MwmActivity.MapTask;
-import com.mapswithme.maps.MwmActivity.OpenUrlTask;
 import com.mapswithme.maps.base.BaseMwmFragmentActivity;
 import com.mapswithme.maps.downloader.CountryItem;
 import com.mapswithme.maps.downloader.MapManager;
 import com.mapswithme.maps.intent.Factory;
 import com.mapswithme.maps.intent.IntentProcessor;
+import com.mapswithme.maps.intent.MapTask;
 import com.mapswithme.maps.location.LocationHelper;
 import com.mapswithme.maps.location.LocationListener;
 import com.mapswithme.util.ConnectionState;
@@ -94,6 +94,7 @@ public class DownloadResourcesLegacyActivity extends BaseMwmFragmentActivity
       Factory.createOldLeadUrlProcessor(),
       Factory.createDlinkBookmarkCatalogueProcessor(),
       Factory.createMapsmeBookmarkCatalogueProcessor(),
+      Factory.createDlinkBookmarkGuidesPageProcessor(),
       Factory.createOldCoreLinkAdapterProcessor(),
       Factory.createOpenCountryTaskProcessor(),
       Factory.createMapsmeProcessor(),
@@ -439,8 +440,7 @@ public class DownloadResourcesLegacyActivity extends BaseMwmFragmentActivity
     if (mMapTaskToForward != null)
     {
       intent.putExtra(MwmActivity.EXTRA_TASK, mMapTaskToForward);
-      intent.putExtra(MwmActivity.EXTRA_LAUNCH_BY_DEEP_LINK,
-                      mMapTaskToForward instanceof OpenUrlTask);
+      intent.putExtra(MwmActivity.EXTRA_LAUNCH_BY_DEEP_LINK, true);
       mMapTaskToForward = null;
     }
 
@@ -473,6 +473,7 @@ public class DownloadResourcesLegacyActivity extends BaseMwmFragmentActivity
       else
       {
         mAreResourcesDownloaded = true;
+        mMapTaskToForward = processIntent();
         showMap();
       }
     }
@@ -490,6 +491,15 @@ public class DownloadResourcesLegacyActivity extends BaseMwmFragmentActivity
     final Intent intent = getIntent();
     if (intent == null)
       return null;
+
+    MwmApplication application = MwmApplication.from(this);
+    intent.putExtra(Factory.EXTRA_IS_FIRST_LAUNCH, application.isFirstLaunch());
+    if (intent.getData() == null)
+    {
+      String firstLaunchDeeplink = application.getMediator().retrieveFirstLaunchDeeplink();
+      if (!TextUtils.isEmpty(firstLaunchDeeplink))
+        intent.setData(Uri.parse(firstLaunchDeeplink));
+    }
 
     MapTask mapTaskToForward;
     for (IntentProcessor ip : mIntentProcessors)

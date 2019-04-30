@@ -81,8 +81,6 @@
 /* View and button titles for accessibility */
 "core_my_position" = "現在地";
 
-"ok" = "OK";
-
 /* Settings/Downloader - No free space dialog message */
 "free_disk_space_for_country_x" = "%@をダウンロードするため、デバイスの空き容量を確認してください";
 
@@ -1342,10 +1340,6 @@
 
 "onboarding_permissions_message" = "これにより地図のダウンロード、近隣のスポットや交通情報の確認、およびナビゲーションを利用できるようになります。";
 
-"onboarding_welcome_title" = "MAPS.ME へようこそ";
-
-"onboarding_welcome_first_subtitle" = "ターンバイターン方式のナビゲーションを採用した、完全にオフラインで利用できる無料・高速かつ詳細な地図を提供します。";
-
 "onboarding_welcome_second_subtitle" = "アプリケーションを起動することで、<a href=\"%s\">利用規約</a>および<a href=\"%s\">プライバシーポリシー</a>にご同意いただいたものとみなします。";
 
 "dialog_incorrect_feature_position" = "位置を変更してください";
@@ -2195,8 +2189,6 @@
 
 "whats_new_message_ugc_travel" = "訪れた場所の評価やレビューを行ってください！";
 
-"dialog_pedestrian_route_is_long" = "歩行ルートが長すぎます";
-
 "dialog_message_transit_not_found_connection" = "1 つの交通ネットワーク内でルートを作成";
 
 "bookmarks_error_message_share_general" = "アプリケーションエラーのため共有できません";
@@ -2388,8 +2380,6 @@
 "guide_downloaded_title" = "ガイドが正常にダウンロードされました";
 
 "download_guides" = "ガイドをダウンロード";
-
-"cached_guides_placeholder_subtitle" = "どんな旅にも使える詳細なオフラインガイド。最適なものを選び、マップに直接ダウンロードしてください。ガイドをダウンロードするにはインターネット接続が必要です。";
 
 "guides_groups_cached" = "ガイドをダウンロード";
 
@@ -2741,6 +2731,123 @@
 
 "whats_new_wiki_message" = "当社はWikipedia.orgの記事を最も人気の観光名所のページに追加しました。これらはオフラインで利用する事ができます";
 
+"driving_options_title" = "運転オプション";
+
+"driving_options_subheader" = "すべてのルートで回避";
+
+"avoid_tolls" = "有料道路";
+
+"avoid_unpaved" = "未舗装道路";
+
+"avoid_ferry" = "フェリー航路";
+
+"avoid_motorways" = "高速道路";
+
+"unable_to_calc_alert_title" = "ルートを計算できません";
+
+"unable_to_calc_alert_subtitle" = "残念ながら恐らく設定されたオプションのためにルートが見つけられませんでした。設定を変更し、もう一度お試しください";
+
+"define_to_avoid_btn" = "回避するために道を設定";
+
+"change_driving_options_btn" = "運転オプションを変更";
+
+"toll_road" = "有料道路";
+
+"unpaved_road" = "未舗装道路";
+
+"ferry_crossing" = "フェリー航路";
+
+"operated_by" = "\"%s\"で稼働";
+
+"avoid_toll_roads_placepage" = "有料道路を回避";
+
+"avoid_unpaved_roads_placepage" = "未舗装道路を回避";
+
+"avoid_ferry_crossing_placepage" = "フェリー航路を回避";
+
+"cached_guides_placeholder_subtitle" = "MAPS.MEはマップに表示されたオフラインで利用できる写真と説明文がついた選択された場所への便利なガイドを提供しています。";
+
+"guides_catalogue_title" = "ガイドのカタログ";
+
+"download_guides_button" = "カタログへ";
+
+"type.cuisine.uzbek" = "ウズベキスタン料理";
+
+"onboarding_welcome_title" = "MAPS.MEで計画および旅行";
+
+"onboarding_welcome_first_subtitle" = "興味のある場所をブックマークし、ホテルを予約して、オフラインでルートを検索";
+
+"onboarding_guide_direct_download_title" = "ガイドはダウンロードできます";
+
+"onboarding_guide_direct_download_subtitle" = "これはマップ上に表示され、オフラインでも機能します";
+
+"onboarding_guide_direct_download_button" = "ダウンロード";
+
+"onboarding_bydeeplink_guide_title" = "MAPS.MEのすぐに利用できるガイド";
+
+"onboarding_bydeeplink_guide_subtitle" = "写真と説明文がついたマップ上に表示された名所。オフラインでも機能します。";
+
+"whats_new_auto_update_bydeeplink_title" = "ガイドへ進む前に…";
+
+"whats_new_auto_update_bydeeplink_message" = "オブジェクトについての情報を最新に保つためにマップをアップデートしましょう!";
+
+"whats_new_auto_update_and_proceed_button_size" = "アップデート(%s) して進む";
+
+"dialog_pedestrian_route_is_long" = "歩行ルートが長過ぎます";
+
+"whatsnew_toll_unpaved_title" = "全てのタイプの道を考慮に入れて自動車ルートをレイアウト";
+
+"whatsnew_toll_unpaved_message" = "有料道路、未舗装道路、およびフェリー航路を回避するために迂回路を選択";
+
+"whatsnew_new_catalogue_title" = "カタログのページをアップデート";
+
+"whatsnew_new_catalogue_message" = "ルートの選択を簡単かつ便利にするためにパートナーのガイドの詳細な情報を追加しました";
+
+"purchase_please_wait_toast" = "購入が完了するまでこの画面を閉じないでください";
+
+"trip_start" = "レッツゴー";
+
+"pick_destination" = "目的地";
+
+"follow_my_position" = "リセンター";
+
+"search_results" = "検索結果";
+
+"then_turn" = "その後";
+
+"redirect_route_alert" = "ルートを再構築しますか?";
+
+"redirect_route_yes" = "はい";
+
+"redirect_route_no" = "いいえ";
+
+"trip_finished" = "到着しました!";
+
+"keyboard_availability_alert" = "運転中はキーボードを使用する事はできません";
+
+"dialog_routing_change_start_carplay" = "現在位置からはルートを構築できません";
+
+"dialog_routing_change_end_carplay" = "目的地へのルートは構築できません。別の地点を選択してください";
+
+"dialog_routing_check_gps_carplay" = "GPS信号がありません。開けた場所へ移動してください";
+
+"dialog_routing_unable_locate_route_carplay" = "ルートが構築できません。別のルート地点を設定して下さい";
+
+"dialog_routing_download_files_carplay" = "ルートを構築するために全てのマップが表示されているわけではありません。携帯電話にそれらをダウンロードしてください";
+
+"dialog_routing_system_error_carplay" = "エラーが発生しました。アプリを再起動してください";
+
+"dialog_routing_rebuild_from_current_location_carplay" = "ルートは現在位置から再構築されます";
+
+"dialog_routing_rebuild_for_vehicle_carplay" = "ルートは自動車用として修正されます";
+
+"ok" = "OK";
+
+"vezet_taxi" = "Vezet";
+
+
+/**********  Partners  **********/
+
 "sponsored_partner1_action" = "Outlets";
 
 "sponsored_partner2_action" = "Discount";
@@ -2788,9 +2895,9 @@
 
 "type.aeroway.terminal" = "aeroway-terminal";
 
-"type.amenity" = "amenity";
+"type.amenity" = "アメニティー";
 
-"type.amenity.arts_centre" = "amenity-arts_centre";
+"type.amenity.arts_centre" = "芸術センター";
 
 "type.amenity.atm" = "ATM";
 
@@ -2854,7 +2961,7 @@
 
 "type.amenity.fire_station" = "消防署";
 
-"type.amenity.food_court" = "amenity-food_court";
+"type.amenity.food_court" = "Food court";
 
 "type.amenity.fountain" = "噴水";
 
@@ -2970,7 +3077,7 @@
 
 "type.amenity.vending_machine.parking_tickets" = "駐車券支払機";
 
-"type.amenity.vending_machine.public_transport_tickets" = "amenity-vending_machine-public_transport_tickets";
+"type.amenity.vending_machine.public_transport_tickets" = "公共交通機関の券売機";
 
 "type.amenity.veterinary" = "獣医";
 
@@ -3286,7 +3393,7 @@
 
 "type.highway.bus_stop" = "バス停";
 
-"type.highway.construction" = "highway-construction";
+"type.highway.construction" = "工事中の道路";
 
 "type.highway.cycleway" = "highway-cycleway";
 
@@ -3592,7 +3699,7 @@
 
 "type.landuse" = "landuse";
 
-"type.landuse.allotments" = "landuse-allotments";
+"type.landuse.allotments" = "Allotments";
 
 "type.landuse.basin" = "水地";
 
@@ -3606,13 +3713,13 @@
 
 "type.landuse.construction" = "landuse-construction";
 
-"type.landuse.farm" = "landuse-farm";
+"type.landuse.farm" = "Farm";
 
-"type.landuse.farmland" = "landuse-farmland";
+"type.landuse.farmland" = "農地";
 
-"type.landuse.farmyard" = "landuse-farmyard";
+"type.landuse.farmyard" = "Farmyard";
 
-"type.landuse.field" = "landuse-field";
+"type.landuse.field" = "Field";
 
 "type.landuse.forest" = "森林";
 
@@ -3622,27 +3729,27 @@
 
 "type.landuse.forest.mixed" = "森林";
 
-"type.landuse.garages" = "landuse-garages";
+"type.landuse.garages" = "Garages";
 
-"type.landuse.grass" = "landuse-grass";
+"type.landuse.grass" = "芝生";
 
 "type.landuse.greenfield" = "landuse-greenfield";
 
 "type.landuse.greenhouse_horticulture" = "landuse-greenhouse_horticulture";
 
-"type.landuse.industrial" = "landuse-industrial";
+"type.landuse.industrial" = "Industrial land";
 
-"type.landuse.landfill" = "landuse-landfill";
+"type.landuse.landfill" = "埋立地";
 
-"type.landuse.meadow" = "landuse-meadow";
+"type.landuse.meadow" = "Meadow";
 
-"type.landuse.military" = "landuse-military";
+"type.landuse.military" = "Military area";
 
-"type.landuse.orchard" = "landuse-orchard";
+"type.landuse.orchard" = "Orchard";
 
-"type.landuse.quarry" = "landuse-quarry";
+"type.landuse.quarry" = "Quarry";
 
-"type.landuse.railway" = "landuse-railway";
+"type.landuse.railway" = "鉄道施設";
 
 "type.landuse.recreation_ground" = "landuse-recreation_ground";
 
@@ -3660,13 +3767,13 @@
 
 "type.landuse.village_green" = "landuse-village_green";
 
-"type.landuse.vineyard" = "landuse-vineyard";
+"type.landuse.vineyard" = "Vineyard";
 
 "type.leisure" = "leisure";
 
 "type.leisure.common" = "leisure-common";
 
-"type.leisure.dog_park" = "ドッグラン";
+"type.leisure.dog_park" = "ドッグエリア";
 
 "type.leisure.dog_park.tennis" = "ドッグラン";
 
@@ -3678,11 +3785,11 @@
 
 "type.leisure.golf_course" = "ゴルフコース";
 
-"type.leisure.ice_rink" = "leisure-ice_rink";
+"type.leisure.ice_rink" = "Ice rink";
 
-"type.leisure.landscape_reserve" = "leisure-landscape_reserve";
+"type.leisure.landscape_reserve" = "Landscape reserve";
 
-"type.leisure.marina" = "leisure-marina";
+"type.leisure.marina" = "Marina";
 
 "type.leisure.nature_reserve" = "自然保護区";
 
@@ -3706,7 +3813,7 @@
 
 "type.leisure.playing_fields.tennis" = "leisure-playing_fields-tennis";
 
-"type.leisure.recreation_ground" = "leisure-recreation_ground";
+"type.leisure.recreation_ground" = "Recreation ground";
 
 "type.leisure.sauna" = "サウナ";
 
@@ -3786,7 +3893,7 @@
 
 "type.natural" = "natural";
 
-"type.natural.bare_rock" = "natural-bare_rock";
+"type.natural.bare_rock" = "Bare rock";
 
 "type.natural.bay" = "港湾";
 
@@ -3796,53 +3903,53 @@
 
 "type.natural.cave_entrance" = "洞穴入口";
 
-"type.natural.cliff" = "natural-cliff";
+"type.natural.cliff" = "Cliff";
 
-"type.natural.coastline" = "natural-coastline";
+"type.natural.coastline" = "Coastline";
 
 "type.natural.geyser" = "間欠泉";
 
 "type.natural.glacier" = "氷河";
 
-"type.natural.grassland" = "natural-grassland";
+"type.natural.grassland" = "野原";
 
-"type.natural.heath" = "natural-heath";
+"type.natural.heath" = "Heath";
 
 "type.natural.lake" = "湖";
 
 "type.natural.land" = "natural-land";
 
-"type.natural.meadow" = "natural-meadow";
+"type.natural.meadow" = "Meadow";
 
-"type.natural.orchard" = "natural-orchard";
+"type.natural.orchard" = "Orchard";
 
 "type.natural.peak" = "山頂";
 
 "type.natural.pond" = "池";
 
-"type.natural.rock" = "natural-rock";
+"type.natural.rock" = "Rock";
 
-"type.natural.salt_pond" = "natural-salt_pond";
+"type.natural.salt_pond" = "Salt pond";
 
-"type.natural.scrub" = "natural-scrub";
+"type.natural.scrub" = "雑木林";
 
 "type.natural.spring" = "泉";
 
 "type.natural.tree" = "木";
 
-"type.natural.tree_row" = "natural-tree_row";
+"type.natural.tree_row" = "Tree row";
 
-"type.natural.vineyard" = "natural-vineyard";
+"type.natural.vineyard" = "Vineyard";
 
 "type.natural.volcano" = "火山";
 
 "type.natural.water" = "水地";
 
-"type.natural.wetland" = "natural-wetland";
+"type.natural.wetland" = "湿地帯";
 
-"type.natural.wetland.bog" = "natural-wetland-bog";
+"type.natural.wetland.bog" = "Wetland";
 
-"type.natural.wetland.marsh" = "natural-wetland-marsh";
+"type.natural.wetland.marsh" = "Wetland";
 
 "type.natural.wood" = "森林";
 
@@ -3946,7 +4053,7 @@
 
 "type.place.locality" = "地域";
 
-"type.place.neighbourhood" = "place-neighbourhood";
+"type.place.neighbourhood" = "Neighbourhood";
 
 "type.place.ocean" = "海";
 
@@ -4032,7 +4139,7 @@
 
 "type.railway.incline.tunnel" = "railway-incline-tunnel";
 
-"type.railway.level_crossing" = "Level Crossing";
+"type.railway.level_crossing" = "踏切";
 
 "type.railway.light_rail" = "railway-light_rail";
 
@@ -4040,7 +4147,7 @@
 
 "type.railway.light_rail.tunnel" = "railway-light_rail-tunnel";
 
-"type.railway.monorail" = "railway-monorail";
+"type.railway.monorail" = "モノレール";
 
 "type.railway.monorail.bridge" = "railway-monorail-bridge";
 
@@ -4062,7 +4169,7 @@
 
 "type.railway.proposed" = "railway-proposed";
 
-"type.railway.rail" = "railway-rail";
+"type.railway.rail" = "鉄道";
 
 "type.railway.rail.bridge" = "railway-rail-bridge";
 
@@ -4172,7 +4279,7 @@
 
 "type.railway.subway.yellow" = "railway-subway-yellow";
 
-"type.railway.subway_entrance" = "地下鉄";
+"type.railway.subway_entrance" = "地下鉄入り口";
 
 "type.railway.subway_entrance.barcelona" = "地下鉄";
 
@@ -4430,13 +4537,13 @@
 
 "type.sport.archery" = "sport-archery";
 
-"type.sport.athletics" = "Athletics";
+"type.sport.athletics" = "運動競技";
 
 "type.sport.australian_football" = "sport-australian_football";
 
 "type.sport.baseball" = "sport-baseball";
 
-"type.sport.basketball" = "Basketball";
+"type.sport.basketball" = "バスケットボール";
 
 "type.sport.bowls" = "sport-bowls";
 
@@ -4446,7 +4553,7 @@
 
 "type.sport.diving" = "sport-diving";
 
-"type.sport.equestrian" = "Equestrian Sports";
+"type.sport.equestrian" = "乗馬スポーツ";
 
 "type.sport.football" = "sport-football";
 
@@ -4468,7 +4575,7 @@
 
 "type.sport.swimming" = "sport-swimming";
 
-"type.sport.tennis" = "sport-tennis";
+"type.sport.tennis" = "テニスコート";
 
 "type.tourism" = "tourism";
 
@@ -4580,11 +4687,11 @@
 
 "type.wheelchair" = "wheelchair";
 
-"type.wheelchair.limited" = "wheelchair-limited";
+"type.wheelchair.limited" = "車椅子でのアクセス制限";
 
-"type.wheelchair.no" = "wheelchair-no";
+"type.wheelchair.no" = "車椅子でのアクセスなし";
 
-"type.wheelchair.yes" = "wheelchair-yes";
+"type.wheelchair.yes" = "車椅子でのアクセスあり";
 
 "type.piste_lift" = "piste:lift";
 
@@ -4617,6 +4724,40 @@
 "type.piste_type.nordic" = "piste:type-nordic";
 
 "type.piste_type.sled" = "piste:type-sled";
+
+"type.building_part" = "建物";
+
+"type.earthquake_damage" = "earthquake:damage";
+
+"type.area_highway.cycleway" = "area:highway-cycleway";
+
+"type.area_highway.footway" = "area:highway-footway";
+
+"type.area_highway.living_street" = "area:highway-living_street";
+
+"type.area_highway.motorway" = "area:highway-motorway";
+
+"type.area_highway.path" = "area:highway-path";
+
+"type.area_highway.pedestrian" = "area:highway-pedestrian";
+
+"type.area_highway.primary" = "area:highway-primary";
+
+"type.area_highway.residential" = "area:highway-residential";
+
+"type.area_highway.secondary" = "area:highway-secondary";
+
+"type.area_highway.service" = "area:highway-service";
+
+"type.area_highway.tertiary" = "area:highway-tertiary";
+
+"type.area_highway.steps" = "area:highway-steps";
+
+"type.area_highway.track" = "area:highway-track";
+
+"type.area_highway.trunk" = "area:highway-trunk";
+
+"type.area_highway.unclassified" = "area:highway-unclassified";
 
 
 /********** Brands **********/

@@ -16,13 +16,15 @@
 - (void)removeBookmark;
 
 - (void)call;
-- (void)book:(BOOL)isDecription;
+- (void)book;
 - (void)searchBookingHotels;
 
 - (void)openPartner;
-
-- (void)apiBack;
 - (void)downloadSelectedArea;
+- (void)avoidToll;
+- (void)avoidDirty;
+- (void)avoidFerry;
+- (void)avoidMotorway;
 
 @end
 

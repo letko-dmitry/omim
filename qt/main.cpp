@@ -1,5 +1,6 @@
 #include "qt/info_dialog.hpp"
 #include "qt/mainwindow.hpp"
+#include "qt/screenshoter.hpp"
 
 #include "map/framework.hpp"
 
@@ -20,15 +21,21 @@
 #include "3party/Alohalytics/src/alohalytics.h"
 #include "3party/gflags/src/gflags/gflags.h"
 
-#include <QtWidgets/QMessageBox>
 #include <QtCore/QDir>
+#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileDialog>
 
-DEFINE_string(data_path, "", "Path to data directory");
+DEFINE_string(data_path, "", "Path to data directory.");
 DEFINE_string(log_abort_level, base::ToString(base::GetDefaultLogAbortLevel()),
               "Log messages severity that causes termination.");
-DEFINE_string(resources_path, "", "Path to resources directory");
+DEFINE_string(resources_path, "", "Path to resources directory.");
+DEFINE_string(kml_path, "", "Path to a directory with kml files to take screenshots.");
+DEFINE_string(dst_path, "", "Path to a directory to save screenshots.");
+DEFINE_string(lang, "", "Device language.");
+DEFINE_int32(width, 0, "Screenshot width.");
+DEFINE_int32(height, 0, "Screenshot height.");
+DEFINE_double(dpi_scale, 0.0, "Screenshot dpi scale.");
 
 namespace
 {
@@ -148,8 +155,27 @@ int main(int argc, char * argv[])
   if (eulaAccepted)   // User has accepted EULA
   {
     bool apiOpenGLES3 = false;
+    std::unique_ptr<qt::ScreenshotParams> screenshotParams;
+
 #if defined(OMIM_OS_MAC)
     apiOpenGLES3 = a.arguments().contains("es3", Qt::CaseInsensitive);
+
+    if (!FLAGS_lang.empty())
+      (void)::setenv("LANGUAGE", FLAGS_lang.c_str(), 1);
+
+    if (!FLAGS_kml_path.empty())
+    {
+      screenshotParams = std::make_unique<qt::ScreenshotParams>();
+      screenshotParams->m_kmlPath = FLAGS_kml_path;
+      if (!FLAGS_dst_path.empty())
+        screenshotParams->m_dstPath = FLAGS_dst_path;
+      if (FLAGS_width > 0)
+        screenshotParams->m_width = FLAGS_width;
+      if (FLAGS_height > 0)
+        screenshotParams->m_height = FLAGS_height;
+      if (FLAGS_dpi_scale >= df::VisualParams::kMdpiScale && FLAGS_dpi_scale <= df::VisualParams::kXxxhdpiScale)
+        screenshotParams->m_dpiScale = FLAGS_dpi_scale;
+    }
 #endif
     qt::MainWindow::SetDefaultSurfaceFormat(apiOpenGLES3);
 
@@ -166,7 +192,7 @@ int main(int argc, char * argv[])
 #endif // BUILD_DESIGNER
 
     Framework framework;
-    qt::MainWindow w(framework, apiOpenGLES3, mapcssFilePath);
+    qt::MainWindow w(framework, apiOpenGLES3, std::move(screenshotParams), mapcssFilePath);
     w.show();
     returnCode = a.exec();
   }

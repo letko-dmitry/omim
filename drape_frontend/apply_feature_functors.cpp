@@ -313,16 +313,16 @@ dp::FontDecl GetRoadShieldTextFont(dp::FontDecl const & baseFont, ftypes::RoadSh
   using ftypes::RoadShieldType;
 
   static std::unordered_map<int, df::ColorConstant> kColors = {
-      {base::Key(RoadShieldType::Generic_Green), kRoadShieldWhiteTextColor},
-      {base::Key(RoadShieldType::Generic_Blue), kRoadShieldWhiteTextColor},
-      {base::Key(RoadShieldType::UK_Highway), kRoadShieldUKYellowTextColor},
-      {base::Key(RoadShieldType::US_Interstate), kRoadShieldWhiteTextColor},
-      {base::Key(RoadShieldType::US_Highway), kRoadShieldBlackTextColor},
-      {base::Key(RoadShieldType::Generic_Red), kRoadShieldWhiteTextColor},
-      {base::Key(RoadShieldType::Generic_Orange), kRoadShieldBlackTextColor}
+      {base::Underlying(RoadShieldType::Generic_Green), kRoadShieldWhiteTextColor},
+      {base::Underlying(RoadShieldType::Generic_Blue), kRoadShieldWhiteTextColor},
+      {base::Underlying(RoadShieldType::UK_Highway), kRoadShieldUKYellowTextColor},
+      {base::Underlying(RoadShieldType::US_Interstate), kRoadShieldWhiteTextColor},
+      {base::Underlying(RoadShieldType::US_Highway), kRoadShieldBlackTextColor},
+      {base::Underlying(RoadShieldType::Generic_Red), kRoadShieldWhiteTextColor},
+      {base::Underlying(RoadShieldType::Generic_Orange), kRoadShieldBlackTextColor}
   };
 
-  auto it = kColors.find(base::Key(shield.m_type));
+  auto it = kColors.find(base::Underlying(shield.m_type));
   if (it != kColors.end())
     f.m_color = df::GetColorConstant(it->second);
 
@@ -334,14 +334,14 @@ dp::Color GetRoadShieldColor(dp::Color const & baseColor, ftypes::RoadShield con
   using ftypes::RoadShieldType;
 
   static std::unordered_map<int, df::ColorConstant> kColors = {
-      {base::Key(RoadShieldType::Generic_Green), kRoadShieldGreenBackgroundColor},
-      {base::Key(RoadShieldType::Generic_Blue), kRoadShieldBlueBackgroundColor},
-      {base::Key(RoadShieldType::UK_Highway), kRoadShieldGreenBackgroundColor},
-      {base::Key(RoadShieldType::Generic_Red), kRoadShieldRedBackgroundColor},
-      {base::Key(RoadShieldType::Generic_Orange), kRoadShieldOrangeBackgroundColor}
+      {base::Underlying(RoadShieldType::Generic_Green), kRoadShieldGreenBackgroundColor},
+      {base::Underlying(RoadShieldType::Generic_Blue), kRoadShieldBlueBackgroundColor},
+      {base::Underlying(RoadShieldType::UK_Highway), kRoadShieldGreenBackgroundColor},
+      {base::Underlying(RoadShieldType::Generic_Red), kRoadShieldRedBackgroundColor},
+      {base::Underlying(RoadShieldType::Generic_Orange), kRoadShieldOrangeBackgroundColor}
   };
 
-  auto it = kColors.find(base::Key(shield.m_type));
+  auto it = kColors.find(base::Underlying(shield.m_type));
   if (it != kColors.end())
     return df::GetColorConstant(it->second);
 
@@ -595,11 +595,14 @@ void ApplyPointFeature::Finish(ref_ptr<dp::TextureManager> texMng)
                                                            : SpecialDisplacement::None;
     params.m_specialPriority = specialModePriority;
 
-    m_insertShape(make_unique_dp<PoiSymbolShape>(m2::PointD(m_centerPoint), params, m_tileKey, 0 /* text index */));
-
     dp::TextureManager::SymbolRegion region;
     texMng->GetSymbolRegion(params.m_symbolName, region);
     symbolSize = region.GetPixelSize();
+
+    if (region.IsValid())
+      m_insertShape(make_unique_dp<PoiSymbolShape>(m2::PointD(m_centerPoint), params, m_tileKey, 0 /* text index */));
+    else
+      LOG(LERROR, ("Style error. Symbol name must be valid for feature", m_id));
   }
 
   for (auto textParams : m_textParams)
@@ -673,7 +676,7 @@ void ApplyAreaFeature::operator()(m2::PointD const & p1, m2::PointD const & p2, 
     return;
 
   double const crossProduct = m2::CrossProduct(v1.Normalize(), v2.Normalize());
-  double const kEps = 1e-7;
+  double constexpr kEps = 1e-7;
   if (fabs(crossProduct) < kEps)
     return;
 
@@ -684,7 +687,7 @@ void ApplyAreaFeature::operator()(m2::PointD const & p1, m2::PointD const & p2, 
     m_triangles.push_back(p3);
   };
 
-  if (m2::CrossProduct(p2 - p1, p3 - p1) < 0)
+  if (crossProduct < 0)
     m2::ClipTriangleByRect(m_tileRect, p1, p2, p3, clipFunctor);
   else
     m2::ClipTriangleByRect(m_tileRect, p1, p3, p2, clipFunctor);
@@ -701,50 +704,53 @@ void ApplyAreaFeature::ProcessBuildingPolygon(m2::PointD const & p1, m2::PointD 
     return;
 
   double const crossProduct = m2::CrossProduct(v1.Normalize(), v2.Normalize());
-  double const kEps = 0.01;
+  double constexpr kEps = 0.01;
   if (fabs(crossProduct) < kEps)
     return;
 
+  // Triangles near to degenerate are drawn two-side, because we can't strictly determine
+  // vertex traversal direction.
+  double constexpr kTwoSideEps = 0.05;
+  bool const isTwoSide = fabs(crossProduct) < kTwoSideEps;
+
+  auto const i1 = GetIndex(p1);
+  auto const i2 = GetIndex(p2);
+  auto const i3 = GetIndex(p3);
   if (crossProduct < 0)
   {
     m_triangles.push_back(p1);
     m_triangles.push_back(p2);
     m_triangles.push_back(p3);
-    BuildEdges(GetIndex(p1), GetIndex(p2), GetIndex(p3));
+    BuildEdges(i1, i2, i3, isTwoSide);
   }
   else
   {
     m_triangles.push_back(p1);
     m_triangles.push_back(p3);
     m_triangles.push_back(p2);
-    BuildEdges(GetIndex(p1), GetIndex(p3), GetIndex(p2));
+    BuildEdges(i1, i3, i2, isTwoSide);
   }
 }
 
 int ApplyAreaFeature::GetIndex(m2::PointD const & pt)
 {
+  double constexpr kEps = 1e-7;
   for (size_t i = 0; i < m_points.size(); i++)
   {
-    if (pt.EqualDxDy(m_points[i], 1e-7))
+    if (pt.EqualDxDy(m_points[i], kEps))
       return static_cast<int>(i);
   }
   m_points.push_back(pt);
   return static_cast<int>(m_points.size()) - 1;
 }
 
-bool ApplyAreaFeature::EqualEdges(TEdge const & edge1, TEdge const & edge2) const
+bool ApplyAreaFeature::IsDuplicatedEdge(Edge const & edge)
 {
-  return (edge1.first == edge2.first && edge1.second == edge2.second) ||
-         (edge1.first == edge2.second && edge1.second == edge2.first);
-}
-
-bool ApplyAreaFeature::FindEdge(TEdge const & edge)
-{
-  for (size_t i = 0; i < m_edges.size(); i++)
+  for (auto & e : m_edges)
   {
-    if (EqualEdges(m_edges[i].first, edge))
+    if (e.m_edge == edge)
     {
-      m_edges[i].second = -1;
+      e.m_internalVertexIndex = -1;
       return true;
     }
   }
@@ -763,45 +769,52 @@ m2::PointD ApplyAreaFeature::CalculateNormal(m2::PointD const & p1, m2::PointD c
   return normal;
 }
 
-void ApplyAreaFeature::BuildEdges(int vertexIndex1, int vertexIndex2, int vertexIndex3)
+void ApplyAreaFeature::BuildEdges(int vertexIndex1, int vertexIndex2, int vertexIndex3, bool twoSide)
 {
   // Check if triangle is degenerate.
   if (vertexIndex1 == vertexIndex2 || vertexIndex2 == vertexIndex3 || vertexIndex1 == vertexIndex3)
     return;
 
-  TEdge edge1 = make_pair(vertexIndex1, vertexIndex2);
-  if (!FindEdge(edge1))
-    m_edges.push_back(make_pair(move(edge1), vertexIndex3));
+  auto edge1 = Edge(vertexIndex1, vertexIndex2);
+  if (!IsDuplicatedEdge(edge1))
+    m_edges.emplace_back(std::move(edge1), vertexIndex3, twoSide);
 
-  TEdge edge2 = make_pair(vertexIndex2, vertexIndex3);
-  if (!FindEdge(edge2))
-    m_edges.push_back(make_pair(move(edge2), vertexIndex1));
+  auto edge2 = Edge(vertexIndex2, vertexIndex3);
+  if (!IsDuplicatedEdge(edge2))
+    m_edges.emplace_back(std::move(edge2), vertexIndex1, twoSide);
 
-  TEdge edge3 = make_pair(vertexIndex3, vertexIndex1);
-  if (!FindEdge(edge3))
-    m_edges.push_back(make_pair(move(edge3), vertexIndex2));
+  auto edge3 = Edge(vertexIndex3, vertexIndex1);
+  if (!IsDuplicatedEdge(edge3))
+    m_edges.emplace_back(std::move(edge3), vertexIndex2, twoSide);
 }
 
 void ApplyAreaFeature::CalculateBuildingOutline(bool calculateNormals, BuildingOutline & outline)
 {
-  outline.m_vertices = move(m_points);
+  outline.m_vertices = std::move(m_points);
   outline.m_indices.reserve(m_edges.size() * 2);
   if (calculateNormals)
     outline.m_normals.reserve(m_edges.size());
 
-  for (auto & e : m_edges)
+  for (auto const & e : m_edges)
   {
-    if (e.second < 0)
+    if (e.m_internalVertexIndex < 0)
       continue;
 
-    outline.m_indices.push_back(e.first.first);
-    outline.m_indices.push_back(e.first.second);
+    outline.m_indices.push_back(e.m_edge.m_startIndex);
+    outline.m_indices.push_back(e.m_edge.m_endIndex);
+    if (e.m_twoSide)
+    {
+      outline.m_indices.push_back(e.m_edge.m_endIndex);
+      outline.m_indices.push_back(e.m_edge.m_startIndex);
+    }
 
     if (calculateNormals)
     {
-      outline.m_normals.emplace_back(CalculateNormal(outline.m_vertices[e.first.first],
-                                                     outline.m_vertices[e.first.second],
-                                                     outline.m_vertices[e.second]));
+      outline.m_normals.emplace_back(CalculateNormal(outline.m_vertices[e.m_edge.m_startIndex],
+                                                     outline.m_vertices[e.m_edge.m_endIndex],
+                                                     outline.m_vertices[e.m_internalVertexIndex]));
+      if (e.m_twoSide)
+        outline.m_normals.push_back(outline.m_normals.back());
     }
   }
 }
@@ -809,7 +822,7 @@ void ApplyAreaFeature::CalculateBuildingOutline(bool calculateNormals, BuildingO
 void ApplyAreaFeature::ProcessAreaRule(Stylist::TRuleWrapper const & rule)
 {
   drule::BaseRule const * pRule = rule.first;
-  float const depth = static_cast<float>(rule.second);
+  auto const depth = static_cast<float>(rule.second);
 
   AreaRuleProto const * areaRule = pRule->GetArea();
   if (areaRule && !m_triangles.empty())
@@ -838,7 +851,7 @@ void ApplyAreaFeature::ProcessAreaRule(Stylist::TRuleWrapper const & rule)
       params.m_is3D = !outline.m_indices.empty() && calculateNormals;
     }
 
-    m_insertShape(make_unique_dp<AreaShape>(move(m_triangles), move(outline), params));
+    m_insertShape(make_unique_dp<AreaShape>(std::vector<m2::PointD>(m_triangles), move(outline), params));
   }
   else
   {

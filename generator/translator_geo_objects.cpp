@@ -1,7 +1,8 @@
 #include "generator/translator_geo_objects.hpp"
 
-#include "generator/collector_interface.hpp"
-#include "generator/emitter_interface.hpp"
+#include "generator/feature_maker.hpp"
+#include "generator/filter_interface.hpp"
+#include "generator/geo_objects/geo_objects_filter.hpp"
 #include "generator/intermediate_data.hpp"
 #include "generator/osm_element.hpp"
 #include "generator/osm_element_helpers.hpp"
@@ -9,11 +10,10 @@
 namespace generator
 {
 TranslatorGeoObjects::TranslatorGeoObjects(std::shared_ptr<EmitterInterface> emitter,
-                                           cache::IntermediateDataReader & holder)
-  : TranslatorGeocoderBase(emitter, holder) {}
+                                           cache::IntermediateDataReader & cache)
+  : Translator(emitter, cache, std::make_shared<FeatureMakerSimple>(cache))
 
-bool TranslatorGeoObjects::IsSuitableElement(OsmElement const * p) const
 {
-  return osm_element::IsBuilding(*p) || osm_element::IsPoi(*p);
+  AddFilter(std::make_shared<geo_objects::GeoObjectsFilter>());
 }
 }  // namespace generator

@@ -276,7 +276,7 @@ std::unique_ptr<kml::FileData> LoadKmzFile(std::string const & file, std::string
   std::string unarchievedPath;
   try
   {
-    ZipFileReader::FileListT files;
+    ZipFileReader::FileList files;
     ZipFileReader::FilesList(file, files);
     if (files.empty())
       return nullptr;
@@ -491,4 +491,13 @@ bool IsMyCategory(std::string const & userId, kml::CategoryData const & category
 bool IsMyCategory(User const & user, kml::CategoryData const & categoryData)
 {
   return IsMyCategory(user.GetUserId(), categoryData);
+}
+
+void ExpandBookmarksRectForPreview(m2::RectD & rect)
+{
+  if (!rect.IsValid())
+    return;
+
+  double const kPaddingScale = 1.2;
+  rect.Scale(kPaddingScale);
 }

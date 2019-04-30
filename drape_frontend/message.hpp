@@ -38,6 +38,7 @@ public:
     SelectObject,
     AddSubroute,
     RemoveSubroute,
+    PrepareSubrouteArrows,
     CacheSubrouteArrows,
     FlushSubroute,
     FlushSubrouteArrows,
@@ -65,7 +66,7 @@ public:
     SetDisplacementMode,
     AllowAutoZoom,
     RequestSymbolsSize,
-    RecoverGLResources,
+    RecoverContextDependentResources,
     SetVisibleViewport,
     EnableTraffic,
     FlushTrafficGeometry,
@@ -95,7 +96,8 @@ public:
     RegenerateTransitScheme,
     FlushTransitScheme,
     ShowDebugInfo,
-    NotifyRenderThread
+    NotifyRenderThread,
+    NotifyGraphicsReady,
   };
 
   virtual ~Message() = default;

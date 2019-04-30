@@ -82,7 +82,7 @@ void TestSerializeDeserialize(openlr::Path const & path, DataSource const & data
 
 openlr::Path MakePath(FeatureType const & road, bool const forward)
 {
-  CHECK_EQUAL(road.GetFeatureType(), feature::GEOM_LINE, ());
+  CHECK_EQUAL(road.GetGeomType(), feature::GeomType::Line, ());
   CHECK_GREATER(road.GetPointsCount(), 0, ());
   openlr::Path path;
 
@@ -141,11 +141,11 @@ void WithRoad(vector<m2::PointD> const & points, Func && fn)
   TEST(mwmHandle.IsAlive(), ());
 
   FeaturesLoaderGuard const guard(dataSource, regResult.first);
-  FeatureType road;
-  TEST(guard.GetFeatureByIndex(0, road), ());
-  road.ParseEverything();
+  auto road = guard.GetFeatureByIndex(0);
+  TEST(road, ());
 
-  fn(dataSource, road);
+  road->ParseGeometry(FeatureType::BEST_GEOMETRY);
+  fn(dataSource, *road);
 }
 
 UNIT_TEST(MakePath_Test)

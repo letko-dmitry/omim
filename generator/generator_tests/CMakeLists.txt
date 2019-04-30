@@ -4,6 +4,7 @@ set(
   SRC
   altitude_test.cpp
   brands_loader_test.cpp
+  camera_collector_tests.cpp
   check_mwms.cpp
   cities_boundaries_checker_tests.cpp
   city_roads_tests.cpp
@@ -82,9 +83,17 @@ omim_link_libraries(
   opening_hours
   stb_image
   sdf_image
+  vulkan_wrapper
   # TODO(syershov): Use FindPackage.
   sqlite3
   ${LIBZ}
 )
+
+if (PLATFORM_LINUX)
+  omim_link_libraries(
+    ${PROJECT_NAME}
+    dl
+  )
+endif()
 
 link_qt5_core(${PROJECT_NAME})

@@ -9,7 +9,12 @@
 #include "base/thread_pool.hpp"
 #include "base/logging.hpp"
 
-#include "std/numeric.hpp"
+#include <cstdint>
+#include <memory>
+#include <numeric>
+#include <string>
+
+using namespace std;
 
 namespace
 {
@@ -41,9 +46,8 @@ namespace
     string const & m_cont;
 
   public:
-    ApkTester(string const & cont) : m_cont(cont)
+    explicit ApkTester(string const & cont) : m_cont(cont), m_hashes(COUNT)
     {
-      m_hashes.resize(COUNT);
     }
 
     virtual void Do()

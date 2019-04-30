@@ -14,7 +14,9 @@
 #include "base/logging.hpp"
 #include "base/macros.hpp"
 
-#include "std/limits.hpp"
+#include <limits>
+
+using namespace std;
 
 namespace routing
 {
@@ -48,7 +50,7 @@ FeaturesRoadGraph::CrossCountryVehicleModel::CrossCountryVehicleModel(
 {
 }
 
-VehicleModelInterface::SpeedKMpH FeaturesRoadGraph::CrossCountryVehicleModel::GetSpeed(
+SpeedKMpH FeaturesRoadGraph::CrossCountryVehicleModel::GetSpeed(
     FeatureType & f, SpeedParams const & speedParams) const
 {
   return GetVehicleModel(f.GetID())->GetSpeed(f, speedParams);
@@ -84,7 +86,7 @@ VehicleModelInterface * FeaturesRoadGraph::CrossCountryVehicleModel::GetVehicleM
   auto const vehicleModel = m_vehicleModelFactory->GetVehicleModelForCountry(
       featureId.m_mwmId.GetInfo()->GetCountryName());
 
-  ASSERT(nullptr != vehicleModel, ());
+  ASSERT(vehicleModel, ());
   ASSERT_EQUAL(m_maxSpeed, vehicleModel->GetMaxWeightSpeed(), ());
 
   itr = m_cache.insert(make_pair(featureId.m_mwmId, move(vehicleModel))).first;
@@ -195,13 +197,13 @@ void FeaturesRoadGraph::FindClosestEdges(m2::PointD const & point, uint32_t coun
 
 void FeaturesRoadGraph::GetFeatureTypes(FeatureID const & featureId, feature::TypesHolder & types) const
 {
-  FeatureType ft;
   FeaturesLoaderGuard loader(m_dataSource, featureId.m_mwmId);
-  if (!loader.GetFeatureByIndex(featureId.m_index, ft))
+  auto ft = loader.GetFeatureByIndex(featureId.m_index);
+  if (!ft)
     return;
 
-  ASSERT_EQUAL(ft.GetFeatureType(), feature::GEOM_LINE, ());
-  types = feature::TypesHolder(ft);
+  ASSERT_EQUAL(ft->GetGeomType(), feature::GeomType::Line, ());
+  types = feature::TypesHolder(*ft);
 }
 
 void FeaturesRoadGraph::GetJunctionTypes(Junction const & junction, feature::TypesHolder & types) const
@@ -214,7 +216,7 @@ void FeaturesRoadGraph::GetJunctionTypes(Junction const & junction, feature::Typ
     if (!types.Empty())
       return;
 
-    if (ft.GetFeatureType() != feature::GEOM_POINT)
+    if (ft.GetGeomType() != feature::GeomType::Point)
       return;
 
     if (!base::AlmostEqualAbs(ft.GetCenter(), cross, routing::kPointsEqualEpsilon))
@@ -292,16 +294,15 @@ IRoadGraph::RoadInfo const & FeaturesRoadGraph::GetCachedRoadInfo(FeatureID cons
   if (found)
     return ri;
 
-  FeatureType ft;
-
   FeaturesLoaderGuard loader(m_dataSource, featureId.m_mwmId);
 
-  if (!loader.GetFeatureByIndex(featureId.m_index, ft))
+  auto ft = loader.GetFeatureByIndex(featureId.m_index);
+  if (!ft)
     return ri;
 
-  ASSERT_EQUAL(ft.GetFeatureType(), feature::GEOM_LINE, ());
+  ASSERT_EQUAL(ft->GetGeomType(), feature::GeomType::Line, ());
 
-  ExtractRoadInfo(featureId, ft, GetSpeedKMpHFromFt(ft, speedParams), ri);
+  ExtractRoadInfo(featureId, *ft, GetSpeedKMpHFromFt(*ft, speedParams), ri);
   return ri;
 }
 

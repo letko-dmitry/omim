@@ -63,7 +63,8 @@ public class MapFragment extends BaseMwmFragment
   private int mHeight;
   private int mWidth;
   private boolean mRequireResize;
-  private boolean mContextCreated;
+  private boolean mSurfaceCreated;
+  private boolean mSurfaceAttached;
   private boolean mLaunchByDeepLink;
   private static boolean sWasCopyrightDisplayed;
   @Nullable
@@ -112,7 +113,7 @@ public class MapFragment extends BaseMwmFragment
                       mWidth - marginX,
                       offsetY + marginY,
                       ANCHOR_CENTER);
-    if (forceRedraw && mContextCreated)
+    if (forceRedraw && mSurfaceCreated)
       nativeApplyWidgets();
   }
 
@@ -122,7 +123,7 @@ public class MapFragment extends BaseMwmFragment
                       UiUtils.dimen(R.dimen.margin_ruler_left),
                       mHeight - UiUtils.dimen(R.dimen.margin_ruler_bottom) + offsetY,
                       ANCHOR_LEFT_BOTTOM);
-    if (forceRedraw && mContextCreated)
+    if (forceRedraw && mSurfaceCreated)
       nativeApplyWidgets();
   }
 
@@ -132,7 +133,7 @@ public class MapFragment extends BaseMwmFragment
                       mWidth - UiUtils.dimen(R.dimen.margin_watermark_right),
                       mHeight - UiUtils.dimen(R.dimen.margin_watermark_bottom) + offsetY,
                       ANCHOR_RIGHT_BOTTOM);
-    if (forceRedraw && mContextCreated)
+    if (forceRedraw && mSurfaceCreated)
       nativeApplyWidgets();
   }
 
@@ -174,7 +175,7 @@ public class MapFragment extends BaseMwmFragment
       return;
     }
 
-    LOGGER.d(TAG, "surfaceCreated, mContextCreated = " + mContextCreated);
+    LOGGER.d(TAG, "surfaceCreated, mSurfaceCreated = " + mSurfaceCreated);
     final Surface surface = surfaceHolder.getSurface();
     if (nativeIsEngineCreated())
     {
@@ -183,7 +184,8 @@ public class MapFragment extends BaseMwmFragment
         reportUnsupported();
         return;
       }
-      mContextCreated = true;
+      mSurfaceCreated = true;
+      mSurfaceAttached = true;
       mRequireResize = true;
       return;
     }
@@ -196,8 +198,9 @@ public class MapFragment extends BaseMwmFragment
     getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
     final float exactDensityDpi = metrics.densityDpi;
 
-    final boolean firstStart = SplashActivity.isFirstStart();
-    if (!nativeCreateEngine(surface, (int) exactDensityDpi, firstStart, mLaunchByDeepLink))
+    final boolean firstStart = MwmApplication.from(getActivity()).isFirstLaunch();
+    if (!nativeCreateEngine(surface, (int) exactDensityDpi, firstStart, mLaunchByDeepLink,
+                            BuildConfig.VERSION_CODE))
     {
       reportUnsupported();
       return;
@@ -215,7 +218,8 @@ public class MapFragment extends BaseMwmFragment
       });
     }
 
-    mContextCreated = true;
+    mSurfaceCreated = true;
+    mSurfaceAttached = true;
     onRenderingInitialized();
   }
 
@@ -228,12 +232,12 @@ public class MapFragment extends BaseMwmFragment
       return;
     }
 
-    LOGGER.d(TAG, "surfaceChanged, mContextCreated = " + mContextCreated);
-    if (!mContextCreated ||
-        (!mRequireResize && surfaceHolder.isCreating()))
+    LOGGER.d(TAG, "surfaceChanged, mSurfaceCreated = " + mSurfaceCreated);
+    if (!mSurfaceCreated || (!mRequireResize && surfaceHolder.isCreating()))
       return;
 
-    nativeSurfaceChanged(width, height);
+    final Surface surface = surfaceHolder.getSurface();
+    nativeSurfaceChanged(surface, width, height);
 
     mRequireResize = false;
     setupWidgets(width, height);
@@ -245,18 +249,19 @@ public class MapFragment extends BaseMwmFragment
   public void surfaceDestroyed(SurfaceHolder surfaceHolder)
   {
     LOGGER.d(TAG, "surfaceDestroyed");
-    destroyContext();
+    destroySurface();
   }
 
-  void destroyContext()
+  void destroySurface()
   {
-    LOGGER.d(TAG, "destroyContext, mContextCreated = " + mContextCreated +
-                  ", isAdded = " + isAdded());
-    if (!mContextCreated || !isAdded())
+    LOGGER.d(TAG, "destroySurface, mSurfaceCreated = " + mSurfaceCreated +
+             ", mSurfaceAttached = " + mSurfaceAttached + ", isAdded = " + isAdded());
+    if (!mSurfaceCreated || !mSurfaceAttached || !isAdded())
       return;
 
     nativeDetachSurface(!getActivity().isChangingConfigurations());
-    mContextCreated = false;
+    mSurfaceCreated = !nativeDestroySurfaceOnDetach();
+    mSurfaceAttached = false;
   }
 
   @Override
@@ -355,22 +360,24 @@ public class MapFragment extends BaseMwmFragment
 
   boolean isContextCreated()
   {
-    return mContextCreated;
+    return mSurfaceCreated;
   }
 
   static native void nativeCompassUpdated(double magneticNorth, double trueNorth, boolean forceRedraw);
   static native void nativeScalePlus();
   static native void nativeScaleMinus();
-  static native boolean nativeShowMapForUrl(String url);
+  public static native boolean nativeShowMapForUrl(String url);
   static native boolean nativeIsEngineCreated();
+  static native boolean nativeDestroySurfaceOnDetach();
   private static native boolean nativeCreateEngine(Surface surface, int density,
                                                    boolean firstLaunch,
-                                                   boolean isLaunchByDeepLink);
+                                                   boolean isLaunchByDeepLink,
+                                                   int appVersionCode);
   private static native boolean nativeAttachSurface(Surface surface);
-  private static native void nativeDetachSurface(boolean destroyContext);
+  private static native void nativeDetachSurface(boolean destroySurface);
   private static native void nativePauseSurfaceRendering();
   private static native void nativeResumeSurfaceRendering();
-  private static native void nativeSurfaceChanged(int w, int h);
+  private static native void nativeSurfaceChanged(Surface surface, int w, int h);
   private static native void nativeOnTouch(int actionType, int id1, float x1, float y1, int id2, float x2, float y2, int maskedPointer);
   private static native void nativeSetupWidget(int widget, float x, float y, int anchor);
   private static native void nativeApplyWidgets();

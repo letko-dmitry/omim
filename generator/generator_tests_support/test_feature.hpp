@@ -1,8 +1,11 @@
 #pragma once
 
+#include "indexer/feature_data.hpp"
 #include "indexer/feature_decl.hpp"
 #include "indexer/feature_meta.hpp"
 #include "indexer/mwm_set.hpp"
+
+#include "coding/string_utf8_multilang.hpp"
 
 #include "geometry/point2d.hpp"
 #include "geometry/rect2d.hpp"
@@ -31,13 +34,21 @@ public:
   virtual ~TestFeature() = default;
 
   bool Matches(FeatureType & feature) const;
-  inline void SetPostcode(std::string const & postcode) { m_postcode = postcode; }
-  inline uint64_t GetId() const { return m_id; }
-  inline std::string const & GetName() const { return m_name; }
-  inline feature::Metadata & GetMetadata() { return m_metadata; }
+  void SetPostcode(std::string const & postcode) { m_postcode = postcode; }
+  uint64_t GetId() const { return m_id; }
+  StringUtf8Multilang const & GetNames() const { return m_names; }
+  std::string GetName(std::string const & lang) const
+  {
+    std::string res;
+    if (m_names.GetString(lang, res))
+      return res;
+    return {};
+  }
+
+  feature::Metadata & GetMetadata() { return m_metadata; }
 
   virtual void Serialize(FeatureBuilder1 & fb) const;
-  virtual std::string ToString() const = 0;
+  virtual std::string ToDebugString() const = 0;
 
 protected:
   enum class Type
@@ -49,6 +60,7 @@ protected:
 
   TestFeature();
   TestFeature(std::string const & name, std::string const & lang);
+  TestFeature(StringUtf8Multilang const & name);
   TestFeature(m2::PointD const & center, std::string const & name, std::string const & lang);
   TestFeature(std::vector<m2::PointD> const & boundary, std::string const & name,
               std::string const & lang);
@@ -57,8 +69,7 @@ protected:
   m2::PointD const m_center;
   std::vector<m2::PointD> const m_boundary;
   Type const m_type;
-  std::string const m_name;
-  std::string const m_lang;
+  StringUtf8Multilang m_names;
   std::string m_postcode;
   feature::Metadata m_metadata;
 
@@ -73,7 +84,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 };
 
 class TestCity : public TestFeature
@@ -86,7 +97,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   uint8_t const m_rank;
@@ -99,7 +110,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   uint8_t const m_rank;
@@ -109,13 +120,17 @@ class TestStreet : public TestFeature
 {
 public:
   TestStreet(std::vector<m2::PointD> const & points, std::string const & name, std::string const & lang);
+  TestStreet(std::vector<m2::PointD> const & points, StringUtf8Multilang const & name);
+
+  void SetHighwayType(std::string const & type) { m_highwayType = type; }
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   std::vector<m2::PointD> m_points;
+  std::string m_highwayType;
 };
 
 class TestSquare : public TestFeature
@@ -125,7 +140,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   m2::RectD m_rect;
@@ -143,11 +158,12 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
-  inline void SetHouseNumber(std::string const & houseNumber) { m_houseNumber = houseNumber; }
-  inline void SetStreetName(std::string const & name) { m_streetName = name; }
-  inline void SetTypes(std::vector<std::vector<std::string>> const & types) { m_types = types; }
+  feature::TypesHolder GetTypes() const;
+  void SetHouseNumber(std::string const & houseNumber) { m_houseNumber = houseNumber; }
+  void SetStreetName(std::string const & name) { m_streetName = name; }
+  void SetTypes(std::vector<std::vector<std::string>> const & types) { m_types = types; }
 
 protected:
   std::string m_houseNumber;
@@ -162,7 +178,7 @@ public:
                       std::map<std::string, std::string> const & multilingualNames);
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   std::map<std::string, std::string> m_multilingualNames;
@@ -174,13 +190,14 @@ public:
   TestBuilding(m2::PointD const & center, std::string const & name, std::string const & houseNumber,
                std::string const & lang);
   TestBuilding(m2::PointD const & center, std::string const & name, std::string const & houseNumber,
-               TestStreet const & street, std::string const & lang);
-  TestBuilding(std::vector<m2::PointD> const & boundary, std::string const & name, std::string const & houseNumber,
-               TestStreet const & street, std::string const & lang);
+               std::string const & street, std::string const & lang);
+  TestBuilding(std::vector<m2::PointD> const & boundary, std::string const & name,
+               std::string const & houseNumber, std::string const & street,
+               std::string const & lang);
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
   void AddType(std::vector<std::string> const & path) { m_types.push_back(path); }
 
@@ -199,7 +216,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   std::vector<m2::PointD> m_boundary;
@@ -212,7 +229,7 @@ public:
 
   // TestFeature overrides:
   void Serialize(FeatureBuilder1 & fb) const override;
-  std::string ToString() const override;
+  std::string ToDebugString() const override;
 
 private:
   std::vector<m2::PointD> m_points;

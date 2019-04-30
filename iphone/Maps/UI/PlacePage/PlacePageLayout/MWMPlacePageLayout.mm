@@ -14,6 +14,7 @@
 #import "MWMiPhonePlacePageLayoutImpl.h"
 #import "MapViewController.h"
 #import "SwiftBridge.h"
+#import "Statistics.h"
 
 #include "partners_api/booking_api.hpp"
 
@@ -392,7 +393,7 @@ map<MetainfoRows, Class> const kMetaInfoCells = {
       case taxi::Provider::Uber: type = MWMPlacePageTaxiProviderUber; break;
       case taxi::Provider::Yandex: type = MWMPlacePageTaxiProviderYandex; break;
       case taxi::Provider::Maxim: type = MWMPlacePageTaxiProviderMaxim; break;
-      case taxi::Provider::Rutaxi: type = MWMPlacePageTaxiProviderRutaxi; break;
+      case taxi::Provider::Rutaxi: type = MWMPlacePageTaxiProviderVezet; break;
       case taxi::Provider::Count: LOG(LERROR, ("Incorrect taxi provider")); break;
       }
       [c configWithType:type delegate:delegate];
@@ -413,7 +414,7 @@ map<MetainfoRows, Class> const kMetaInfoCells = {
               case ButtonsRows::AddPlace: [delegate addPlace]; break;
               case ButtonsRows::EditPlace: [delegate editPlace]; break;
               case ButtonsRows::AddBusiness: [delegate addBusiness]; break;
-              case ButtonsRows::HotelDescription: [delegate book:NO]; break;
+              case ButtonsRows::HotelDescription: [delegate openDescriptionUrl]; break;
               case ButtonsRows::Other: NSAssert(false, @"Incorrect row");
               }
             }];
@@ -483,7 +484,7 @@ map<MetainfoRows, Class> const kMetaInfoCells = {
 
         [c configWithTitle:L(@"reviews_on_bookingcom")
                      action:^{
-                       [delegate book:NO];
+                       [delegate openReviewUrl];
                      }
               isInsetButton:NO];
         return c;
@@ -510,7 +511,7 @@ map<MetainfoRows, Class> const kMetaInfoCells = {
             [tableView dequeueReusableCellWithCellClass:cls indexPath:indexPath]);
         [c configWithTitle:L(@"more_on_bookingcom")
                      action:^{
-                       [delegate book:NO];
+                       [delegate openMoreUrl];
                        ;
                      }
               isInsetButton:NO];
@@ -630,7 +631,7 @@ map<MetainfoRows, Class> const kMetaInfoCells = {
     case taxi::Provider::Uber: provider = kStatUber; break;
     case taxi::Provider::Yandex: provider = kStatYandex; break;
     case taxi::Provider::Maxim: provider = kStatMaxim; break;
-    case taxi::Provider::Rutaxi: provider = kStatRutaxi; break;
+    case taxi::Provider::Rutaxi: provider = kStatVezet; break;
     case taxi::Provider::Count: LOG(LERROR, ("Incorrect taxi provider")); break;
     }
     [Statistics logEvent:kStatPlacepageTaxiShow

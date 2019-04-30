@@ -11,10 +11,14 @@
 #include "base/thread.hpp"
 #include "base/string_utils.hpp"
 
-#include "std/regex.hpp"
+#include <memory>
+#include <regex>
+#include <string>
 
 #include <unistd.h>     // for sysconf
 #include <sys/stat.h>
+
+using namespace std;
 
 Platform::Platform()
 {
@@ -78,19 +82,22 @@ size_t GetSearchSources(string const & file, string const & searchScope,
 #ifdef DEBUG
 class DbgLogger
 {
-  string const & m_file;
-  SourceT m_src;
 public:
-  DbgLogger(string const & file) : m_file(file) {}
-  void SetSource(SourceT src) { m_src = src; }
+  explicit DbgLogger(string const & file) : m_file(file) {}
+
   ~DbgLogger()
   {
     LOG(LDEBUG, ("Source for file", m_file, "is", m_src));
   }
+
+  void SetSource(SourceT src) { m_src = src; }
+
+private:
+  string const & m_file;
+  SourceT m_src;
 };
 #endif
-
-}
+}  // namespace
 
 unique_ptr<ModelReader> Platform::GetReader(string const & file, string const & searchScope) const
 {
@@ -196,7 +203,7 @@ void Platform::GetFilesByRegExp(string const & directory, string const & regexp,
   if (ZipFileReader::IsZip(directory))
   {
     // Get files list inside zip file
-    typedef ZipFileReader::FileListT FilesT;
+    typedef ZipFileReader::FileList FilesT;
     FilesT fList;
     ZipFileReader::FilesList(directory, fList);
 

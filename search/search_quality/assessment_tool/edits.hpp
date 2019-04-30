@@ -12,7 +12,25 @@
 
 #include <boost/optional.hpp>
 
-class Edits
+struct SampleEdits
+{
+  using OnUpdate = std::function<void()>;
+
+  explicit SampleEdits(OnUpdate onUpdate) : m_onUpdate(onUpdate) {}
+
+  void Reset(bool origUseless);
+  void FlipUsefulness();
+  void Apply();
+  bool HasChanges() const { return m_origUseless != m_currUseless; }
+  void Clear() {}
+
+  bool m_origUseless = false;
+  bool m_currUseless = false;
+
+  OnUpdate m_onUpdate;
+};
+
+class ResultsEdits
 {
 public:
   using Relevance = search::Sample::Result::Relevance;
@@ -27,12 +45,12 @@ public:
 
     Entry() = default;
     Entry(boost::optional<Relevance> relevance, Type type)
-      : m_curr(relevance), m_orig(relevance), m_type(type)
+      : m_currRelevance(relevance), m_origRelevance(relevance), m_type(type)
     {
     }
 
-    boost::optional<Relevance> m_curr = {};
-    boost::optional<Relevance> m_orig = {};
+    boost::optional<Relevance> m_currRelevance = {};
+    boost::optional<Relevance> m_origRelevance = {};
     bool m_deleted = false;
     Type m_type = Type::Loaded;
   };
@@ -68,7 +86,7 @@ public:
   class Editor
   {
   public:
-    Editor(Edits & parent, size_t index);
+    Editor(ResultsEdits & parent, size_t index);
 
     // Sets relevance to |relevance|. Returns true iff |relevance|
     // differs from the original one.
@@ -78,11 +96,11 @@ public:
     Entry::Type GetType() const;
 
   private:
-    Edits & m_parent;
+    ResultsEdits & m_parent;
     size_t m_index = 0;
   };
 
-  explicit Edits(OnUpdate onUpdate) : m_onUpdate(onUpdate) {}
+  explicit ResultsEdits(OnUpdate onUpdate) : m_onUpdate(onUpdate) {}
 
   void Apply();
   void Reset(std::vector<boost::optional<Relevance>> const & relevances);

@@ -4,6 +4,8 @@
 #include "qt/place_page_dialog.hpp"
 #include "qt/qt_common/helpers.hpp"
 #include "qt/qt_common/scale_slider.hpp"
+#include "qt/routing_settings_dialog.hpp"
+#include "qt/screenshoter.hpp"
 
 #include "map/framework.hpp"
 
@@ -36,32 +38,11 @@
 
 using namespace qt::common;
 
-namespace
-{
-search::ReverseGeocoder::Address GetFeatureAddressInfo(Framework const & framework,
-                                                       FeatureType & ft)
-{
-  search::ReverseGeocoder const coder(framework.GetDataSource());
-  search::ReverseGeocoder::Address address;
-  coder.GetExactAddress(ft, address);
-
-  return address;
-}
-
-search::ReverseGeocoder::Address GetFeatureAddressInfo(Framework const & framework,
-                                                       FeatureID const & fid)
-{
-  FeatureType ft;
-  if (!framework.GetFeatureByID(fid, ft))
-    return {};
-  return GetFeatureAddressInfo(framework, ft);
-}
-}  // namespace
-
 namespace qt
 {
-DrawWidget::DrawWidget(Framework & framework, bool apiOpenGLES3, QWidget * parent)
-  : TBase(framework, apiOpenGLES3, parent)
+DrawWidget::DrawWidget(Framework & framework, bool apiOpenGLES3, std::unique_ptr<ScreenshotParams> && screenshotParams,
+                       QWidget * parent)
+  : TBase(framework, apiOpenGLES3, screenshotParams != nullptr, parent)
   , m_rubberBand(nullptr)
   , m_emulatingLocation(false)
 {
@@ -83,6 +64,11 @@ DrawWidget::DrawWidget(Framework & framework, bool apiOpenGLES3, QWidget * paren
     UpdateCountryStatus(countryId);
   });
 
+  if (screenshotParams != nullptr)
+  {
+    m_ratio = screenshotParams->m_dpiScale;
+    m_screenshoter = std::make_unique<Screenshoter>(*screenshotParams, m_framework, this);
+  }
   QTimer * countryStatusTimer = new QTimer(this);
   VERIFY(connect(countryStatusTimer, SIGNAL(timeout()), this, SLOT(OnUpdateCountryStatusByTimer())), ());
   countryStatusTimer->setSingleShot(false);
@@ -181,7 +167,11 @@ void DrawWidget::ChoosePositionModeDisable()
 
 void DrawWidget::initializeGL()
 {
-  m_framework.LoadBookmarks();
+  if (m_screenshotMode)
+    m_framework.GetBookmarkManager().EnableTestMode(true);
+  else
+    m_framework.LoadBookmarks();
+
   MapWidget::initializeGL();
 
   m_framework.GetRoutingManager().LoadRoutePoints([this](bool success)
@@ -189,10 +179,16 @@ void DrawWidget::initializeGL()
     if (success)
       m_framework.GetRoutingManager().BuildRoute(0 /* timeoutSec */);
   });
+
+  if (m_screenshotMode)
+    m_screenshoter->Start();
 }
 
 void DrawWidget::mousePressEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mousePressEvent(e);
 
   m2::PointD const pt = GetDevicePoint(e);
@@ -230,6 +226,9 @@ void DrawWidget::mousePressEvent(QMouseEvent * e)
 
 void DrawWidget::mouseMoveEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mouseMoveEvent(e);
   if (IsLeftButton(e) && !IsAltModifier(e))
     m_framework.TouchEvent(GetTouchEvent(e, df::TouchEvent::TOUCH_MOVE));
@@ -243,6 +242,9 @@ void DrawWidget::mouseMoveEvent(QMouseEvent * e)
 
 void DrawWidget::mouseReleaseEvent(QMouseEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   QOpenGLWidget::mouseReleaseEvent(e);
   if (IsLeftButton(e) && !IsAltModifier(e))
   {
@@ -281,6 +283,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent * e)
 
 void DrawWidget::keyPressEvent(QKeyEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   TBase::keyPressEvent(e);
   if (IsLeftButton(QGuiApplication::mouseButtons()) &&
       e->key() == Qt::Key_Control)
@@ -299,6 +304,9 @@ void DrawWidget::keyPressEvent(QKeyEvent * e)
 
 void DrawWidget::keyReleaseEvent(QKeyEvent * e)
 {
+  if (m_screenshotMode)
+    return;
+
   TBase::keyReleaseEvent(e);
 
   if (IsLeftButton(QGuiApplication::mouseButtons()) &&
@@ -316,6 +324,13 @@ void DrawWidget::keyReleaseEvent(QKeyEvent * e)
   }
   else if (e->key() == Qt::Key_Alt)
     m_emulatingLocation = false;
+}
+
+void DrawWidget::OnViewportChanged(ScreenBase const & screen)
+{
+  TBase::OnViewportChanged(screen);
+  if (m_screenshotMode)
+    m_screenshoter->OnViewportChanged();
 }
 
 bool DrawWidget::Search(search::EverywhereSearchParams const & params)
@@ -376,7 +391,9 @@ void DrawWidget::SetMapStyle(MapStyle mapStyle)
 void DrawWidget::SubmitFakeLocationPoint(m2::PointD const & pt)
 {
   m_emulatingLocation = true;
-  auto const point = m_framework.P3dtoG(pt);
+
+  m2::PointD const point = GetCoordsFromSettingsIfExists(true /* start */, pt);
+
   m_framework.OnLocationUpdate(qt::common::MakeGpsInfo(point));
 
   if (m_framework.GetRoutingManager().IsRoutingActive())
@@ -410,7 +427,8 @@ void DrawWidget::SubmitRoutingPoint(m2::PointD const & pt)
   RouteMarkData point;
   point.m_pointType = m_routePointAddMode;
   point.m_isMyPosition = false;
-  point.m_position = m_framework.P3dtoG(pt);
+  point.m_position = GetCoordsFromSettingsIfExists(false /* start */, pt);
+
   routingManager.AddRoutePoint(std::move(point));
 
   if (routingManager.GetRoutePoints().size() >= 2)
@@ -484,9 +502,14 @@ void DrawWidget::ShowPlacePage(place_page::Info const & info)
 {
   search::ReverseGeocoder::Address address;
   if (info.IsFeature())
-    address = GetFeatureAddressInfo(m_framework, info.GetID());
+  {
+    search::ReverseGeocoder const coder(m_framework.GetDataSource());
+    coder.GetExactAddress(info.GetID(), address);
+  }
   else
+  {
     address = m_framework.GetAddressAtPoint(info.GetMercator());
+  }
 
   PlacePageDialog dlg(this, info, address);
   if (dlg.exec() == QDialog::Accepted)
@@ -512,40 +535,6 @@ void DrawWidget::ShowPlacePage(place_page::Info const & info)
     }
   }
   m_framework.DeactivateMapSelection(false);
-}
-
-void DrawWidget::ShowInfoPopup(QMouseEvent * e, m2::PointD const & pt)
-{
-  // show feature types
-  QMenu menu;
-  auto const addStringFn = [&menu](string const & s)
-  {
-    if (s.empty())
-      return;
-
-    menu.addAction(QString::fromUtf8(s.c_str()));
-  };
-
-  m_framework.ForEachFeatureAtPoint([&](FeatureType & ft)
-  {
-    string concat;
-    auto types = feature::TypesHolder(ft);
-    types.SortBySpec();
-    for (auto const & type : types.ToObjectNames())
-      concat += type + " ";
-    addStringFn(concat);
-
-    std::string name;
-    ft.GetReadableName(name);
-    addStringFn(name);
-
-    auto const info = GetFeatureAddressInfo(m_framework, ft);
-    addStringFn(info.FormatAddress());
-
-    menu.addSeparator();
-  }, m_framework.PtoG(pt));
-
-  menu.exec(e->pos());
 }
 
 void DrawWidget::SetRouter(routing::RouterType routerType)
@@ -595,5 +584,13 @@ void DrawWidget::SetDefaultSurfaceFormat(bool apiOpenGLES3)
 void DrawWidget::RefreshDrawingRules()
 {
   SetMapStyle(MapStyleClear);
+}
+
+m2::PointD DrawWidget::GetCoordsFromSettingsIfExists(bool start, m2::PointD const & pt)
+{
+  if (auto optional = RoutingSettings::GetCoords(start))
+    return MercatorBounds::FromLatLon(*optional);
+
+  return m_framework.P3dtoG(pt);
 }
 }  // namespace qt

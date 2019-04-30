@@ -82,6 +82,51 @@ format_version() {
   fi
 }
 
+get_python36() {
+  local pythons=('python' 'python3' 'python3.6' 'python36')
+  local best_version='0'
+  local cur_version='0'
+  local best_python=''
+  for python in ${pythons[@]}; do
+    if command -v "$python" >/dev/null 2>&1 ; then
+      cur_version=`$python -c 'import sys; print("".join(map(str, sys.version_info[:3])))'`
+      if [ "$best_version" \< "$cur_version" ]; then
+        best_version=$cur_version
+        best_python=$python
+      fi
+    fi
+  done
+  if [ "$best_version" \< "360" ]; then
+    echo "Python 3.6 minimum required, found only $best_python";
+    exit
+  fi
+
+  echo $(which $best_python)
+}
+
+get_python2() {
+  local pythons=('python' 'python2' 'python2.6' 'python2.7' 'python26' 'python27')
+  local best_version='0'
+  local cur_version='0'
+  local best_python=''
+  for python in ${pythons[@]}; do
+    if command -v "$python" >/dev/null 2>&1 ; then
+      cur_version=`$python -c 'import sys; print("".join(map(str, sys.version_info[:3])))'`
+      if [ "$best_version" \< "$cur_version" ] && [ $cur_version \< "300" ]; then
+        best_version=$cur_version
+        best_python=$python
+      fi
+    fi
+  done
+
+  if [ "$best_version" = "0" ]; then
+    echo "Can not find python with version >= 2.0";
+    exit
+  fi
+
+  echo $(which $best_python)
+}
+
 # Do not start processing when there are no arguments
 [ $# -eq 0 ] && usage && fail
 # Parse command line parameters
@@ -180,13 +225,13 @@ else
   PYTHON_SCRIPTS_PATH="$OMIM_PATH/tools/python"
 fi
 ROADS_SCRIPT="$PYTHON_SCRIPTS_PATH/road_runner.py"
-HIERARCHY_SCRIPT="$PYTHON_SCRIPTS_PATH/hierarchy_to_countries.py"
-DESCRIPTIONS_DOWNLOADER="$PYTHON_SCRIPTS_PATH/descriptions_downloader.py"
-LOCALADS_SCRIPT="$PYTHON_SCRIPTS_PATH/local_ads/mwm_to_csv_4localads.py"
+HIERARCHY_SCRIPT="$PYTHON_SCRIPTS_PATH/post_generation/hierarchy_to_countries.py"
+DESCRIPTIONS_DOWNLOADER="$PYTHON_SCRIPTS_PATH/descriptions/descriptions_downloader.py"
+LOCALADS_SCRIPT="$PYTHON_SCRIPTS_PATH/post_generation/localads_mwm_to_csv.py"
 UGC_FILE="${UGC_FILE:-$INTDIR/ugc_db.sqlite3}"
 POPULAR_PLACES_FILE="${POPULAR_PLACES_FILE:-$INTDIR/popular_places.csv}"
 WIKIDATA_FILE="${WIKIDATA_FILE:-$INTDIR/idToWikidata.csv}"
-BOOKING_SCRIPT="$PYTHON_SCRIPTS_PATH/booking_hotels.py"
+BOOKING_SCRIPT="$PYTHON_SCRIPTS_PATH/booking/download_hotels.py"
 BOOKING_FILE="${BOOKING_FILE:-$INTDIR/hotels.csv}"
 OPENTABLE_SCRIPT="$PYTHON_SCRIPTS_PATH/opentable_restaurants.py"
 OPENTABLE_FILE="${OPENTABLE_FILE:-$INTDIR/restaurants.csv}"
@@ -194,8 +239,8 @@ CITIES_BOUNDARIES_DATA="${CITIES_BOUNDARIES_DATA:-$INTDIR/cities_boundaries.bin}
 BRANDS_TRANSLATIONS_DATA="${BRANDS_TRANSLATIONS_DATA:-$INTDIR/translations_food.json}"
 BRANDS_DATA="${BRANDS_DATA:-$INTDIR/ids_food.json}"
 TESTING_SCRIPT="$SCRIPTS_PATH/test_planet.sh"
-PYTHON="$(which python2.7)"
-PYTHON36="$(which python36)" || PYTHON36="$(which python3.6)"
+PYTHON=$(get_python2)
+PYTHON36=$(get_python36)
 MWM_VERSION_FORMAT="%s"
 COUNTRIES_VERSION_FORMAT="%y%m%d"
 LOG_PATH="${LOG_PATH:-$TARGET/logs}"
@@ -274,7 +319,7 @@ fi
 if [ ! -f "$BOOKING_FILE" -a -n "${BOOKING_USER-}" -a -n "${BOOKING_PASS-}" ]; then
   log "STATUS" "Step S1: Starting background hotels downloading"
   (
-      $PYTHON $BOOKING_SCRIPT --user $BOOKING_USER --password $BOOKING_PASS --path "$INTDIR" --download --translate --output "$BOOKING_FILE" 2>"$LOG_PATH"/booking.log || true
+      $PYTHON $BOOKING_SCRIPT --user $BOOKING_USER --password $BOOKING_PASS --output "$BOOKING_FILE" --logfile="$LOG_PATH"/booking.log || true
       if [ -f "$BOOKING_FILE" -a "$(wc -l < "$BOOKING_FILE" || echo 0)" -gt 100 ]; then
         echo "Hotels have been downloaded. Please ensure this line is before Step 4." >> "$PLANET_LOG"
       else

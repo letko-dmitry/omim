@@ -36,7 +36,7 @@ string DebugPrint(TypesHolder const & holder)
   return s;
 }
 
-TypesHolder::TypesHolder(FeatureType & f) : m_size(0), m_geoType(f.GetFeatureType())
+TypesHolder::TypesHolder(FeatureType & f) : m_size(0), m_geomType(f.GetGeomType())
 {
   f.ForEachType([this](uint32_t type)
   {
@@ -65,105 +65,101 @@ namespace
 {
 class UselessTypesChecker
 {
-  vector<uint32_t> m_types;
-  size_t m_count1;
-
-  template <size_t N, size_t M>
-  void AddTypes(char const * (&arr)[N][M])
-  {
-    Classificator const & c = classif();
-
-    for (size_t i = 0; i < N; ++i)
-      m_types.push_back(c.GetTypeByPath(vector<string>(arr[i], arr[i] + M)));
-  }
-
 public:
-  UselessTypesChecker()
+  static UselessTypesChecker const & Instance()
   {
-    // Fill types that will be taken into account last,
-    // when we have many types for POI.
-
-    // 1-arity
-    char const * arr1[][1] = {
-      { "building" },
-      { "building:part" },
-      { "hwtag" },
-      { "psurface" },
-      { "internet_access" },
-      { "wheelchair" },
-      { "sponsored" },
-      { "entrance" },
-      { "cuisine" },
-      { "area:highway" },
-      { "earthquake:damage" },
-    };
-
-    AddTypes(arr1);
-    m_count1 = m_types.size();
-
-    // 2-arity
-    char const * arr2[][2] = {
-      { "amenity", "atm" },
-      { "amenity", "bench" },
-      { "amenity", "shelter" },
-      { "amenity", "toilets" },
-      { "building", "address" },
-      { "building", "has_parts" },
-    };
-
-    AddTypes(arr2);
+    static UselessTypesChecker const inst;
+    return inst;
   }
 
-  bool operator() (uint32_t t) const
+  bool operator()(uint32_t t) const
   {
-    auto const end1 = m_types.begin() + m_count1;
-
-    // check 2-arity types
     ftype::TruncValue(t, 2);
-    if (find(end1, m_types.end(), t) != m_types.end())
+    if (find(m_types2.begin(), m_types2.end(), t) != m_types2.end())
       return true;
 
-    // check 1-arity types
     ftype::TruncValue(t, 1);
-    if (find(m_types.begin(), end1, t) != end1)
+    if (find(m_types1.begin(), m_types1.end(), t) != m_types1.end())
       return true;
 
     return false;
   }
+
+private:
+  UselessTypesChecker()
+  {
+    // Fill types that will be taken into account last,
+    // when we have many types for POI.
+    vector<vector<string>> const types = {
+        // 1-arity
+        {"building"},
+        {"building:part"},
+        {"hwtag"},
+        {"psurface"},
+        {"internet_access"},
+        {"wheelchair"},
+        {"sponsored"},
+        {"entrance"},
+        {"cuisine"},
+        {"area:highway"},
+        {"earthquake:damage"},
+        // 2-arity
+        {"amenity", "atm"},
+        {"amenity", "bench"},
+        {"amenity", "shelter"},
+        {"amenity", "toilets"},
+        {"building", "address"},
+        {"building", "has_parts"},
+    };
+
+    Classificator const & c = classif();
+    for (auto const & type : types)
+    {
+      if (type.size() == 1)
+        m_types1.push_back(c.GetTypeByPath(type));
+      else if (type.size() == 2)
+        m_types2.push_back(c.GetTypeByPath(type));
+      else
+        CHECK(false, ());
+    }
+  }
+
+  vector<uint32_t> m_types1;
+  vector<uint32_t> m_types2;
 };
 }  // namespace
 
 namespace feature
 {
-uint8_t CalculateHeader(size_t const typesCount, uint8_t const headerGeomType,
+uint8_t CalculateHeader(size_t const typesCount, HeaderGeomType const headerGeomType,
                         FeatureParamsBase const & params)
 {
   ASSERT(typesCount != 0, ("Feature should have at least one type."));
   uint8_t header = static_cast<uint8_t>(typesCount - 1);
 
   if (!params.name.IsEmpty())
-    header |= HEADER_HAS_NAME;
+    header |= HEADER_MASK_HAS_NAME;
 
   if (params.layer != 0)
-    header |= HEADER_HAS_LAYER;
+    header |= HEADER_MASK_HAS_LAYER;
 
-  header |= headerGeomType;
+  header |= static_cast<uint8_t>(headerGeomType);
 
   // Geometry type for additional info is only one.
   switch (headerGeomType)
   {
-  case HEADER_GEOM_POINT:
+  case HeaderGeomType::Point:
     if (params.rank != 0)
-      header |= HEADER_HAS_ADDINFO;
+      header |= HEADER_MASK_HAS_ADDINFO;
     break;
-  case HEADER_GEOM_LINE:
+  case HeaderGeomType::Line:
     if (!params.ref.empty())
-      header |= HEADER_HAS_ADDINFO;
+      header |= HEADER_MASK_HAS_ADDINFO;
     break;
-  case HEADER_GEOM_AREA:
-  case HEADER_GEOM_POINT_EX:
+  case HeaderGeomType::Area:
+  case HeaderGeomType::PointEx:
     if (!params.house.IsEmpty())
-      header |= HEADER_HAS_ADDINFO;
+      header |= HEADER_MASK_HAS_ADDINFO;
     break;
   }
 
@@ -176,8 +172,8 @@ void TypesHolder::SortBySpec()
     return;
 
   // Put "very common" types to the end of possible PP-description types.
-  static UselessTypesChecker checker;
-  UNUSED_VALUE(base::RemoveIfKeepValid(begin(), end(), [](uint32_t t) { return checker(t); }));
+  auto const & checker = UselessTypesChecker::Instance();
+  UNUSED_VALUE(base::RemoveIfKeepValid(begin(), end(), checker));
 }
 
 vector<string> TypesHolder::ToObjectNames() const
@@ -385,39 +381,40 @@ string FeatureParams::GetStreet() const
   return m_addrTags.Get(AddressData::STREET);
 }
 
-void FeatureParams::SetGeomType(feature::EGeomType t)
+void FeatureParams::SetGeomType(feature::GeomType t)
 {
   switch (t)
   {
-  case GEOM_POINT: m_geomType = HEADER_GEOM_POINT; break;
-  case GEOM_LINE: m_geomType = HEADER_GEOM_LINE; break;
-  case GEOM_AREA: m_geomType = HEADER_GEOM_AREA; break;
+  case GeomType::Point: m_geomType = HeaderGeomType::Point; break;
+  case GeomType::Line: m_geomType = HeaderGeomType::Line; break;
+  case GeomType::Area: m_geomType = HeaderGeomType::Area; break;
   default: ASSERT(false, ());
   }
 }
 
 void FeatureParams::SetGeomTypePointEx()
 {
-  ASSERT(m_geomType == HEADER_GEOM_POINT || m_geomType == HEADER_GEOM_POINT_EX, ());
+  ASSERT(m_geomType == HeaderGeomType::Point ||
+         m_geomType == HeaderGeomType::PointEx, ());
   ASSERT(!house.IsEmpty(), ());
 
-  m_geomType = HEADER_GEOM_POINT_EX;
+  m_geomType = HeaderGeomType::PointEx;
 }
 
-feature::EGeomType FeatureParams::GetGeomType() const
+feature::GeomType FeatureParams::GetGeomType() const
 {
-  CHECK_NOT_EQUAL(m_geomType, 0xFF, ());
+  CheckValid();
   switch (m_geomType)
   {
-  case HEADER_GEOM_LINE: return GEOM_LINE;
-  case HEADER_GEOM_AREA: return GEOM_AREA;
-  default: return GEOM_POINT;
+  case HeaderGeomType::Line: return GeomType::Line;
+  case HeaderGeomType::Area: return GeomType::Area;
+  default: return GeomType::Point;
   }
 }
 
-uint8_t FeatureParams::GetTypeMask() const
+HeaderGeomType FeatureParams::GetHeaderGeomType() const
 {
-  CHECK_NOT_EQUAL(m_geomType, 0xFF, ());
+  CheckValid();
   return m_geomType;
 }
 
@@ -496,14 +493,18 @@ bool FeatureParams::FinishAddingTypes()
     newTypes.push_back(candidate);
   }
 
-  // Remove duplicated types.
-  sort(newTypes.begin(), newTypes.end());
-  newTypes.erase(unique(newTypes.begin(), newTypes.end()), newTypes.end());
+  base::SortUnique(newTypes);
+
+  if (newTypes.size() > kMaxTypesCount)
+  {
+    // Put common types to the end to leave the most important types.
+    auto const & checker = UselessTypesChecker::Instance();
+    UNUSED_VALUE(base::RemoveIfKeepValid(newTypes.begin(), newTypes.end(), checker));
+    newTypes.resize(kMaxTypesCount);
+    sort(newTypes.begin(), newTypes.end());
+  }
 
   m_types.swap(newTypes);
-
-  if (m_types.size() > kMaxTypesCount)
-    m_types.resize(kMaxTypesCount);
 
   // Patch fix that removes house number from localities.
   if (!house.IsEmpty() && ftypes::IsLocalityChecker::Instance()(m_types))
@@ -555,14 +556,13 @@ uint32_t FeatureParams::FindType(uint32_t comp, uint8_t level) const
 bool FeatureParams::CheckValid() const
 {
   CHECK(!m_types.empty() && m_types.size() <= kMaxTypesCount, ());
-  CHECK_NOT_EQUAL(m_geomType, 0xFF, ());
 
   return FeatureParamsBase::CheckValid();
 }
 
 uint8_t FeatureParams::GetHeader() const
 {
-  return CalculateHeader(m_types.size(), GetTypeMask(), *this);
+  return CalculateHeader(m_types.size(), GetHeaderGeomType(), *this);
 }
 
 uint32_t FeatureParams::GetIndexForType(uint32_t t)
