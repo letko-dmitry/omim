@@ -89,6 +89,10 @@
 		DC8AC8E42264F8F500D2421A /* MWMMapViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC8AC8E72264F96200D2421A /* MWMMapViewRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC8AC8E82264F96200D2421A /* MWMMapViewRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC8AC8E62264F96200D2421A /* MWMMapViewRegion.mm */; };
+		DCAD501B22787438008638DF /* editor.config in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA842256573D002B64E8 /* editor.config */; };
+		DCAD501C227874D2008638DF /* taxi_places in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA852256573D002B64E8 /* taxi_places */; };
+		DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */; };
+		DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
 		DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA432256543F002B64E8 /* MetalContextFactory.h */; };
@@ -112,20 +116,14 @@
 		DCCFEA982256573D002B64E8 /* drules_proto_vehicle_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7A2256573C002B64E8 /* drules_proto_vehicle_dark.bin */; };
 		DCCFEA992256573D002B64E8 /* resources-mdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */; };
 		DCCFEA9A2256573D002B64E8 /* resources-6plus_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */; };
-		DCCFEA9B2256573D002B64E8 /* drules_proto_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */; };
 		DCCFEA9C2256573D002B64E8 /* resources-xhdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */; };
 		DCCFEA9D2256573D002B64E8 /* packed_polygons_obsolete.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */; };
 		DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA802256573D002B64E8 /* packed_polygons.bin */; };
-		DCCFEA9F2256573D002B64E8 /* sound-strings in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA812256573D002B64E8 /* sound-strings */; };
 		DCCFEAA02256573D002B64E8 /* resources-hdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA822256573D002B64E8 /* resources-hdpi_dark */; };
 		DCCFEAA12256573D002B64E8 /* ugc_types.csv in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA832256573D002B64E8 /* ugc_types.csv */; };
-		DCCFEAA22256573D002B64E8 /* editor.config in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA842256573D002B64E8 /* editor.config */; };
-		DCCFEAA32256573D002B64E8 /* taxi_places in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA852256573D002B64E8 /* taxi_places */; };
 		DCCFEAA42256573D002B64E8 /* resources-xhdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */; };
 		DCCFEAA52256573D002B64E8 /* resources-hdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA872256573D002B64E8 /* resources-hdpi_clear */; };
 		DCCFEAA62256573D002B64E8 /* World.mwm in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA882256573D002B64E8 /* World.mwm */; };
-		DCCFEAA72256573D002B64E8 /* cuisine-strings in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA892256573D002B64E8 /* cuisine-strings */; };
-		DCCFEAA82256573D002B64E8 /* drules_proto_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */; };
 		DCCFEAA92256573D002B64E8 /* resources-mdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */; };
 		DCCFEAAA2256573D002B64E8 /* WorldCoasts_obsolete.mwm in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */; };
 		DCCFEAB82256594A002B64E8 /* colors.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAB22565949002B64E8 /* colors.txt */; };
@@ -319,7 +317,6 @@
 		DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_dark"; path = "../../data/resources-xhdpi_dark"; sourceTree = SOURCE_ROOT; };
 		DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons_obsolete.bin; path = ../../data/packed_polygons_obsolete.bin; sourceTree = SOURCE_ROOT; };
 		DCCFEA802256573D002B64E8 /* packed_polygons.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons.bin; path = ../../data/packed_polygons.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA812256573D002B64E8 /* sound-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "sound-strings"; path = "../../data/sound-strings"; sourceTree = SOURCE_ROOT; };
 		DCCFEA822256573D002B64E8 /* resources-hdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_dark"; path = "../../data/resources-hdpi_dark"; sourceTree = SOURCE_ROOT; };
 		DCCFEA832256573D002B64E8 /* ugc_types.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ugc_types.csv; path = ../../data/ugc_types.csv; sourceTree = SOURCE_ROOT; };
 		DCCFEA842256573D002B64E8 /* editor.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = editor.config; path = ../../data/editor.config; sourceTree = SOURCE_ROOT; };
@@ -327,7 +324,6 @@
 		DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_clear"; path = "../../data/resources-xhdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA872256573D002B64E8 /* resources-hdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_clear"; path = "../../data/resources-hdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA882256573D002B64E8 /* World.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = World.mwm; path = ../../data/World.mwm; sourceTree = SOURCE_ROOT; };
-		DCCFEA892256573D002B64E8 /* cuisine-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "cuisine-strings"; path = "../../data/cuisine-strings"; sourceTree = SOURCE_ROOT; };
 		DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_dark.bin; path = ../../data/drules_proto_dark.bin; sourceTree = SOURCE_ROOT; };
 		DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_clear"; path = "../../data/resources-mdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts_obsolete.mwm; path = ../../data/WorldCoasts_obsolete.mwm; sourceTree = SOURCE_ROOT; };
@@ -644,7 +640,6 @@
 			isa = PBXGroup;
 			children = (
 				DCCFEA742256573C002B64E8 /* countries-strings */,
-				DCCFEA892256573D002B64E8 /* cuisine-strings */,
 				DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */,
 				DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */,
 				DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */,
@@ -666,7 +661,6 @@
 				DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */,
 				DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */,
 				DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */,
-				DCCFEA812256573D002B64E8 /* sound-strings */,
 				DCCFEA852256573D002B64E8 /* taxi_places */,
 				DCCFEA732256573C002B64E8 /* ugc_migration */,
 				DCCFEA832256573D002B64E8 /* ugc_types.csv */,
@@ -793,25 +787,23 @@
 				DCCFEA8F2256573D002B64E8 /* icudt57l.dat in Resources */,
 				DCCFEA982256573D002B64E8 /* drules_proto_vehicle_dark.bin in Resources */,
 				DCCFEAC22256594A002B64E8 /* countries.txt in Resources */,
-				DCCFEA9B2256573D002B64E8 /* drules_proto_clear.bin in Resources */,
 				DCCFEA952256573D002B64E8 /* resources-xxhdpi_dark in Resources */,
 				DCCFEA8D2256573D002B64E8 /* drules_proto_vehicle_clear.bin in Resources */,
 				DCCFEA992256573D002B64E8 /* resources-mdpi_dark in Resources */,
 				DCCFEAD322565954002B64E8 /* 06_code2000.ttf in Resources */,
+				DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */,
 				DCCFEA912256573D002B64E8 /* ugc_migration in Resources */,
 				DCCFEACF22565954002B64E8 /* 02_droidsans-fallback.ttf in Resources */,
 				DCCFEA932256573D002B64E8 /* resources-xxxhdpi_dark in Resources */,
 				DCCFEAC02256594A002B64E8 /* patterns.txt in Resources */,
-				DCCFEAA72256573D002B64E8 /* cuisine-strings in Resources */,
 				DCCFEAA92256573D002B64E8 /* resources-mdpi_clear in Resources */,
 				DCCFEAB82256594A002B64E8 /* colors.txt in Resources */,
 				DCCFEA962256573D002B64E8 /* resources-xxxhdpi_clear in Resources */,
 				DCCFEAA52256573D002B64E8 /* resources-hdpi_clear in Resources */,
-				DCCFEAA32256573D002B64E8 /* taxi_places in Resources */,
+				DCAD501B22787438008638DF /* editor.config in Resources */,
 				DCCFEAAA2256573D002B64E8 /* WorldCoasts_obsolete.mwm in Resources */,
-				DCCFEAA22256573D002B64E8 /* editor.config in Resources */,
 				DCCFEA9D2256573D002B64E8 /* packed_polygons_obsolete.bin in Resources */,
-				DCCFEAA82256573D002B64E8 /* drules_proto_dark.bin in Resources */,
+				DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */,
 				DCCFEAA12256573D002B64E8 /* ugc_types.csv in Resources */,
 				DCCFEA9C2256573D002B64E8 /* resources-xhdpi_dark in Resources */,
 				DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */,
@@ -828,11 +820,11 @@
 				DCCFEAD122565954002B64E8 /* 04_padauk.ttf in Resources */,
 				DCCFEABD2256594A002B64E8 /* categories.txt in Resources */,
 				DCCFEAC12256594A002B64E8 /* local_ads_symbols.txt in Resources */,
-				DCCFEA9F2256573D002B64E8 /* sound-strings in Resources */,
 				DCCFEA972256573D002B64E8 /* WorldCoasts.mwm in Resources */,
 				DCCFEABB2256594A002B64E8 /* types.txt in Resources */,
 				DCCFEAA62256573D002B64E8 /* World.mwm in Resources */,
 				DCCFEA902256573D002B64E8 /* resources-default in Resources */,
+				DCAD501C227874D2008638DF /* taxi_places in Resources */,
 				DCCFEABE2256594A002B64E8 /* synonyms.txt in Resources */,
 				DCCFEABA2256594A002B64E8 /* classificator.txt in Resources */,
 				DCCFEA8E2256573D002B64E8 /* resources-xxhdpi_clear in Resources */,
