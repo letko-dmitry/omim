@@ -94,6 +94,7 @@
 		DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */; };
 		DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */; };
 		DCAD502222787F0C008638DF /* libvulkan_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DCAD502122787F0C008638DF /* libvulkan_wrapper.a */; };
+		DCAD502322788026008638DF /* categories.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB022565949002B64E8 /* categories.txt */; };
 		DCAF7A49224E1EA3009450FF /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B4700EE218A3E4C00DB7F6D /* CoreVideo.framework */; };
 		DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA422256543F002B64E8 /* iosOGLContext.mm */; };
 		DCCFEA5B22565440002B64E8 /* MetalContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA432256543F002B64E8 /* MetalContextFactory.h */; };
@@ -132,8 +133,6 @@
 		DCCFEABA2256594A002B64E8 /* classificator.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAD22565949002B64E8 /* classificator.txt */; };
 		DCCFEABB2256594A002B64E8 /* types.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAE22565949002B64E8 /* types.txt */; };
 		DCCFEABC2256594A002B64E8 /* fonts_blacklist.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAF22565949002B64E8 /* fonts_blacklist.txt */; };
-		DCCFEABD2256594A002B64E8 /* categories.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB022565949002B64E8 /* categories.txt */; };
-		DCCFEABE2256594A002B64E8 /* synonyms.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB122565949002B64E8 /* synonyms.txt */; };
 		DCCFEABF2256594A002B64E8 /* unicode_blocks.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB222565949002B64E8 /* unicode_blocks.txt */; };
 		DCCFEAC02256594A002B64E8 /* patterns.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB322565949002B64E8 /* patterns.txt */; };
 		DCCFEAC12256594A002B64E8 /* local_ads_symbols.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAB42256594A002B64E8 /* local_ads_symbols.txt */; };
@@ -335,7 +334,6 @@
 		DCCFEAAE22565949002B64E8 /* types.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = types.txt; path = ../../data/types.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAAF22565949002B64E8 /* fonts_blacklist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fonts_blacklist.txt; path = ../../data/fonts_blacklist.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAB022565949002B64E8 /* categories.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = categories.txt; path = ../../data/categories.txt; sourceTree = SOURCE_ROOT; };
-		DCCFEAB122565949002B64E8 /* synonyms.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = synonyms.txt; path = ../../data/synonyms.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAB222565949002B64E8 /* unicode_blocks.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unicode_blocks.txt; path = ../../data/unicode_blocks.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAB322565949002B64E8 /* patterns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = patterns.txt; path = ../../data/patterns.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAB42256594A002B64E8 /* local_ads_symbols.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = local_ads_symbols.txt; path = ../../data/local_ads_symbols.txt; sourceTree = SOURCE_ROOT; };
@@ -680,7 +678,6 @@
 				DCCFEAB62256594A002B64E8 /* fonts_whitelist.txt */,
 				DCCFEAB42256594A002B64E8 /* local_ads_symbols.txt */,
 				DCCFEAB322565949002B64E8 /* patterns.txt */,
-				DCCFEAB122565949002B64E8 /* synonyms.txt */,
 				DCCFEAAC22565949002B64E8 /* transit_colors.txt */,
 				DCCFEAAE22565949002B64E8 /* types.txt */,
 				DCCFEAB222565949002B64E8 /* unicode_blocks.txt */,
@@ -812,6 +809,7 @@
 				DCCFEA9C2256573D002B64E8 /* resources-xhdpi_dark in Resources */,
 				DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */,
 				DCCFEAB92256594A002B64E8 /* transit_colors.txt in Resources */,
+				DCAD502322788026008638DF /* categories.txt in Resources */,
 				DCCFEACE22565954002B64E8 /* 01_dejavusans.ttf in Resources */,
 				DCCFEAA42256573D002B64E8 /* resources-xhdpi_clear in Resources */,
 				DCCFEAD422565954002B64E8 /* 07_roboto_medium.ttf in Resources */,
@@ -822,14 +820,12 @@
 				DCCFEAC42256594A002B64E8 /* countries_obsolete.txt in Resources */,
 				DCCFEACD22565954002B64E8 /* 00_roboto_regular.ttf in Resources */,
 				DCCFEAD122565954002B64E8 /* 04_padauk.ttf in Resources */,
-				DCCFEABD2256594A002B64E8 /* categories.txt in Resources */,
 				DCCFEAC12256594A002B64E8 /* local_ads_symbols.txt in Resources */,
 				DCCFEA972256573D002B64E8 /* WorldCoasts.mwm in Resources */,
 				DCCFEABB2256594A002B64E8 /* types.txt in Resources */,
 				DCCFEAA62256573D002B64E8 /* World.mwm in Resources */,
 				DCCFEA902256573D002B64E8 /* resources-default in Resources */,
 				DCAD501C227874D2008638DF /* taxi_places in Resources */,
-				DCCFEABE2256594A002B64E8 /* synonyms.txt in Resources */,
 				DCCFEABA2256594A002B64E8 /* classificator.txt in Resources */,
 				DCCFEA8E2256573D002B64E8 /* resources-xxhdpi_clear in Resources */,
 				DCCFEABC2256594A002B64E8 /* fonts_blacklist.txt in Resources */,
@@ -930,13 +926,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1006,9 +999,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
-				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1019,7 +1009,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LLVM_LTO = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
