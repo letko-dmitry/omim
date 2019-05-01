@@ -40,7 +40,10 @@ float const kGlyphAreaMultiplier = 1.2f;
 float const kGlyphAreaCoverage = 0.9f;
 
 std::string const kDefaultSymbolsTexture = "symbols";
-std::string const kSymbolTextures[] = { kDefaultSymbolsTexture, "symbols-ad" };
+/**
+ WiFi Map
+ */
+std::string const kSymbolTextures[] = { kDefaultSymbolsTexture/*, "symbols-ad"*/ };
 uint32_t const kDefaultSymbolsIndex = 0;
 
 namespace

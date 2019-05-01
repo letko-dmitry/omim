@@ -105,28 +105,15 @@
 		DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DCCFEA502256543F002B64E8 /* iosOGLContextFactory.h */; };
 		DCCFEA6922565440002B64E8 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCCFEA512256543F002B64E8 /* EAGLView.mm */; };
 		DCCFEA8D2256573D002B64E8 /* drules_proto_vehicle_clear.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */; };
-		DCCFEA8E2256573D002B64E8 /* resources-xxhdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA702256573C002B64E8 /* resources-xxhdpi_clear */; };
 		DCCFEA8F2256573D002B64E8 /* icudt57l.dat in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA712256573C002B64E8 /* icudt57l.dat */; };
-		DCCFEA902256573D002B64E8 /* resources-default in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA722256573C002B64E8 /* resources-default */; };
 		DCCFEA912256573D002B64E8 /* ugc_migration in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA732256573C002B64E8 /* ugc_migration */; };
 		DCCFEA922256573D002B64E8 /* countries-strings in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA742256573C002B64E8 /* countries-strings */; };
-		DCCFEA932256573D002B64E8 /* resources-xxxhdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */; };
-		DCCFEA942256573D002B64E8 /* resources-6plus_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA762256573C002B64E8 /* resources-6plus_clear */; };
-		DCCFEA952256573D002B64E8 /* resources-xxhdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */; };
-		DCCFEA962256573D002B64E8 /* resources-xxxhdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */; };
 		DCCFEA972256573D002B64E8 /* WorldCoasts.mwm in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA792256573C002B64E8 /* WorldCoasts.mwm */; };
 		DCCFEA982256573D002B64E8 /* drules_proto_vehicle_dark.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7A2256573C002B64E8 /* drules_proto_vehicle_dark.bin */; };
-		DCCFEA992256573D002B64E8 /* resources-mdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */; };
-		DCCFEA9A2256573D002B64E8 /* resources-6plus_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */; };
-		DCCFEA9C2256573D002B64E8 /* resources-xhdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */; };
 		DCCFEA9D2256573D002B64E8 /* packed_polygons_obsolete.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */; };
 		DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA802256573D002B64E8 /* packed_polygons.bin */; };
-		DCCFEAA02256573D002B64E8 /* resources-hdpi_dark in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA822256573D002B64E8 /* resources-hdpi_dark */; };
 		DCCFEAA12256573D002B64E8 /* ugc_types.csv in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA832256573D002B64E8 /* ugc_types.csv */; };
-		DCCFEAA42256573D002B64E8 /* resources-xhdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */; };
-		DCCFEAA52256573D002B64E8 /* resources-hdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA872256573D002B64E8 /* resources-hdpi_clear */; };
 		DCCFEAA62256573D002B64E8 /* World.mwm in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA882256573D002B64E8 /* World.mwm */; };
-		DCCFEAA92256573D002B64E8 /* resources-mdpi_clear in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */; };
 		DCCFEAAA2256573D002B64E8 /* WorldCoasts_obsolete.mwm in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */; };
 		DCCFEAB82256594A002B64E8 /* colors.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAB22565949002B64E8 /* colors.txt */; };
 		DCCFEAB92256594A002B64E8 /* transit_colors.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCCFEAAC22565949002B64E8 /* transit_colors.txt */; };
@@ -153,6 +140,13 @@
 		DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCDFC69E226624E000FA98BD /* MWMMapView.mm */; };
 		DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */; };
 		DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */; };
+		DCE3F4AE2279C53500A8C8DA /* resources-xxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */; };
+		DCE3F4B12279C53500A8C8DA /* resources-hdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A42279C53400A8C8DA /* resources-hdpi */; };
+		DCE3F4B22279C53500A8C8DA /* resources-6plus in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A52279C53400A8C8DA /* resources-6plus */; };
+		DCE3F4B32279C53500A8C8DA /* resources-xxxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */; };
+		DCE3F4B42279C53500A8C8DA /* resources-xhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A72279C53500A8C8DA /* resources-xhdpi */; };
+		DCE3F4B62279C53500A8C8DA /* resources-mdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A92279C53500A8C8DA /* resources-mdpi */; };
+		DCE3F4B92279C53500A8C8DA /* resources-default in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4AC2279C53500A8C8DA /* resources-default */; };
 		DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */ = {isa = PBXBuildFile; fileRef = DCF274AF22737ADC005DF836 /* MWMMapCountry.m */; };
 /* End PBXBuildFile section */
 
@@ -301,32 +295,19 @@
 		DCCFEA502256543F002B64E8 /* iosOGLContextFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iosOGLContextFactory.h; sourceTree = "<group>"; };
 		DCCFEA512256543F002B64E8 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
 		DCCFEA6F2256573C002B64E8 /* drules_proto_vehicle_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_clear.bin; path = ../../data/drules_proto_vehicle_clear.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA702256573C002B64E8 /* resources-xxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_clear"; path = "../../data/resources-xxhdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA712256573C002B64E8 /* icudt57l.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = icudt57l.dat; path = ../../data/icudt57l.dat; sourceTree = SOURCE_ROOT; };
-		DCCFEA722256573C002B64E8 /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-default"; path = "../../data/resources-default"; sourceTree = SOURCE_ROOT; };
 		DCCFEA732256573C002B64E8 /* ugc_migration */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ugc_migration; path = ../../data/ugc_migration; sourceTree = SOURCE_ROOT; };
 		DCCFEA742256573C002B64E8 /* countries-strings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "countries-strings"; path = "../../data/countries-strings"; sourceTree = SOURCE_ROOT; };
-		DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_dark"; path = "../../data/resources-xxxhdpi_dark"; sourceTree = SOURCE_ROOT; };
-		DCCFEA762256573C002B64E8 /* resources-6plus_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_clear"; path = "../../data/resources-6plus_clear"; sourceTree = SOURCE_ROOT; };
-		DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxhdpi_dark"; path = "../../data/resources-xxhdpi_dark"; sourceTree = SOURCE_ROOT; };
-		DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xxxhdpi_clear"; path = "../../data/resources-xxxhdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA792256573C002B64E8 /* WorldCoasts.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts.mwm; path = ../../data/WorldCoasts.mwm; sourceTree = SOURCE_ROOT; };
 		DCCFEA7A2256573C002B64E8 /* drules_proto_vehicle_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_vehicle_dark.bin; path = ../../data/drules_proto_vehicle_dark.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_dark"; path = "../../data/resources-mdpi_dark"; sourceTree = SOURCE_ROOT; };
-		DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-6plus_dark"; path = "../../data/resources-6plus_dark"; sourceTree = SOURCE_ROOT; };
 		DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_clear.bin; path = ../../data/drules_proto_clear.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_dark"; path = "../../data/resources-xhdpi_dark"; sourceTree = SOURCE_ROOT; };
 		DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons_obsolete.bin; path = ../../data/packed_polygons_obsolete.bin; sourceTree = SOURCE_ROOT; };
 		DCCFEA802256573D002B64E8 /* packed_polygons.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = packed_polygons.bin; path = ../../data/packed_polygons.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA822256573D002B64E8 /* resources-hdpi_dark */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_dark"; path = "../../data/resources-hdpi_dark"; sourceTree = SOURCE_ROOT; };
 		DCCFEA832256573D002B64E8 /* ugc_types.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ugc_types.csv; path = ../../data/ugc_types.csv; sourceTree = SOURCE_ROOT; };
 		DCCFEA842256573D002B64E8 /* editor.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = editor.config; path = ../../data/editor.config; sourceTree = SOURCE_ROOT; };
 		DCCFEA852256573D002B64E8 /* taxi_places */ = {isa = PBXFileReference; lastKnownFileType = folder; name = taxi_places; path = ../../data/taxi_places; sourceTree = SOURCE_ROOT; };
-		DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-xhdpi_clear"; path = "../../data/resources-xhdpi_clear"; sourceTree = SOURCE_ROOT; };
-		DCCFEA872256573D002B64E8 /* resources-hdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-hdpi_clear"; path = "../../data/resources-hdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA882256573D002B64E8 /* World.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = World.mwm; path = ../../data/World.mwm; sourceTree = SOURCE_ROOT; };
 		DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = drules_proto_dark.bin; path = ../../data/drules_proto_dark.bin; sourceTree = SOURCE_ROOT; };
-		DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "resources-mdpi_clear"; path = "../../data/resources-mdpi_clear"; sourceTree = SOURCE_ROOT; };
 		DCCFEA8C2256573D002B64E8 /* WorldCoasts_obsolete.mwm */ = {isa = PBXFileReference; lastKnownFileType = file; name = WorldCoasts_obsolete.mwm; path = ../../data/WorldCoasts_obsolete.mwm; sourceTree = SOURCE_ROOT; };
 		DCCFEAAB22565949002B64E8 /* colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = colors.txt; path = ../../data/colors.txt; sourceTree = SOURCE_ROOT; };
 		DCCFEAAC22565949002B64E8 /* transit_colors.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = transit_colors.txt; path = ../../data/transit_colors.txt; sourceTree = SOURCE_ROOT; };
@@ -354,6 +335,13 @@
 		DCDFC69E226624E000FA98BD /* MWMMapView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapView.mm; sourceTree = "<group>"; };
 		DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapEngineSubscriber.h; sourceTree = "<group>"; };
 		DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWMMapEngine+Private.h"; sourceTree = "<group>"; };
+		DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxhdpi"; sourceTree = "<group>"; };
+		DCE3F4A42279C53400A8C8DA /* resources-hdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-hdpi"; sourceTree = "<group>"; };
+		DCE3F4A52279C53400A8C8DA /* resources-6plus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-6plus"; sourceTree = "<group>"; };
+		DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxxhdpi"; sourceTree = "<group>"; };
+		DCE3F4A72279C53500A8C8DA /* resources-xhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xhdpi"; sourceTree = "<group>"; };
+		DCE3F4A92279C53500A8C8DA /* resources-mdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-mdpi"; sourceTree = "<group>"; };
+		DCE3F4AC2279C53500A8C8DA /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-default"; sourceTree = "<group>"; };
 		DCF274AF22737ADC005DF836 /* MWMMapCountry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWMMapCountry.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -641,6 +629,13 @@
 		DCCFEA582256543F002B64E8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DCE3F4A52279C53400A8C8DA /* resources-6plus */,
+				DCE3F4AC2279C53500A8C8DA /* resources-default */,
+				DCE3F4A42279C53400A8C8DA /* resources-hdpi */,
+				DCE3F4A92279C53500A8C8DA /* resources-mdpi */,
+				DCE3F4A72279C53500A8C8DA /* resources-xhdpi */,
+				DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */,
+				DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */,
 				DCCFEA742256573C002B64E8 /* countries-strings */,
 				DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */,
 				DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */,
@@ -650,19 +645,6 @@
 				DCCFEA712256573C002B64E8 /* icudt57l.dat */,
 				DCCFEA7F2256573D002B64E8 /* packed_polygons_obsolete.bin */,
 				DCCFEA802256573D002B64E8 /* packed_polygons.bin */,
-				DCCFEA762256573C002B64E8 /* resources-6plus_clear */,
-				DCCFEA7C2256573C002B64E8 /* resources-6plus_dark */,
-				DCCFEA722256573C002B64E8 /* resources-default */,
-				DCCFEA872256573D002B64E8 /* resources-hdpi_clear */,
-				DCCFEA822256573D002B64E8 /* resources-hdpi_dark */,
-				DCCFEA8B2256573D002B64E8 /* resources-mdpi_clear */,
-				DCCFEA7B2256573C002B64E8 /* resources-mdpi_dark */,
-				DCCFEA862256573D002B64E8 /* resources-xhdpi_clear */,
-				DCCFEA7E2256573D002B64E8 /* resources-xhdpi_dark */,
-				DCCFEA702256573C002B64E8 /* resources-xxhdpi_clear */,
-				DCCFEA772256573C002B64E8 /* resources-xxhdpi_dark */,
-				DCCFEA782256573C002B64E8 /* resources-xxxhdpi_clear */,
-				DCCFEA752256573C002B64E8 /* resources-xxxhdpi_dark */,
 				DCCFEA852256573D002B64E8 /* taxi_places */,
 				DCCFEA732256573C002B64E8 /* ugc_migration */,
 				DCCFEA832256573D002B64E8 /* ugc_types.csv */,
@@ -788,48 +770,42 @@
 				DCCFEA8F2256573D002B64E8 /* icudt57l.dat in Resources */,
 				DCCFEA982256573D002B64E8 /* drules_proto_vehicle_dark.bin in Resources */,
 				DCCFEAC22256594A002B64E8 /* countries.txt in Resources */,
-				DCCFEA952256573D002B64E8 /* resources-xxhdpi_dark in Resources */,
 				DCCFEA8D2256573D002B64E8 /* drules_proto_vehicle_clear.bin in Resources */,
-				DCCFEA992256573D002B64E8 /* resources-mdpi_dark in Resources */,
 				DCCFEAD322565954002B64E8 /* 06_code2000.ttf in Resources */,
 				DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */,
+				DCE3F4B62279C53500A8C8DA /* resources-mdpi in Resources */,
+				DCE3F4B42279C53500A8C8DA /* resources-xhdpi in Resources */,
 				DCCFEA912256573D002B64E8 /* ugc_migration in Resources */,
 				DCCFEACF22565954002B64E8 /* 02_droidsans-fallback.ttf in Resources */,
-				DCCFEA932256573D002B64E8 /* resources-xxxhdpi_dark in Resources */,
 				DCCFEAC02256594A002B64E8 /* patterns.txt in Resources */,
-				DCCFEAA92256573D002B64E8 /* resources-mdpi_clear in Resources */,
+				DCE3F4B92279C53500A8C8DA /* resources-default in Resources */,
 				DCCFEAB82256594A002B64E8 /* colors.txt in Resources */,
-				DCCFEA962256573D002B64E8 /* resources-xxxhdpi_clear in Resources */,
-				DCCFEAA52256573D002B64E8 /* resources-hdpi_clear in Resources */,
 				DCAD501B22787438008638DF /* editor.config in Resources */,
 				DCCFEAAA2256573D002B64E8 /* WorldCoasts_obsolete.mwm in Resources */,
 				DCCFEA9D2256573D002B64E8 /* packed_polygons_obsolete.bin in Resources */,
+				DCE3F4B12279C53500A8C8DA /* resources-hdpi in Resources */,
 				DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */,
+				DCE3F4B22279C53500A8C8DA /* resources-6plus in Resources */,
 				DCCFEAA12256573D002B64E8 /* ugc_types.csv in Resources */,
-				DCCFEA9C2256573D002B64E8 /* resources-xhdpi_dark in Resources */,
 				DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */,
+				DCE3F4B32279C53500A8C8DA /* resources-xxxhdpi in Resources */,
 				DCCFEAB92256594A002B64E8 /* transit_colors.txt in Resources */,
 				DCAD502322788026008638DF /* categories.txt in Resources */,
 				DCCFEACE22565954002B64E8 /* 01_dejavusans.ttf in Resources */,
-				DCCFEAA42256573D002B64E8 /* resources-xhdpi_clear in Resources */,
 				DCCFEAD422565954002B64E8 /* 07_roboto_medium.ttf in Resources */,
-				DCCFEAA02256573D002B64E8 /* resources-hdpi_dark in Resources */,
 				DCCFEAD022565954002B64E8 /* 03_jomolhari-id-a3d.ttf in Resources */,
-				DCCFEA942256573D002B64E8 /* resources-6plus_clear in Resources */,
 				DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */,
 				DCCFEAC42256594A002B64E8 /* countries_obsolete.txt in Resources */,
 				DCCFEACD22565954002B64E8 /* 00_roboto_regular.ttf in Resources */,
+				DCE3F4AE2279C53500A8C8DA /* resources-xxhdpi in Resources */,
 				DCCFEAD122565954002B64E8 /* 04_padauk.ttf in Resources */,
 				DCCFEAC12256594A002B64E8 /* local_ads_symbols.txt in Resources */,
 				DCCFEA972256573D002B64E8 /* WorldCoasts.mwm in Resources */,
 				DCCFEABB2256594A002B64E8 /* types.txt in Resources */,
 				DCCFEAA62256573D002B64E8 /* World.mwm in Resources */,
-				DCCFEA902256573D002B64E8 /* resources-default in Resources */,
 				DCAD501C227874D2008638DF /* taxi_places in Resources */,
 				DCCFEABA2256594A002B64E8 /* classificator.txt in Resources */,
-				DCCFEA8E2256573D002B64E8 /* resources-xxhdpi_clear in Resources */,
 				DCCFEABC2256594A002B64E8 /* fonts_blacklist.txt in Resources */,
-				DCCFEA9A2256573D002B64E8 /* resources-6plus_dark in Resources */,
 				DCCFEAC32256594A002B64E8 /* fonts_whitelist.txt in Resources */,
 				DCCFEAD222565954002B64E8 /* 05_khmeros.ttf in Resources */,
 			);
@@ -944,6 +920,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -963,7 +940,6 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_DEBUG_INFORMATION_LEVEL = "line-tables-only";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1012,6 +988,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1050,7 +1027,6 @@
 				OMIM_ROOT = "$(PROJECT_DIR)/../..";
 				PRODUCT_BUNDLE_IDENTIFIER = io.wifimap.MapsWithMeLib;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -1087,7 +1063,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = "non-global";
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Release;
 		};

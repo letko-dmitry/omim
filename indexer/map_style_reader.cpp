@@ -45,31 +45,34 @@ std::string GetStyleRulesSuffix(MapStyle mapStyle)
 #endif // BUILD_DESIGNER
 }
 
-std::string GetStyleResourcesSuffix(MapStyle mapStyle)
-{
-#ifdef BUILD_DESIGNER
-  return kSuffixDesignTool;
-#else
-  // We use the same resources for default and vehicle styles
-  // to avoid textures duplication and package size increasing.
-  switch (mapStyle)
-  {
-  case MapStyleDark:
-  case MapStyleVehicleDark:
-    return kSuffixDark;
-  case MapStyleClear:
-  case MapStyleVehicleClear:
-    return kSuffixClear;
-  case MapStyleMerged:
-    return std::string();
-
-  case MapStyleCount:
-    break;
-  }
-  LOG(LWARNING, ("Unknown map style", mapStyle));
-  return kSuffixClear;
-#endif // BUILD_DESIGNER
-}
+    /**
+     WiFi Map
+     */
+//std::string GetStyleResourcesSuffix(MapStyle mapStyle)
+//{
+//#ifdef BUILD_DESIGNER
+//  return kSuffixDesignTool;
+//#else
+//  // We use the same resources for default and vehicle styles
+//  // to avoid textures duplication and package size increasing.
+//  switch (mapStyle)
+//  {
+//  case MapStyleDark:
+//  case MapStyleVehicleDark:
+//    return kSuffixDark;
+//  case MapStyleClear:
+//  case MapStyleVehicleClear:
+//    return kSuffixClear;
+//  case MapStyleMerged:
+//    return std::string();
+//
+//  case MapStyleCount:
+//    break;
+//  }
+//  LOG(LWARNING, ("Unknown map style", mapStyle));
+//  return kSuffixClear;
+//#endif // BUILD_DESIGNER
+//}
 }  // namespace
 
 StyleReader::StyleReader()
@@ -108,8 +111,11 @@ ReaderPtr<Reader> StyleReader::GetDrawingRulesReader() const
 ReaderPtr<Reader> StyleReader::GetResourceReader(std::string const & file,
                                                  std::string const & density) const
 {
+    /**
+     WiFi Map
+     */
   std::string const resourceDir =
-      std::string("resources-") + density + GetStyleResourcesSuffix(GetCurrentStyle());
+      std::string("resources-") + density/* + GetStyleResourcesSuffix(GetCurrentStyle())*/;
   std::string resFile = base::JoinPath(resourceDir, file);
 
   auto overriddenResFile = base::JoinPath(GetPlatform().WritableDir(), kStylesOverrideDir, resFile);
