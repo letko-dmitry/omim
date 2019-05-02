@@ -44,7 +44,8 @@ BackendRenderer::BackendRenderer(Params && params)
   , m_requestedTiles(params.m_requestedTiles)
   , m_updateCurrentCountryFn(params.m_updateCurrentCountryFn)
   , m_metalineManager(make_unique_dp<MetalineManager>(params.m_commutator, m_model))
-{
+  , m_symbolsTextureDescriptions(params.m_symbolsTextureDescriptions)
+  {
 #ifdef DEBUG
   m_isTeardowned = false;
 #endif
@@ -696,6 +697,8 @@ void BackendRenderer::InitContextDependentResources()
   params.m_glyphMngParams.m_blacklist = "fonts_blacklist.txt";
   params.m_glyphMngParams.m_sdfScale = VisualParams::Instance().GetGlyphSdfScale();
   params.m_glyphMngParams.m_baseGlyphHeight = VisualParams::Instance().GetGlyphBaseSize();
+  params.m_symbolsTextureDescriptions = m_symbolsTextureDescriptions;
+
   GetPlatform().GetFontNames(params.m_glyphMngParams.m_fonts);
 
   CHECK(m_context != nullptr, ());

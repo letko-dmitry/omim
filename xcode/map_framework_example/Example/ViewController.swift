@@ -12,7 +12,12 @@ import MapsWithMeLib
 final class ViewController: UIViewController {
     @IBOutlet private var contentView: UIView!
 
-    private lazy var mapEngine = MapEngine()
+    private lazy var mapSymbols = [
+        MapSymbols(name: "categories",
+                   imageFileUrl: Bundle.main.url(forResource: "icons@3x", withExtension: "texture")!,
+                   mapFileUrl: Bundle.main.url(forResource: "icons@3x", withExtension: "sdf")!)
+    ]
+    private lazy var mapEngine = MapEngine(symbols: mapSymbols)
     private lazy var mapView = MapView(engine: mapEngine)
 
     private let annotationA = Annotation(coordinate: CLLocationCoordinate2D(latitude: 53.93952, longitude: 27.598032))

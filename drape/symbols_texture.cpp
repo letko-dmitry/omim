@@ -1,4 +1,5 @@
 #include "drape/symbols_texture.hpp"
+#include "drape/symbols_texture_description.h"
 #include "3party/stb_image/stb_image.h"
 
 #include "indexer/map_style_reader.hpp"
@@ -112,67 +113,79 @@ private:
   m2::RectF m_rect;
 };
 
-void LoadSymbols(std::string const & skinPathName, std::string const & textureName,
-                 bool convertToUV, TDefinitionInserter const & definitionInserter,
+void LoadSymbols(ReaderPtr<Reader> imageFileReader,
+                 ReaderPtr<Reader> mapFileReader,
+                 bool convertToUV,
+                 TDefinitionInserter const & definitionInserter,
+                 TSymbolsLoadingCompletion const & completionHandler,
+                 TSymbolsLoadingFailure const & failureHandler) {
+    ASSERT(definitionInserter != nullptr, ());
+    ASSERT(completionHandler != nullptr, ());
+    ASSERT(failureHandler != nullptr, ());
+
+    vector<unsigned char> rawData;
+    uint32_t width, height;
+
+    try {
+        DefinitionLoader loader(definitionInserter, convertToUV);
+        ReaderSource<ReaderPtr<Reader>> source(mapFileReader);
+
+        if (!ParseXML(source, loader)) {
+            failureHandler("Error parsing skin");
+            return;
+        }
+
+        width = loader.GetWidth();
+        height = loader.GetHeight();
+
+        size_t const size = static_cast<size_t>(imageFileReader.Size());
+        
+        rawData.resize(size);
+        imageFileReader.Read(0, &rawData[0], size);
+    } catch (RootException & e) {
+        failureHandler(e.what());
+        return;
+    }
+
+    int w, h, bpp;
+    unsigned char * data =
+    stbi_load_from_memory(&rawData[0], static_cast<int>(rawData.size()), &w, &h, &bpp, 0);
+    ASSERT_EQUAL(bpp, 4, ("Incorrect symbols texture format"));
+    ASSERT(glm::isPowerOfTwo(w), (w));
+    ASSERT(glm::isPowerOfTwo(h), (h));
+
+    if (width == static_cast<uint32_t>(w) && height == static_cast<uint32_t>(h))
+    {
+        completionHandler(data, width, height);
+    }
+    else
+    {
+        failureHandler("Error symbols texture creation");
+    }
+
+    stbi_image_free(data);
+}
+
+void LoadSymbols(std::string const & skinPathName,
+                 std::string const & textureName,
+                 bool convertToUV,
+                 TDefinitionInserter const & definitionInserter,
                  TSymbolsLoadingCompletion const & completionHandler,
                  TSymbolsLoadingFailure const & failureHandler)
 {
-  ASSERT(definitionInserter != nullptr, ());
-  ASSERT(completionHandler != nullptr, ());
-  ASSERT(failureHandler != nullptr, ());
+    ASSERT(definitionInserter != nullptr, ());
+    ASSERT(completionHandler != nullptr, ());
+    ASSERT(failureHandler != nullptr, ());
 
-  vector<unsigned char> rawData;
-  uint32_t width, height;
+    try {
+        auto &styleReader = GetStyleReader();
+        auto mapFileReader = styleReader.GetResourceReader(textureName + ".sdf", skinPathName);
+        auto imageFileReader = styleReader.GetResourceReader(textureName + ".png", skinPathName);
 
-  try
-  {
-    DefinitionLoader loader(definitionInserter, convertToUV);
-
-    {
-      ReaderPtr<Reader> reader =
-          GetStyleReader().GetResourceReader(textureName + ".sdf", skinPathName);
-      ReaderSource<ReaderPtr<Reader>> source(reader);
-      if (!ParseXML(source, loader))
-      {
-        failureHandler("Error parsing skin");
-        return;
-      }
-
-      width = loader.GetWidth();
-      height = loader.GetHeight();
+        LoadSymbols(imageFileReader, mapFileReader, convertToUV, definitionInserter, completionHandler, failureHandler);
+    } catch (RootException & e) {
+        failureHandler(e.what());
     }
-
-    {
-      ReaderPtr<Reader> reader =
-          GetStyleReader().GetResourceReader(textureName + ".png", skinPathName);
-      size_t const size = static_cast<size_t>(reader.Size());
-      rawData.resize(size);
-      reader.Read(0, &rawData[0], size);
-    }
-  }
-  catch (RootException & e)
-  {
-    failureHandler(e.what());
-    return;
-  }
-
-  int w, h, bpp;
-  unsigned char * data =
-      stbi_load_from_memory(&rawData[0], static_cast<int>(rawData.size()), &w, &h, &bpp, 0);
-  ASSERT_EQUAL(bpp, 4, ("Incorrect symbols texture format"));
-  ASSERT(glm::isPowerOfTwo(w), (w));
-  ASSERT(glm::isPowerOfTwo(h), (h));
-
-  if (width == static_cast<uint32_t>(w) && height == static_cast<uint32_t>(h))
-  {
-    completionHandler(data, width, height);
-  }
-  else
-  {
-    failureHandler("Error symbols texture creation");
-  }
-
-  stbi_image_free(data);
 }
 }  // namespace
 
@@ -199,11 +212,47 @@ Texture::ResourceType SymbolsTexture::SymbolInfo::GetType() const
   return Texture::ResourceType::Symbol;
 }
 
-SymbolsTexture::SymbolsTexture(ref_ptr<dp::GraphicsContext> context, std::string const & skinPathName,
-                               std::string const & textureName, ref_ptr<HWTextureAllocator> allocator)
+SymbolsTexture::SymbolsTexture(ref_ptr<dp::GraphicsContext> context,
+                               std::string const & skinPathName,
+                               std::string const & textureName,
+                               ref_ptr<HWTextureAllocator> allocator)
   : m_name(textureName)
 {
   Load(context, skinPathName, allocator);
+}
+
+SymbolsTexture::SymbolsTexture(ref_ptr<dp::GraphicsContext> context,
+                               dp::SymbolsTextureDescription const & description,
+                               ref_ptr<HWTextureAllocator> allocator) : m_name(description.name) {
+    auto definitionInserter = [this](std::string const & name, m2::RectF const & rect) {
+        m_definition.insert(std::make_pair(name, SymbolsTexture::SymbolInfo(rect)));
+    };
+
+    auto completionHandler = [this, &allocator, context](unsigned char * data, uint32_t width, uint32_t height) {
+        Texture::Params p;
+        p.m_allocator = allocator;
+        p.m_format = dp::TextureFormat::RGBA8;
+        p.m_width = width;
+        p.m_height = height;
+
+        Create(context, p, make_ref(data));
+    };
+
+    auto failureHandler = [this, context](std::string const & reason) {
+        LOG(LERROR, (reason));
+        Fail(context);
+    };
+
+    auto &platform = GetPlatform();
+
+    try {
+        ReaderPtr<Reader> imageFileReader = platform.GetReader(description.imageFilePath);
+        ReaderPtr<Reader> mapFileReader = platform.GetReader(description.mapFilePath);
+
+        LoadSymbols(imageFileReader, mapFileReader, true, definitionInserter, completionHandler, failureHandler);
+    } catch (RootException & e) {
+        failureHandler(e.what());
+    }
 }
 
 void SymbolsTexture::Load(ref_ptr<dp::GraphicsContext> context, std::string const & skinPathName,

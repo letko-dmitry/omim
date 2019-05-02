@@ -114,15 +114,17 @@ ReaderPtr<Reader> StyleReader::GetResourceReader(std::string const & file,
     /**
      WiFi Map
      */
-  std::string const resourceDir =
-      std::string("resources-") + density/* + GetStyleResourcesSuffix(GetCurrentStyle())*/;
-  std::string resFile = base::JoinPath(resourceDir, file);
+    std::string const resourceDir = std::string("resources-") + density/* + GetStyleResourcesSuffix(GetCurrentStyle())*/;
+    std::string resFile = base::JoinPath(resourceDir, file);
 
-  auto overriddenResFile = base::JoinPath(GetPlatform().WritableDir(), kStylesOverrideDir, resFile);
-  if (GetPlatform().IsFileExistsByFullPath(overriddenResFile))
-    resFile = overriddenResFile;
+    auto &platform = GetPlatform();
+    auto overriddenResFile = base::JoinPath(platform.WritableDir(), kStylesOverrideDir, resFile);
 
-  return GetPlatform().GetReader(resFile);
+    if (platform.IsFileExistsByFullPath(overriddenResFile)) {
+        resFile = overriddenResFile;
+    }
+
+    return platform.GetReader(resFile);
 }
 
 ReaderPtr<Reader> StyleReader::GetDefaultResourceReader(std::string const & file) const

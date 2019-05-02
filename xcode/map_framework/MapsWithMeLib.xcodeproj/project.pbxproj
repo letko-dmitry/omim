@@ -86,6 +86,13 @@
 		DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = DC253CB9225E54A900F3301E /* shaders_metal.metallib */; };
 		DC5750932260E793000B20B4 /* MWMMapEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC5750942260E795000B20B4 /* MWMMapEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */; };
+		DC810B42227B1CC000B2C97E /* resources-xxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DC810B3B227B1CC000B2C97E /* resources-xxhdpi */; };
+		DC810B43227B1CC000B2C97E /* resources-xxxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DC810B3C227B1CC000B2C97E /* resources-xxxhdpi */; };
+		DC810B44227B1CC000B2C97E /* resources-6plus in Resources */ = {isa = PBXBuildFile; fileRef = DC810B3D227B1CC000B2C97E /* resources-6plus */; };
+		DC810B45227B1CC000B2C97E /* resources-xhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DC810B3E227B1CC000B2C97E /* resources-xhdpi */; };
+		DC810B46227B1CC000B2C97E /* resources-default in Resources */ = {isa = PBXBuildFile; fileRef = DC810B3F227B1CC000B2C97E /* resources-default */; };
+		DC810B47227B1CC000B2C97E /* resources-hdpi in Resources */ = {isa = PBXBuildFile; fileRef = DC810B40227B1CC000B2C97E /* resources-hdpi */; };
+		DC810B48227B1CC000B2C97E /* resources-mdpi in Resources */ = {isa = PBXBuildFile; fileRef = DC810B41227B1CC000B2C97E /* resources-mdpi */; };
 		DC8AC8E42264F8F500D2421A /* MWMMapViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC8AC8E72264F96200D2421A /* MWMMapViewRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC8AC8E82264F96200D2421A /* MWMMapViewRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC8AC8E62264F96200D2421A /* MWMMapViewRegion.mm */; };
@@ -140,13 +147,8 @@
 		DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCDFC69E226624E000FA98BD /* MWMMapView.mm */; };
 		DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */; };
 		DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */; };
-		DCE3F4AE2279C53500A8C8DA /* resources-xxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */; };
-		DCE3F4B12279C53500A8C8DA /* resources-hdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A42279C53400A8C8DA /* resources-hdpi */; };
-		DCE3F4B22279C53500A8C8DA /* resources-6plus in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A52279C53400A8C8DA /* resources-6plus */; };
-		DCE3F4B32279C53500A8C8DA /* resources-xxxhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */; };
-		DCE3F4B42279C53500A8C8DA /* resources-xhdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A72279C53500A8C8DA /* resources-xhdpi */; };
-		DCE3F4B62279C53500A8C8DA /* resources-mdpi in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4A92279C53500A8C8DA /* resources-mdpi */; };
-		DCE3F4B92279C53500A8C8DA /* resources-default in Resources */ = {isa = PBXBuildFile; fileRef = DCE3F4AC2279C53500A8C8DA /* resources-default */; };
+		DCE3F4C5227A08A100A8C8DA /* MWMMapSymbols.h in Headers */ = {isa = PBXBuildFile; fileRef = DCE3F4C3227A08A100A8C8DA /* MWMMapSymbols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DCE3F4C6227A08A100A8C8DA /* MWMMapSymbols.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE3F4C4227A08A100A8C8DA /* MWMMapSymbols.m */; };
 		DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */ = {isa = PBXBuildFile; fileRef = DCF274AF22737ADC005DF836 /* MWMMapCountry.m */; };
 /* End PBXBuildFile section */
 
@@ -282,6 +284,13 @@
 		DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapAnnotationManager.mm; sourceTree = "<group>"; };
 		DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MWMMapEngine.h; sourceTree = "<group>"; };
 		DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapEngine.mm; sourceTree = "<group>"; };
+		DC810B3B227B1CC000B2C97E /* resources-xxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxhdpi"; sourceTree = "<group>"; };
+		DC810B3C227B1CC000B2C97E /* resources-xxxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxxhdpi"; sourceTree = "<group>"; };
+		DC810B3D227B1CC000B2C97E /* resources-6plus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-6plus"; sourceTree = "<group>"; };
+		DC810B3E227B1CC000B2C97E /* resources-xhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xhdpi"; sourceTree = "<group>"; };
+		DC810B3F227B1CC000B2C97E /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-default"; sourceTree = "<group>"; };
+		DC810B40227B1CC000B2C97E /* resources-hdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-hdpi"; sourceTree = "<group>"; };
+		DC810B41227B1CC000B2C97E /* resources-mdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-mdpi"; sourceTree = "<group>"; };
 		DC8AC8E32264F8F000D2421A /* MWMMapViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewDelegate.h; sourceTree = "<group>"; };
 		DC8AC8E52264F96200D2421A /* MWMMapViewRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapViewRegion.h; sourceTree = "<group>"; };
 		DC8AC8E62264F96200D2421A /* MWMMapViewRegion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapViewRegion.mm; sourceTree = "<group>"; };
@@ -335,13 +344,8 @@
 		DCDFC69E226624E000FA98BD /* MWMMapView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MWMMapView.mm; sourceTree = "<group>"; };
 		DCDFC6A122662B9200FA98BD /* MWMMapEngineSubscriber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapEngineSubscriber.h; sourceTree = "<group>"; };
 		DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWMMapEngine+Private.h"; sourceTree = "<group>"; };
-		DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxhdpi"; sourceTree = "<group>"; };
-		DCE3F4A42279C53400A8C8DA /* resources-hdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-hdpi"; sourceTree = "<group>"; };
-		DCE3F4A52279C53400A8C8DA /* resources-6plus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-6plus"; sourceTree = "<group>"; };
-		DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xxxhdpi"; sourceTree = "<group>"; };
-		DCE3F4A72279C53500A8C8DA /* resources-xhdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-xhdpi"; sourceTree = "<group>"; };
-		DCE3F4A92279C53500A8C8DA /* resources-mdpi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-mdpi"; sourceTree = "<group>"; };
-		DCE3F4AC2279C53500A8C8DA /* resources-default */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "resources-default"; sourceTree = "<group>"; };
+		DCE3F4C3227A08A100A8C8DA /* MWMMapSymbols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWMMapSymbols.h; sourceTree = "<group>"; };
+		DCE3F4C4227A08A100A8C8DA /* MWMMapSymbols.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWMMapSymbols.m; sourceTree = "<group>"; };
 		DCF274AF22737ADC005DF836 /* MWMMapCountry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWMMapCountry.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -618,6 +622,8 @@
 				DCDE1C332267692B00D9A82D /* MWMMapAnnotationManager+Private.h */,
 				DC57508C2260DF18000B20B4 /* MWMMapAnnotationManager.mm */,
 				DCDE1C352267737200D9A82D /* MWMMapAnnotationManagerDelegate.h */,
+				DCE3F4C3227A08A100A8C8DA /* MWMMapSymbols.h */,
+				DCE3F4C4227A08A100A8C8DA /* MWMMapSymbols.m */,
 				DC57508F2260DFFC000B20B4 /* MWMMapEngine.h */,
 				DCDFC6A222662C8300FA98BD /* MWMMapEngine+Private.h */,
 				DC5750902260DFFC000B20B4 /* MWMMapEngine.mm */,
@@ -629,13 +635,13 @@
 		DCCFEA582256543F002B64E8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DCE3F4A52279C53400A8C8DA /* resources-6plus */,
-				DCE3F4AC2279C53500A8C8DA /* resources-default */,
-				DCE3F4A42279C53400A8C8DA /* resources-hdpi */,
-				DCE3F4A92279C53500A8C8DA /* resources-mdpi */,
-				DCE3F4A72279C53500A8C8DA /* resources-xhdpi */,
-				DCE3F4A12279C53400A8C8DA /* resources-xxhdpi */,
-				DCE3F4A62279C53400A8C8DA /* resources-xxxhdpi */,
+				DC810B3D227B1CC000B2C97E /* resources-6plus */,
+				DC810B3F227B1CC000B2C97E /* resources-default */,
+				DC810B40227B1CC000B2C97E /* resources-hdpi */,
+				DC810B41227B1CC000B2C97E /* resources-mdpi */,
+				DC810B3E227B1CC000B2C97E /* resources-xhdpi */,
+				DC810B3B227B1CC000B2C97E /* resources-xxhdpi */,
+				DC810B3C227B1CC000B2C97E /* resources-xxxhdpi */,
 				DCCFEA742256573C002B64E8 /* countries-strings */,
 				DCCFEA7D2256573D002B64E8 /* drules_proto_clear.bin */,
 				DCCFEA8A2256573D002B64E8 /* drules_proto_dark.bin */,
@@ -694,6 +700,7 @@
 				DCDFC6A422662CF100FA98BD /* MWMMapEngine+Private.h in Headers */,
 				753E95FE22731C3C00A68504 /* MWMMapCountry.h in Headers */,
 				DCCFEA6322565440002B64E8 /* iosOGLContext.h in Headers */,
+				DCE3F4C5227A08A100A8C8DA /* MWMMapSymbols.h in Headers */,
 				DCDFC6A322662CED00FA98BD /* MWMMapEngineSubscriber.h in Headers */,
 				DCCFEA6822565440002B64E8 /* iosOGLContextFactory.h in Headers */,
 				DC8AC8E42264F8F500D2421A /* MWMMapViewDelegate.h in Headers */,
@@ -769,35 +776,35 @@
 				DCCFEA922256573D002B64E8 /* countries-strings in Resources */,
 				DCCFEA8F2256573D002B64E8 /* icudt57l.dat in Resources */,
 				DCCFEA982256573D002B64E8 /* drules_proto_vehicle_dark.bin in Resources */,
+				DC810B44227B1CC000B2C97E /* resources-6plus in Resources */,
+				DC810B46227B1CC000B2C97E /* resources-default in Resources */,
+				DC810B43227B1CC000B2C97E /* resources-xxxhdpi in Resources */,
 				DCCFEAC22256594A002B64E8 /* countries.txt in Resources */,
 				DCCFEA8D2256573D002B64E8 /* drules_proto_vehicle_clear.bin in Resources */,
 				DCCFEAD322565954002B64E8 /* 06_code2000.ttf in Resources */,
 				DCAD501D2278752D008638DF /* drules_proto_dark.bin in Resources */,
-				DCE3F4B62279C53500A8C8DA /* resources-mdpi in Resources */,
-				DCE3F4B42279C53500A8C8DA /* resources-xhdpi in Resources */,
 				DCCFEA912256573D002B64E8 /* ugc_migration in Resources */,
 				DCCFEACF22565954002B64E8 /* 02_droidsans-fallback.ttf in Resources */,
 				DCCFEAC02256594A002B64E8 /* patterns.txt in Resources */,
-				DCE3F4B92279C53500A8C8DA /* resources-default in Resources */,
 				DCCFEAB82256594A002B64E8 /* colors.txt in Resources */,
 				DCAD501B22787438008638DF /* editor.config in Resources */,
 				DCCFEAAA2256573D002B64E8 /* WorldCoasts_obsolete.mwm in Resources */,
 				DCCFEA9D2256573D002B64E8 /* packed_polygons_obsolete.bin in Resources */,
-				DCE3F4B12279C53500A8C8DA /* resources-hdpi in Resources */,
 				DCAD501E2278752F008638DF /* drules_proto_clear.bin in Resources */,
-				DCE3F4B22279C53500A8C8DA /* resources-6plus in Resources */,
 				DCCFEAA12256573D002B64E8 /* ugc_types.csv in Resources */,
 				DCCFEA9E2256573D002B64E8 /* packed_polygons.bin in Resources */,
-				DCE3F4B32279C53500A8C8DA /* resources-xxxhdpi in Resources */,
+				DC810B45227B1CC000B2C97E /* resources-xhdpi in Resources */,
 				DCCFEAB92256594A002B64E8 /* transit_colors.txt in Resources */,
 				DCAD502322788026008638DF /* categories.txt in Resources */,
 				DCCFEACE22565954002B64E8 /* 01_dejavusans.ttf in Resources */,
 				DCCFEAD422565954002B64E8 /* 07_roboto_medium.ttf in Resources */,
+				DC810B48227B1CC000B2C97E /* resources-mdpi in Resources */,
 				DCCFEAD022565954002B64E8 /* 03_jomolhari-id-a3d.ttf in Resources */,
 				DC253CBD225E555B00F3301E /* shaders_metal.metallib in Resources */,
 				DCCFEAC42256594A002B64E8 /* countries_obsolete.txt in Resources */,
+				DC810B47227B1CC000B2C97E /* resources-hdpi in Resources */,
 				DCCFEACD22565954002B64E8 /* 00_roboto_regular.ttf in Resources */,
-				DCE3F4AE2279C53500A8C8DA /* resources-xxhdpi in Resources */,
+				DC810B42227B1CC000B2C97E /* resources-xxhdpi in Resources */,
 				DCCFEAD122565954002B64E8 /* 04_padauk.ttf in Resources */,
 				DCCFEAC12256594A002B64E8 /* local_ads_symbols.txt in Resources */,
 				DCCFEA972256573D002B64E8 /* WorldCoasts.mwm in Resources */,
@@ -846,6 +853,7 @@
 				DCCFEA6122565440002B64E8 /* iosOGLContextFactory.mm in Sources */,
 				DCF274B022737ADC005DF836 /* MWMMapCountry.m in Sources */,
 				DC8AC8E82264F96200D2421A /* MWMMapViewRegion.mm in Sources */,
+				DCE3F4C6227A08A100A8C8DA /* MWMMapSymbols.m in Sources */,
 				DCCFEA5A22565440002B64E8 /* iosOGLContext.mm in Sources */,
 				DCDFC6A0226624E000FA98BD /* MWMMapView.mm in Sources */,
 				DCCFEA6922565440002B64E8 /* EAGLView.mm in Sources */,

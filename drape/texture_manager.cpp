@@ -430,6 +430,10 @@ void TextureManager::Init(ref_ptr<dp::GraphicsContext> context, Params const & p
     m_symbolTextures.push_back(make_unique_dp<SymbolsTexture>(context, m_resPostfix, kSymbolTextures[i],
                                                               make_ref(m_textureAllocator)));
   }
+    
+  for (auto description : params.m_symbolsTextureDescriptions) {
+      m_symbolTextures.push_back(make_unique_dp<SymbolsTexture>(context, description, make_ref(m_textureAllocator)));
+  }
 
   // Initialize static textures.
   m_trafficArrowTexture = make_unique_dp<StaticTexture>(context, "traffic-arrow", m_resPostfix,

@@ -149,6 +149,7 @@
 		BBB72EA02118A45800249D4F /* mesh_object.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBB72E9E2118A45800249D4F /* mesh_object.hpp */; };
 		BBF7916C2142E3A100D27BD8 /* metal_cleaner.mm in Sources */ = {isa = PBXBuildFile; fileRef = BBF7916B2142E3A100D27BD8 /* metal_cleaner.mm */; };
 		BBF7916E2142E42C00D27BD8 /* metal_cleaner.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBF7916D2142E42C00D27BD8 /* metal_cleaner.hpp */; };
+		DCE3F4C2227A014800A8C8DA /* symbols_texture_description.h in Headers */ = {isa = PBXBuildFile; fileRef = DCE3F4C1227A014800A8C8DA /* symbols_texture_description.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -297,6 +298,7 @@
 		BBB72E9E2118A45800249D4F /* mesh_object.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mesh_object.hpp; sourceTree = "<group>"; };
 		BBF7916B2142E3A100D27BD8 /* metal_cleaner.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = metal_cleaner.mm; sourceTree = "<group>"; };
 		BBF7916D2142E42C00D27BD8 /* metal_cleaner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = metal_cleaner.hpp; sourceTree = "<group>"; };
+		DCE3F4C1227A014800A8C8DA /* symbols_texture_description.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = symbols_texture_description.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -470,6 +472,7 @@
 				6743D3431C3533AE0095054B /* support_manager.hpp */,
 				6729A5501A69213A007D5872 /* symbols_texture.cpp */,
 				6729A5511A69213A007D5872 /* symbols_texture.hpp */,
+				DCE3F4C1227A014800A8C8DA /* symbols_texture_description.h */,
 				6729A5521A69213A007D5872 /* texture_manager.cpp */,
 				6729A5531A69213A007D5872 /* texture_manager.hpp */,
 				6729A5541A69213A007D5872 /* texture_of_colors.cpp */,
@@ -565,6 +568,7 @@
 				34C624CA1DABDB2000510300 /* static_texture.hpp in Headers */,
 				4577B25521F2035D00864FAC /* vulkan_texture.hpp in Headers */,
 				6729A5901A69213A007D5872 /* object_pool.hpp in Headers */,
+				DCE3F4C2227A014800A8C8DA /* symbols_texture_description.h in Headers */,
 				670947261BDF9A4F005014C0 /* bidi.hpp in Headers */,
 				457B536820358F7E00E4E752 /* glyph_generator.hpp in Headers */,
 				6729A5A11A69213A007D5872 /* shader.hpp in Headers */,

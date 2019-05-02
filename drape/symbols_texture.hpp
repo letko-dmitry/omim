@@ -8,6 +8,8 @@
 
 namespace dp
 {
+struct SymbolsTextureDescription;
+
 class SymbolsTexture : public Texture
 {
 public:
@@ -29,8 +31,14 @@ public:
     ResourceType GetType() const override;
   };
 
-  SymbolsTexture(ref_ptr<dp::GraphicsContext> context, std::string const & skinPathName,
-                 std::string const & textureName, ref_ptr<HWTextureAllocator> allocator);
+  SymbolsTexture(ref_ptr<dp::GraphicsContext> context,
+                 std::string const & skinPathName,
+                 std::string const & textureName,
+                 ref_ptr<HWTextureAllocator> allocator);
+
+  SymbolsTexture(ref_ptr<dp::GraphicsContext> context,
+                 dp::SymbolsTextureDescription const & description,
+                 ref_ptr<HWTextureAllocator> allocator);
 
   ref_ptr<ResourceInfo> FindResource(Key const & key, bool & newResource) override;
 

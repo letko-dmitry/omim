@@ -70,7 +70,8 @@ public:
            bool isAutozoomEnabled,
            bool simplifiedTrafficColors,
            OverlaysShowStatsCallback && overlaysShowStatsCallback,
-           TIsUGCFn && isUGCFn)
+           TIsUGCFn && isUGCFn,
+           std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions)
       : m_apiVersion(apiVersion)
       , m_factory(factory)
       , m_viewport(viewport)
@@ -91,6 +92,7 @@ public:
       , m_simplifiedTrafficColors(simplifiedTrafficColors)
       , m_overlaysShowStatsCallback(std::move(overlaysShowStatsCallback))
       , m_isUGCFn(std::move(isUGCFn))
+      , m_symbolsTextureDescriptions(m_symbolsTextureDescriptions)
     {}
 
     dp::ApiVersion m_apiVersion;
@@ -113,6 +115,7 @@ public:
     bool m_simplifiedTrafficColors;
     OverlaysShowStatsCallback m_overlaysShowStatsCallback;
     TIsUGCFn m_isUGCFn;
+    std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions;
   };
 
   DrapeEngine(Params && params);

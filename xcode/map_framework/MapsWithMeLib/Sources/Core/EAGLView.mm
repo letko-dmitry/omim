@@ -2,6 +2,7 @@
 
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
+#import "MWMMapSymbols.h"
 
 #import "drape/drape_global.hpp"
 #import "drape/visual_scale.hpp"
@@ -129,19 +130,31 @@ double getExactDPI(double contentScaleFactor)
 
 - (void)createDrapeEngineWithWidth:(int)width height:(int)height
 {
-  LOG(LINFO, ("CreateDrapeEngine Started", width, height, m_apiVersion));
-  CHECK(m_factory != nullptr, ());
-  
-  Framework::DrapeCreationParams p;
-  p.m_apiVersion = m_apiVersion;
-  p.m_surfaceWidth = width;
-  p.m_surfaceHeight = height;
-  p.m_visualScale = dp::VisualScale(getExactDPI(self.contentScaleFactor));
+    LOG(LINFO, ("CreateDrapeEngine Started", width, height, m_apiVersion));
+    CHECK(m_factory != nullptr, ());
 
-  MWMMapEngineFramework(_engine).CreateDrapeEngine(make_ref(m_factory), move(p));
+    auto symbolsTextureDescriptions = std::vector<dp::SymbolsTextureDescription>();
 
-  self->_drapeEngineCreated = YES;
-  LOG(LINFO, ("CreateDrapeEngine Finished"));
+    for (MWMMapSymbols *symbols in _engine.symbols) {
+        auto description = dp::SymbolsTextureDescription();
+        description.name = symbols.name.UTF8String;
+        description.imageFilePath = symbols.imageFileUrl.path.UTF8String;
+        description.mapFilePath = symbols.mapFileUrl.path.UTF8String;
+
+        symbolsTextureDescriptions.push_back(description);
+    }
+
+    Framework::DrapeCreationParams p;
+    p.m_apiVersion = m_apiVersion;
+    p.m_surfaceWidth = width;
+    p.m_surfaceHeight = height;
+    p.m_visualScale = dp::VisualScale(getExactDPI(self.contentScaleFactor));
+    p.m_symbolsTextureDescriptions = symbolsTextureDescriptions;
+
+    MWMMapEngineFramework(_engine).CreateDrapeEngine(make_ref(m_factory), move(p));
+
+    self->_drapeEngineCreated = YES;
+    LOG(LINFO, ("CreateDrapeEngine Finished"));
 }
 
 - (m2::PointU)pixelSize

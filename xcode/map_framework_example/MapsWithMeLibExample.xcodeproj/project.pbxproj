@@ -19,6 +19,10 @@
 		DC257ED5224D18F800D0E595 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED2224D18F800D0E595 /* MetalPerformanceShaders.framework */; };
 		DC257ED6224D18F800D0E595 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED3224D18F800D0E595 /* MetalKit.framework */; };
 		DC257ED8224D18FF00D0E595 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC257ED7224D18FF00D0E595 /* QuartzCore.framework */; };
+		DC810B37227B1C5100B2C97E /* icons@3x.texture in Resources */ = {isa = PBXBuildFile; fileRef = DC810B33227B1C5100B2C97E /* icons@3x.texture */; };
+		DC810B38227B1C5100B2C97E /* icons@2x.sdf in Resources */ = {isa = PBXBuildFile; fileRef = DC810B34227B1C5100B2C97E /* icons@2x.sdf */; };
+		DC810B39227B1C5100B2C97E /* icons@2x.texture in Resources */ = {isa = PBXBuildFile; fileRef = DC810B35227B1C5100B2C97E /* icons@2x.texture */; };
+		DC810B3A227B1C5100B2C97E /* icons@3x.sdf in Resources */ = {isa = PBXBuildFile; fileRef = DC810B36227B1C5100B2C97E /* icons@3x.sdf */; };
 		DCCFE74922563CBE002B64E8 /* MapsWithMeLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCFE74822563CBE002B64E8 /* MapsWithMeLib.framework */; };
 		DCCFE74A22563CBE002B64E8 /* MapsWithMeLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DCCFE74822563CBE002B64E8 /* MapsWithMeLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -50,6 +54,10 @@
 		DC257ED2224D18F800D0E595 /* MetalPerformanceShaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalPerformanceShaders.framework; path = System/Library/Frameworks/MetalPerformanceShaders.framework; sourceTree = SDKROOT; };
 		DC257ED3224D18F800D0E595 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		DC257ED7224D18FF00D0E595 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		DC810B33227B1C5100B2C97E /* icons@3x.texture */ = {isa = PBXFileReference; lastKnownFileType = file; path = "icons@3x.texture"; sourceTree = "<group>"; };
+		DC810B34227B1C5100B2C97E /* icons@2x.sdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "icons@2x.sdf"; sourceTree = "<group>"; };
+		DC810B35227B1C5100B2C97E /* icons@2x.texture */ = {isa = PBXFileReference; lastKnownFileType = file; path = "icons@2x.texture"; sourceTree = "<group>"; };
+		DC810B36227B1C5100B2C97E /* icons@3x.sdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "icons@3x.sdf"; sourceTree = "<group>"; };
 		DCCFE74822563CBE002B64E8 /* MapsWithMeLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MapsWithMeLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCCFE9CE22564A90002B64E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DCCFE9CF22564A91002B64E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -93,6 +101,10 @@
 		DC129739224A7DEE004F46AF /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				DC810B34227B1C5100B2C97E /* icons@2x.sdf */,
+				DC810B35227B1C5100B2C97E /* icons@2x.texture */,
+				DC810B36227B1C5100B2C97E /* icons@3x.sdf */,
+				DC810B33227B1C5100B2C97E /* icons@3x.texture */,
 				DC12973A224A7DEE004F46AF /* AppDelegate.swift */,
 				DC12973C224A7DEE004F46AF /* ViewController.swift */,
 				753E95FC22731BF100A68504 /* Barbados.mwm */,
@@ -178,7 +190,11 @@
 				DC129745224A7DEF004F46AF /* LaunchScreen.storyboard in Resources */,
 				753E95FF2273626B00A68504 /* Barbados.mwm in Resources */,
 				DC129742224A7DEF004F46AF /* Assets.xcassets in Resources */,
+				DC810B37227B1C5100B2C97E /* icons@3x.texture in Resources */,
 				DC129740224A7DEE004F46AF /* Main.storyboard in Resources */,
+				DC810B38227B1C5100B2C97E /* icons@2x.sdf in Resources */,
+				DC810B3A227B1C5100B2C97E /* icons@3x.sdf in Resources */,
+				DC810B39227B1C5100B2C97E /* icons@2x.texture in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

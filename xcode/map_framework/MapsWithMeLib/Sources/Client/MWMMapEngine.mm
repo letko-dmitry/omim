@@ -10,6 +10,7 @@
 #import "MWMMapEngine+Private.h"
 #import "MWMMapEngineSubscriber.h"
 #import "MWMMapCountry.h"
+#import "MWMMapSymbols.h"
 
 #import "base/logging.hpp"
 #import "base/assert.hpp"
@@ -17,6 +18,8 @@
 #import "platform/local_country_file_utils.hpp"
 #import "map/framework.hpp"
 #import "drape_frontend/animation_system.hpp"
+
+#import "3party/Alohalytics/src/alohalytics.h"
 
 
 @interface MWMMapEngine () {
@@ -52,6 +55,8 @@
 @implementation MWMMapEngine
 
 + (void)initialize {
+    alohalytics::Stats::Instance().Disable();
+
 #ifndef DEBUG
     base::SetLogMessageFn([] (base::LogLevel level, base::SrcPoint const &, std::string const &) { });
     base::SetAssertFunction([] (base::SrcPoint const & srcPoint, std::string const & msg) { return true; });
@@ -59,9 +64,17 @@
 }
 
 - (instancetype)init {
+    return [self initWithSymbols:@[]];
+}
+
+- (instancetype)initWithSymbols:(NSArray<MWMMapSymbols *> *)symbols {
+    NSParameterAssert(symbols);
+
     self = [super init];
 
     if (self) {
+        _symbols = [symbols copy];
+
         _isPaused = NO;
 
         _framework = new Framework(FrameworkParams(false, true));

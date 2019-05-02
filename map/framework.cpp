@@ -1898,17 +1898,17 @@ void Framework::CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFac
   bool const simplifiedTrafficColors = m_trafficManager.HasSimplifiedColorScheme();
   double const fontsScaleFactor = LoadLargeFontsSize() ? kLargeFontsScaleFactor : 1.0;
 
-  df::DrapeEngine::Params p(
-      params.m_apiVersion, contextFactory,
-      dp::Viewport(0, 0, params.m_surfaceWidth, params.m_surfaceHeight),
-      df::MapDataProvider(move(idReadFn), move(featureReadFn), move(filterFeatureFn),
-                          move(isCountryLoadedByNameFn), move(updateCurrentCountryFn)),
-      params.m_hints, params.m_visualScale, fontsScaleFactor, move(params.m_widgetsInitInfo),
-      make_pair(params.m_initialMyPositionState, params.m_hasMyPositionState),
-      move(myPositionModeChangedFn), allow3dBuildings, trafficEnabled,
-      params.m_isChoosePositionMode, params.m_isChoosePositionMode, GetSelectedFeatureTriangles(),
-      m_routingManager.IsRoutingActive() && m_routingManager.IsRoutingFollowing(),
-      isAutozoomEnabled, simplifiedTrafficColors, move(overlaysShowStatsFn), move(isUGCFn));
+  df::DrapeEngine::Params p(params.m_apiVersion, contextFactory,
+                            dp::Viewport(0, 0, params.m_surfaceWidth, params.m_surfaceHeight),
+                            df::MapDataProvider(move(idReadFn), move(featureReadFn), move(filterFeatureFn),
+                                                move(isCountryLoadedByNameFn), move(updateCurrentCountryFn)),
+                            params.m_hints, params.m_visualScale, fontsScaleFactor, move(params.m_widgetsInitInfo),
+                            make_pair(params.m_initialMyPositionState, params.m_hasMyPositionState),
+                            move(myPositionModeChangedFn), allow3dBuildings, trafficEnabled,
+                            params.m_isChoosePositionMode, params.m_isChoosePositionMode, GetSelectedFeatureTriangles(),
+                            m_routingManager.IsRoutingActive() && m_routingManager.IsRoutingFollowing(),
+                            isAutozoomEnabled, simplifiedTrafficColors, move(overlaysShowStatsFn), move(isUGCFn),
+                            params.m_symbolsTextureDescriptions);
 
   m_drapeEngine = make_unique_dp<df::DrapeEngine>(move(p));
   m_drapeEngine->SetModelViewListener([this](ScreenBase const & screen)

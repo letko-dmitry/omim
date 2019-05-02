@@ -6,6 +6,7 @@
 #include "drape/pointers.hpp"
 #include "drape/texture.hpp"
 #include "drape/font_texture.hpp"
+#include "drape/symbols_texture_description.h"
 
 #include "base/string_utils.hpp"
 #include "base/timer.hpp"
@@ -78,6 +79,7 @@ public:
     std::string m_colors;
     std::string m_patterns;
     GlyphManager::Params m_glyphMngParams;
+    std::vector<SymbolsTextureDescription> m_symbolsTextureDescriptions;
   };
 
   explicit TextureManager(ref_ptr<GlyphGenerator> glyphGenerator);

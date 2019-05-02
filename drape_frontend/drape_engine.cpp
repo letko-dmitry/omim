@@ -99,7 +99,8 @@ DrapeEngine::DrapeEngine(Params && params)
                                    params.m_allow3dBuildings,
                                    params.m_trafficEnabled,
                                    params.m_simplifiedTrafficColors,
-                                   std::move(params.m_isUGCFn));
+                                   std::move(params.m_isUGCFn),
+                                   params.m_symbolsTextureDescriptions);
 
   m_backend = make_unique_dp<BackendRenderer>(std::move(brParams));
 

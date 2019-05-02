@@ -44,7 +44,8 @@ public:
            ref_ptr<dp::GraphicsContextFactory> factory, ref_ptr<dp::TextureManager> texMng,
            MapDataProvider const & model, TUpdateCurrentCountryFn const & updateCurrentCountryFn,
            ref_ptr<RequestedTiles> requestedTiles, bool allow3dBuildings, bool trafficEnabled,
-           bool simplifiedTrafficColors, TIsUGCFn && isUGCFn)
+           bool simplifiedTrafficColors, TIsUGCFn && isUGCFn,
+           std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions)
       : BaseRenderer::Params(apiVersion, commutator, factory, texMng)
       , m_model(model)
       , m_updateCurrentCountryFn(updateCurrentCountryFn)
@@ -53,6 +54,7 @@ public:
       , m_trafficEnabled(trafficEnabled)
       , m_simplifiedTrafficColors(simplifiedTrafficColors)
       , m_isUGCFn(std::move(isUGCFn))
+      , m_symbolsTextureDescriptions(m_symbolsTextureDescriptions)
     {}
 
     MapDataProvider const & m_model;
@@ -62,6 +64,7 @@ public:
     bool m_trafficEnabled;
     bool m_simplifiedTrafficColors;
     TIsUGCFn m_isUGCFn;
+    std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions;
   };
 
   explicit BackendRenderer(Params && params);
@@ -133,5 +136,7 @@ private:
 #ifdef DEBUG
   bool m_isTeardowned;
 #endif
+
+  std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions;
 };
 }  // namespace df

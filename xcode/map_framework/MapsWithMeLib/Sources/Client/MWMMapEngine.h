@@ -11,11 +11,15 @@
 #import "MWMMapCountry.h"
 
 @class MWMMapCountry;
+@class MWMMapSymbols;
 
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_NAME(MapEngine)
 @interface MWMMapEngine : NSObject
+@property (copy, nonatomic, readonly) NSArray<MWMMapSymbols *> *symbols;
+
+- (instancetype)initWithSymbols:(NSArray<MWMMapSymbols *> *)symbols NS_DESIGNATED_INITIALIZER;
 
 - (void)loadCountry:(MWMMapCountry *)country NS_SWIFT_NAME(loadCountry(_:));
 

@@ -11,7 +11,7 @@
 
 #import "map/user_mark.hpp"
 
-class AnnotationMark : public UserMark {
+class AnnotationMark final : public UserMark {
 public:
     explicit AnnotationMark(m2::PointD const &ptOrg);
 
@@ -19,10 +19,6 @@ public:
     df::ColorConstant GetColorConstant() const override;
 
     void SetSelected(bool isSelected);
-
-    bool isSelected() const {
-        return m_isSelected;
-    }
 
 private:
     bool m_isSelected;

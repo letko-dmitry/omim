@@ -507,6 +507,8 @@ public:
 
     bool m_isChoosePositionMode = false;
     df::Hints m_hints;
+
+    std::vector<dp::SymbolsTextureDescription> m_symbolsTextureDescriptions;
   };
 
   void CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFactory, DrapeCreationParams && params);
