@@ -12,6 +12,7 @@
 #import "MWMMapAnnotation.h"
 #import "MWMMapEngine.h"
 #import "MWMMapEngine+Private.h"
+#import "MWMMapEngineSubscriber.h"
 
 #import "AnnotationMark.hpp"
 
@@ -20,9 +21,12 @@
 #import "geometry/screenbase.hpp"
 
 
-@interface MWMMapAnnotationManager () {
+static const size_t MWMMapAnnotationManagerMarksCacheSizeMax = 5000;
+
+@interface MWMMapAnnotationManager () <MWMMapEngineSubscriber> {
     std::map<id<MWMMapAnnotation>, kml::MarkId> _markIdentifiersByAnnotation;
     std::unordered_map<kml::MarkId, id<MWMMapAnnotation>> _annotationsByMarkIdentifiers;
+    std::vector<AnnotationMark *> _marksCache;
 }
 
 - (void)deselectAnnotationAutomatically;
@@ -38,9 +42,15 @@
 
     if (self) {
         _engine = engine;
+
+        [self subscribeToEngineEvents];
     }
 
     return self;
+}
+
+- (void)dealloc {
+    [self unsubscribeFromEngineEvents];
 }
 
 - (void)addAnnotations:(NSSet<id<MWMMapAnnotation>> *)annotations {
@@ -48,12 +58,28 @@
     NSParameterAssert(annotations != nil);
 
     auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
-    
-    _annotationsByMarkIdentifiers.reserve(_annotationsByMarkIdentifiers.size() + annotations.count);
 
-    for (NSObject<MWMMapAnnotation> *annotation in annotations) {
+    for (id<MWMMapAnnotation> annotation in annotations) {
         auto point = MercatorBounds::FromLatLon(annotation.coordinate.latitude, annotation.coordinate.longitude);
-        auto mark = session.CreateUserMark<AnnotationMark>(point);
+
+        AnnotationMark *mark;
+
+        if (_marksCache.empty()) {
+            mark = session.CreateUserMark<AnnotationMark>(point);
+        } else {
+            mark = _marksCache.back();
+            mark->SetPtOrg(point);
+            mark->SetHidden(false);
+
+            _marksCache.pop_back();
+        }
+
+        if (annotation == _selectedAnnotation) {
+            mark->SetSymbol(annotation.selectedSymbol.UTF8String);
+        } else {
+            mark->SetSymbol(annotation.symbol.UTF8String);
+        }
+
         auto markIdentifier = mark->GetId();
 
         _markIdentifiersByAnnotation[annotation] = markIdentifier;
@@ -65,13 +91,22 @@
     NSAssert([NSThread isMainThread], @"The method is expected to be called from the main thread only");
     NSParameterAssert(annotations != nil);
 
+    _marksCache.reserve(min(_marksCache.size() + annotations.count, MWMMapAnnotationManagerMarksCacheSizeMax));
+
     auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
 
     for (NSObject<MWMMapAnnotation> *annotation in annotations) {
         auto iterator = _markIdentifiersByAnnotation.find(annotation);
         auto markIdentifier = iterator->second;
 
-        session.DeleteUserMark(markIdentifier);
+        if (_marksCache.size() < MWMMapAnnotationManagerMarksCacheSizeMax) {
+            auto mark = session.GetMarkForEdit<AnnotationMark>(markIdentifier);
+            mark->SetHidden(true);
+
+            _marksCache.push_back(mark);
+        } else {
+            session.DeleteUserMark(markIdentifier);
+        }
 
         _markIdentifiersByAnnotation.erase(iterator);
         _annotationsByMarkIdentifiers.erase(markIdentifier);
@@ -95,7 +130,7 @@
         auto mark = session.GetMarkForEdit<AnnotationMark>(markIdentifier);
 
         if (mark != nullptr) {
-            mark->SetSelected(true);
+            mark->SetSymbol(annotation.selectedSymbol.UTF8String);
 
             _selectedAnnotation = annotation;
         }
@@ -116,7 +151,7 @@
         auto mark = session.GetMarkForEdit<AnnotationMark>(markIdentifier);
 
         if (mark != nullptr) {
-            mark->SetSelected(false);
+            mark->SetSymbol(_selectedAnnotation.symbol.UTF8String);
         }
     }
 
@@ -157,6 +192,42 @@
         [self deselectAnnotation];
         [self.delegate mapAnnotationManager:self didDeselect:selectedAnnotationOld];
     }
+}
+
+- (void)purge {
+    if (!_marksCache.empty()) {
+        auto session = MWMMapEngineFramework(_engine).GetBookmarkManager().GetEditSession();
+
+        for (auto mark : _marksCache) {
+            session.DeleteUserMark(mark->GetId());
+        }
+
+        _marksCache.resize(0);
+    }
+}
+
+// MARK: - private
+
+- (void)subscribeToEngineEvents {
+    [_engine subscribe:self];
+}
+
+- (void)unsubscribeFromEngineEvents {
+    [_engine unsubscribe:self];
+}
+
+// MARK: - MWMMapEngineSubscriber
+
+- (void)mapEngineWillPurge:(MWMMapEngine *)engine {
+    [self purge];
+}
+
+- (void)mapEngineWillPause:(MWMMapEngine *)engine {
+    [self purge];
+}
+
+- (void)mapEngineDidResume:(MWMMapEngine *)engine {
+    // empty implementation
 }
 
 @end

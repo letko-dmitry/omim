@@ -23,6 +23,7 @@
 #import "geometry/screenbase.hpp"
 #import "map/framework.hpp"
 
+
 @interface MWMMapView() <MWMMapEngineSubscriber> {
     BOOL _delegateRespondsToDidChangeRegion;
     BOOL _delegateRespondsToRegionDidChangeAnimated;
@@ -416,6 +417,10 @@
 }
 
 // MARK: - MWMMapEngineSubscriber
+
+- (void)mapEngineWillPurge:(MWMMapEngine *)engine {
+    //  empty implementation
+}
 
 - (void)mapEngineWillPause:(MWMMapEngine *)engine {
     [_mapView setPresentAvailable:NO];

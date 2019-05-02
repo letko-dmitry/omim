@@ -8,28 +8,33 @@
 
 #import "AnnotationMark.hpp"
 
-AnnotationMark::AnnotationMark(m2::PointD const &ptOrg): UserMark(ptOrg, UserMark::Type::STATIC) {
-    m_isSelected = false;
+AnnotationMark::AnnotationMark(m2::PointD const &ptOrg): StaticMarkPoint(ptOrg) {
+    m_symbol = "";
+    m_isHidden = false;
 }
 
 drape_ptr<df::UserPointMark::SymbolNameZoomInfo> AnnotationMark::GetSymbolNames() const {
     auto symbol = make_unique_dp<SymbolNameZoomInfo>();
-    symbol->insert(std::make_pair(1 /* zoomLevel */, "coloredmark-default-s"));
+    symbol->insert(std::make_pair(1 /* zoomLevel */, m_symbol));
 
     return symbol;
 }
 
-df::ColorConstant AnnotationMark::GetColorConstant() const {
-    if (m_isSelected) {
-        return "BookmarkRed";
-    } else {
-        return "BookmarkBlue";
+bool AnnotationMark::IsVisible() const {
+    return !m_isHidden;
+}
+
+void AnnotationMark::SetHidden(bool isHidden) {
+    if (m_isHidden != isHidden) {
+        m_isHidden = isHidden;
+
+        SetDirty();
     }
 }
 
-void AnnotationMark::SetSelected(bool isSelected) {
-    if (m_isSelected != isSelected) {
-        m_isSelected = isSelected;
+void AnnotationMark::SetSymbol(std::string const & symbol) {
+    if (m_symbol != symbol) {
+        m_symbol = symbol;
 
         SetDirty();
     }

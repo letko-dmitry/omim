@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(MapEngineSubscriber)
 @protocol MWMMapEngineSubscriber <NSObject>
 
+- (void)mapEngineWillPurge:(MWMMapEngine *)engine NS_SWIFT_NAME(mapEngineWillPurge(_:));
+
 - (void)mapEngineWillPause:(MWMMapEngine *)engine NS_SWIFT_NAME(mapEngineWillPause(_:));
 - (void)mapEngineDidResume:(MWMMapEngine *)engine NS_SWIFT_NAME(mapEngineDidResume(_:));
 

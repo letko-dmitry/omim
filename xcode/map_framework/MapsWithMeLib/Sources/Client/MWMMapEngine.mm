@@ -276,6 +276,8 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+    [_subscibers.allObjects makeObjectsPerformSelector:@selector(mapEngineWillPurge:) withObject:self];
+
     _framework->MemoryWarning();
 }
 

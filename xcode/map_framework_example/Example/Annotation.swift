@@ -11,6 +11,8 @@ import MapsWithMeLib
 
 final class Annotation: NSObject, MapAnnotation {
     let coordinate: CLLocationCoordinate2D
+    let symbol = "airport"
+    let selectedSymbol = "apartments"
 
     init(coordinate: CLLocationCoordinate2D) {
         self.coordinate = coordinate

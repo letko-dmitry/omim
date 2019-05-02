@@ -11,17 +11,20 @@
 
 #import "map/user_mark.hpp"
 
-class AnnotationMark final : public UserMark {
+class AnnotationMark final : public StaticMarkPoint {
 public:
     explicit AnnotationMark(m2::PointD const &ptOrg);
 
     drape_ptr<SymbolNameZoomInfo> GetSymbolNames() const override;
-    df::ColorConstant GetColorConstant() const override;
+    bool IsVisible() const override;
 
-    void SetSelected(bool isSelected);
+    void SetHidden(bool isHidden);
+    void SetSymbol(std::string const & symbol);
 
 private:
-    bool m_isSelected;
+    std::string m_symbol;
+
+    bool m_isHidden;
 };
 
 #endif /* AnnotationUserMark_h */
